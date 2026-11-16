@@ -1,0 +1,11 @@
+{
+ "page": null,
+ "url": "http://localhost:44100/",
+ "root": null,
+ "kind": "software",
+ "category": "Full-stack engineer for hire",
+ "primary": "Email Ali",
+ "rounds": 3,
+ "start": "2026-11-16T08:53:28.189Z",
+ "by": "gate.mjs --start"
+}

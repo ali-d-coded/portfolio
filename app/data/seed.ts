@@ -7,11 +7,11 @@ export const seedSnapshot: ContentSnapshot = {
   site: {
     name: 'Ali Afthab',
     role: 'Full-Stack Engineer | Backend & Distributed Systems',
-    heroHeadline: 'Full-Stack Engineer | Backend & Distributed Systems',
+    heroHeadline: 'Full-stack engineer for multi-tenant SaaS backends',
     summary:
-      'Full-Stack Software Engineer with 5 years of experience designing and shipping scalable, multi-tenant SaaS platforms and high-volume, event-driven backend systems.',
+      'I design and ship Node.js, TypeScript and Bun services. My latest is a WhatsApp Business CRM that serves 30+ client businesses behind a single API Gateway.',
     about:
-      'Full-Stack Software Engineer with 5 years of experience designing and shipping scalable, multi-tenant SaaS platforms and high-volume, event-driven backend systems. Expert in Node.js, TypeScript, Bun and microservices architecture, with deep hands-on experience in message queues (BullMQ, Redis Streams), real-time communication (Socket.IO, WebSockets), and MongoDB/PostgreSQL data modeling. Built an API Gateway-based WhatsApp Business CRM integrating the Meta WhatsApp Cloud API, Shopify and Magento, with React web and React Native mobile clients. Strong record of end-to-end ownership, performance optimization, system design, code reviews and mentoring engineers in Agile teams.',
+      'I write backend services in Node.js, TypeScript and Bun, and the React and React Native clients that sit on them. Most of my work since 2022 has been multi-tenant SaaS: one codebase serving many client businesses.\n\nI own features from requirements to deployment, and I review code and mentor junior developers along the way. Message queues, real-time delivery and data modelling are where I go deepest.',
     email: 'aliallu3xa@gmail.com',
     linkedinUrl: 'https://linkedin.com/in/ali-afthab',
     githubUrl: 'https://github.com/ali-d-coded',
@@ -30,18 +30,29 @@ export const seedSnapshot: ContentSnapshot = {
       id: 'eazycrm',
       slug: 'eazycrm',
       title: 'EazyCRM',
-      tagline: 'Multi-Tenant WhatsApp Business CRM',
+      tagline: 'Multi-tenant WhatsApp Business CRM',
       stack: ['Node.js', 'Bun', 'TypeScript', 'MongoDB', 'Redis'],
       summary:
         'Gateway-centric microservices platform for team inbox, bulk campaigns, WhatsApp Groups and e-commerce automation, with React web, React Native mobile and admin dashboard clients.',
-      figures: [{ value: '30+', label: 'client businesses' }],
+      figures: [
+        { value: '30+', label: 'client businesses' },
+        { value: '3', label: 'client apps: web, mobile and admin' },
+        { value: '2', label: 'store connectors: Shopify and Magento 2' },
+      ],
       blocks: [
         { type: 'heading', text: 'Overview' },
         {
           type: 'text',
           text: 'Gateway-centric microservices platform for team inbox, bulk campaigns, WhatsApp Groups and e-commerce automation, with React web, React Native mobile and admin dashboard clients.',
         },
-        { type: 'figures', items: [{ value: '30+', label: 'client businesses' }] },
+        {
+          type: 'figures',
+          items: [
+            { value: '30+', label: 'client businesses' },
+            { value: '3', label: 'client apps: web, mobile and admin' },
+            { value: '2', label: 'store connectors: Shopify and Magento 2' },
+          ],
+        },
         { type: 'heading', text: 'Message pipeline' },
         {
           type: 'text',
@@ -62,7 +73,7 @@ export const seedSnapshot: ContentSnapshot = {
       id: 'restaurant-pos',
       slug: 'restaurant-pos',
       title: 'Restaurant POS Platform',
-      tagline: 'Restaurant Point of Sale',
+      tagline: 'Restaurant point of sale with real-time sales analytics',
       stack: ['Node.js', 'Laravel', 'PostgreSQL'],
       summary:
         'Scalable APIs and backend services powering real-time analytics, order management and operational workflows.',

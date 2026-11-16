@@ -1,0 +1,50 @@
+{
+ "palettes": [
+  "cool-grey-cobalt"
+ ],
+ "types": [
+  "funnel"
+ ],
+ "dealt": [
+  "funnel",
+  "gabarito",
+  "host"
+ ],
+ "moments": [
+  {
+   "id": "counter-rolls",
+   "at": "2026-11-16T08:53:57.942Z",
+   "seed": "f181ca9d"
+  },
+  {
+   "id": "liquid-type",
+   "at": "2026-11-16T08:54:27.320Z",
+   "seed": "0a96f4d1"
+  },
+  {
+   "id": "counter-rolls",
+   "at": "2026-11-16T08:54:27.435Z",
+   "seed": "032b6cde"
+  },
+  {
+   "id": "liquid-type",
+   "at": "2026-11-16T08:54:27.533Z",
+   "seed": "6071cfb2"
+  },
+  {
+   "id": "counter-rolls",
+   "at": "2026-11-16T08:54:27.633Z",
+   "seed": "67eb3a4f"
+  },
+  {
+   "id": "liquid-type",
+   "at": "2026-11-16T08:54:37.740Z",
+   "seed": "5c83fae8"
+  },
+  {
+   "id": "liquid-type",
+   "at": "2026-11-16T08:54:37.855Z",
+   "seed": "8a8ec9dc"
+  }
+ ]
+}
