@@ -2,6 +2,7 @@ import * as http from 'node:http'
 import { createRequestListener } from 'remix/node-fetch-server'
 
 import { assets } from './app/assets.ts'
+import { seedIfEmpty } from './app/data/seed.ts'
 import { store } from './app/data/store.ts'
 import { router } from './app/router.ts'
 
@@ -10,6 +11,8 @@ const hmrProxyPort = process.env.HMR_PROXY_PORT
   ? Number.parseInt(process.env.HMR_PROXY_PORT, 10)
   : null
 const isHmr = process.env.REMIX_NODE_HMR === '1'
+
+await seedIfEmpty(store)
 
 const server = http.createServer(createRequestListener(router.fetch, { trustProxy: isHmr }))
 
