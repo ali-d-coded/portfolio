@@ -2,6 +2,7 @@ import * as http from 'node:http'
 import { createRequestListener } from 'remix/node-fetch-server'
 
 import { assets } from './app/assets.ts'
+import { store } from './app/data/store.ts'
 import { router } from './app/router.ts'
 
 const port = process.env.PORT ? Number.parseInt(process.env.PORT, 10) : 44100
@@ -28,7 +29,9 @@ function shutdown() {
   }
 
   shuttingDown = true
-  server.close(() => assets.close().finally(() => process.exit(0)))
+  server.close(() =>
+    Promise.allSettled([assets.close(), store.close()]).finally(() => process.exit(0)),
+  )
   server.closeAllConnections()
 }
 
