@@ -82,7 +82,10 @@ export async function createSqliteContentStore(options: {
   async function reorder(t: OrderedTable, ids: string[]) {
     await db.transaction(async (tx) => {
       for (let [index, id] of ids.entries()) {
-        await tx.updateMany(t, { position: index }, { where: { id } })
+        let row = await tx.find(t, id)
+        if (!row) continue
+        let data = JSON.stringify({ ...JSON.parse(row.data), position: index })
+        await tx.update(t, id, { position: index, data })
       }
     })
   }

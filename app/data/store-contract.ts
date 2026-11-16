@@ -157,6 +157,38 @@ export function describeContentStore(name: string, create: () => Promise<Content
       assert.deepEqual(ids(await store.listExperience()), ['c', 'a', 'b'])
       await store.reorderSkillGroups(['c', 'a', 'b'])
       assert.deepEqual(ids(await store.listSkillGroups()), ['c', 'a', 'b'])
+
+      let positions = <T extends { position: number }>(items: T[]) => items.map((i) => i.position)
+      assert.deepEqual(positions(await store.listProjects()), [0, 1, 2])
+      assert.deepEqual(positions(await store.listExperience()), [0, 1, 2])
+      assert.deepEqual(positions(await store.listSkillGroups()), [0, 1, 2])
+      assert.equal((await store.getProject('c'))?.position, 0)
+      assert.equal((await store.getExperience('c'))?.position, 0)
+      assert.equal((await store.getSkillGroup('c'))?.position, 0)
+    })
+
+    it('reorder survives export and import', async () => {
+      for (let [i, id] of ['a', 'b', 'c'].entries()) {
+        await store.saveProject(makeProject(id, { position: i }))
+        await store.saveExperience(makeExperience(id, i))
+        await store.saveSkillGroup(makeSkillGroup(id, i))
+      }
+      await store.reorderProjects(['c', 'a', 'b'])
+      await store.reorderExperience(['c', 'a', 'b'])
+      await store.reorderSkillGroups(['c', 'a', 'b'])
+
+      let exported = await store.exportAll()
+      let other = await create()
+      try {
+        await other.importAll(exported)
+        let ids = <T extends { id: string }>(items: T[]) => items.map((item) => item.id)
+        assert.deepEqual(ids(await other.listProjects()), ['c', 'a', 'b'])
+        assert.deepEqual(ids(await other.listExperience()), ['c', 'a', 'b'])
+        assert.deepEqual(ids(await other.listSkillGroups()), ['c', 'a', 'b'])
+        assert.deepEqual(await other.exportAll(), exported)
+      } finally {
+        await other.close()
+      }
     })
 
     it('delete', async () => {
