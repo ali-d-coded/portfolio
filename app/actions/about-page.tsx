@@ -4,7 +4,7 @@ import type { Experience, Site } from '../data/content.ts'
 import { routes } from '../routes.ts'
 import { paragraphs } from '../ui/blocks.tsx'
 import { formatMonth, formatSpan } from '../ui/format.ts'
-import { EmailButton, Layout, type Frame } from '../ui/layout.tsx'
+import { EmailButton, Layout, ResumeButtons, type Frame } from '../ui/layout.tsx'
 import {
   SectionHead,
   Statement,
@@ -71,6 +71,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
           </p>
           <div class="btns" data-enter="">
             <EmailButton site={site} />
+            <ResumeButtons />
             {projects.length > 0 ? (
               <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
                 See the projects

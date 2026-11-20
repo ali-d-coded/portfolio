@@ -4,7 +4,7 @@ import type { Site } from '../data/content.ts'
 import { routes } from '../routes.ts'
 import { Desk } from '../ui/doodles.tsx'
 import { displayUrl } from '../ui/format.ts'
-import { EmailButton, Layout, type Frame } from '../ui/layout.tsx'
+import { EmailButton, Layout, RESUME_HREF, ResumeButtons, type Frame } from '../ui/layout.tsx'
 import { SectionHead, ToolTile } from '../ui/parts.tsx'
 import { toolIcon } from '../ui/tool-icons.ts'
 
@@ -39,6 +39,7 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
               </p>
               <div class="btns" data-enter="">
                 <EmailButton site={site} />
+                <ResumeButtons />
               </div>
             </div>
             <Desk
@@ -86,14 +87,12 @@ function Links(handle: Handle<{ site: Site | null }>) {
         icon: icon ? <ToolTile icon={icon} name={label} size={40} /> : null,
       })
     }
-    if (site.resumeMediaId) {
-      rows.push({
-        label: 'Resume',
-        value: 'Download the resume (PDF)',
-        href: routes.media.href({ id: site.resumeMediaId }),
-        icon: <FileGlyph />,
-      })
-    }
+    rows.push({
+      label: 'Resume',
+      value: 'View the resume (PDF)',
+      href: RESUME_HREF,
+      icon: <FileGlyph />,
+    })
     if (rows.length === 0) return null
 
     return (
@@ -114,7 +113,6 @@ function Links(handle: Handle<{ site: Site | null }>) {
                     class="link contact-row__value"
                     href={row.href}
                     rel={row.label === 'Email' || row.label === 'Resume' ? undefined : 'me'}
-                    download={row.label === 'Resume' ? '' : undefined}
                     data-cursor="link"
                   >
                     {row.value}

@@ -68,6 +68,8 @@ export function Layout(handle: Handle<LayoutProps>) {
           </div>
         </header>
         <ThemeToggle />
+        <ScrollTop />
+        <FloatingMenu frame={frame} pageType={pageType} />
         <main id="top" data-page={pageType}>
           {children}
         </main>
@@ -100,6 +102,18 @@ export function EmailButton(handle: Handle<{ site: Site | null; arrow?: boolean 
       </a>
     )
   }
+}
+
+/** The resume PDF, served unchanged from `public/`. */
+export const RESUME_HREF = '/ali-afthab-resume.pdf'
+
+/** Open the resume in a new tab. */
+export function ResumeButtons() {
+  return () => (
+    <a class="btn btn--ghost" href={RESUME_HREF} target="_blank" rel="noopener" data-cursor="link">
+      View resume
+    </a>
+  )
 }
 
 export function emailLabel(site: Site): string {
@@ -143,53 +157,45 @@ function Brand(handle: Handle<{ site: Site | null }>) {
   }
 }
 
+interface NavItem {
+  label: string
+  href: string
+  current: boolean
+}
+
+/** The nav, shared by the top bar and the floating menu on small screens. */
+function navItems(frame: Frame, pageType: PageType): NavItem[] {
+  let items: NavItem[] = []
+  if (frame.projects.length > 0) {
+    items.push({ label: 'Work', href: routes.work.index.href(), current: pageType === 'work' || pageType === 'project' })
+  }
+  if (frame.hasSkills) items.push({ label: 'Skills', href: `${routes.home.href()}#skills`, current: false })
+  items.push({ label: 'About', href: routes.about.href(), current: pageType === 'about' })
+  items.push({ label: 'Contact', href: routes.contact.href(), current: pageType === 'contact' })
+  return items
+}
+
 function Bar(handle: Handle<{ frame: Frame; pageType: PageType }>) {
   return () => {
     let { frame, pageType } = handle.props
-    let { site, projects, hasSkills, experience } = frame
-    let current = (...pages: PageType[]) => (pages.includes(pageType) ? 'page' : undefined)
+    let { site } = frame
 
     return (
       <div class="bar">
         <div class="wrap bar__in">
           <Brand site={site} />
           <nav class="bar__nav" aria-label="Main">
-            {projects.length > 0 ? (
+            {navItems(frame, pageType).map((item) => (
               <a
+                key={item.label}
                 class="navlink"
-                href={routes.work.index.href()}
-                aria-current={current('work', 'project')}
+                href={item.href}
+                aria-current={item.current ? 'page' : undefined}
                 data-cursor="link"
               >
-                Work
+                {item.label}
               </a>
-            ) : null}
-            {hasSkills ? (
-              <a class="navlink" href={`${routes.home.href()}#skills`} data-cursor="link">
-                Skills
-              </a>
-            ) : null}
-            {experience.length > 0 ? (
-              <a class="navlink" href={`${routes.about.href()}#experience`} data-cursor="link">
-                Experience
-              </a>
-            ) : null}
-            <a
-              class="navlink"
-              href={routes.about.href()}
-              aria-current={current('about')}
-              data-cursor="link"
-            >
-              About
-            </a>
-            <a
-              class="navlink"
-              href={routes.contact.href()}
-              aria-current={current('contact')}
-              data-cursor="link"
-            >
-              Contact
-            </a>
+            ))}
           </nav>
           {site?.email ? (
             <div class="bar__cta">
@@ -200,6 +206,50 @@ function Bar(handle: Handle<{ frame: Frame; pageType: PageType }>) {
       </div>
     )
   }
+}
+
+/** On small screens the nav lives in a floating button that blooms open into the same links. */
+function FloatingMenu(handle: Handle<{ frame: Frame; pageType: PageType }>) {
+  return () => {
+    let { frame, pageType } = handle.props
+    return (
+      <div class="fmenu" data-menu="">
+        <nav class="fmenu__list" id="fmenu-list" aria-label="Menu" data-menu-list="">
+          {navItems(frame, pageType).map((item) => (
+            <a
+              key={item.label}
+              class="fmenu__item"
+              href={item.href}
+              aria-current={item.current ? 'page' : undefined}
+              data-menu-item=""
+              tabIndex={-1}
+            >
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <button class="fmenu__btn" type="button" aria-expanded="false" aria-controls="fmenu-list" aria-label="Open the menu" data-menu-button="">
+          <span class="fmenu__bars" aria-hidden="true">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        </button>
+      </div>
+    )
+  }
+}
+
+/** Appears after scrolling down; takes the visitor back to the top. */
+function ScrollTop() {
+  return () => (
+    <button class="totop" type="button" aria-label="Back to the top" data-to-top="" data-cursor="link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V5" />
+        <path d="M5 12l7-7 7 7" />
+      </svg>
+    </button>
+  )
 }
 
 function Footer(handle: Handle<{ frame: Frame }>) {
@@ -225,6 +275,7 @@ function Footer(handle: Handle<{ frame: Frame }>) {
             ) : null}
             <div class="btns">
               <EmailButton site={site} />
+              <ResumeButtons />
             </div>
           </div>
           {site ? (

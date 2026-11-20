@@ -122,12 +122,16 @@ describe('public pages', () => {
     }
   })
 
-  it('no resume link until one is uploaded', async () => {
+  it('every page that offers the resume links to the PDF in public/, to view', async () => {
     await resetStore(seedCopy())
 
-    let html = await (await get('/contact')).text()
-    assert.equal(html.includes('/media/'), false)
-    assert.doesNotMatch(html, /\bdownload\b/i)
+    for (let path of ['/', '/about', '/contact']) {
+      let html = await (await get(path)).text()
+      assert.match(html, /href="\/ali-afthab-resume\.pdf"[^>]*target="_blank"/, path)
+    }
+    let pdf = await get('/ali-afthab-resume.pdf')
+    assert.equal(pdf.status, 200)
+    assert.match(pdf.headers.get('content-type') ?? '', /pdf/)
   })
 
   it('no page shows the phone number', async () => {

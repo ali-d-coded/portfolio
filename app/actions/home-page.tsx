@@ -4,7 +4,7 @@ import type { Media, Project, SkillGroup } from '../data/content.ts'
 import { routes } from '../routes.ts'
 import { Desk } from '../ui/doodles.tsx'
 import { formatMonth, formatSpan, splitTail } from '../ui/format.ts'
-import { Arrow, EmailButton, Layout, type Frame } from '../ui/layout.tsx'
+import { Arrow, EmailButton, Layout, ResumeButtons, type Frame } from '../ui/layout.tsx'
 import {
   ProjectVisual,
   SectionHead,
@@ -31,7 +31,7 @@ export function HomePage(handle: Handle<HomePageProps>) {
 
     return (
       <Layout
-        title={site?.heroHeadline ? `${site.name}: ${lowerFirst(site.heroHeadline)}` : name}
+        title={pageTitle(site)}
         description={site?.summary ?? ''}
         pageType="home"
         frame={frame}
@@ -55,6 +55,13 @@ function selected(projects: Project[]): Project[] {
 const DESK_NOTE =
   '5 years designing and shipping scalable multi-tenant SaaS platforms and high-volume, event-driven backend systems. Strong record of end-to-end ownership, performance optimization, and system design.'
 
+/** The headline on one line; a headline that already starts with the name is not given the name twice. */
+function pageTitle(site: Frame['site']): string {
+  if (!site?.heroHeadline) return site?.name ?? 'Portfolio'
+  let flat = site.heroHeadline.replace(/\s*\n\s*/g, ' ').trim()
+  return flat.toLowerCase().startsWith(site.name.toLowerCase()) ? flat : `${site.name}: ${lowerFirst(flat)}`
+}
+
 function Hero(handle: Handle<{ frame: Frame }>) {
   return () => {
     let { site, projects, experience } = handle.props.frame
@@ -63,7 +70,8 @@ function Hero(handle: Handle<{ frame: Frame }>) {
     let chosen = selected(projects)
     let stack = chosen[0]?.stack.slice(0, 3) ?? []
     let headline = site?.heroHeadline || site?.name || 'Portfolio'
-    let tail = splitTail(headline)
+    // The headline is set one line per line of text; the last line has its last two words picked out.
+    let lines = headline.split('\n').map((line) => line.trim()).filter(Boolean)
 
     return (
       <section class="hero" aria-labelledby="hero-h" data-ruler-section="Intro">
@@ -75,13 +83,30 @@ function Hero(handle: Handle<{ frame: Frame }>) {
               </p>
             ) : null}
             <h1 id="hero-h" class="hero__title" data-split="" data-hero="">
-              {tail ? (
-                <>
-                  {tail.head} <span class="hl">{tail.tail}</span>
-                </>
-              ) : (
-                headline
-              )}
+              {lines.map((line, index) => {
+                if (index < lines.length - 1 || lines.length === 1) {
+                  let tail = lines.length === 1 ? splitTail(line) : null
+                  return (
+                    <span key={index} class="hero__line">
+                      {tail ? (
+                        <>
+                          {tail.head} <span class="hl">{tail.tail}</span>
+                        </>
+                      ) : (
+                        line
+                      )}
+                    </span>
+                  )
+                }
+                let words = line.split(/\s+/)
+                let split = words.length >= 3 ? words.length - 2 : 0
+                return (
+                  <span key={index} class="hero__line">
+                    {split > 0 ? `${words.slice(0, split).join(' ')} ` : null}
+                    <span class="hl">{words.slice(split).join(' ')}</span>
+                  </span>
+                )
+              })}
             </h1>
             {site?.summary ? (
               <p class="lead" data-enter="">
@@ -90,6 +115,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
             ) : null}
             <div class="btns" data-enter="">
               <EmailButton site={site} />
+              <ResumeButtons />
               {projects.length > 0 ? (
                 <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
                   See the projects

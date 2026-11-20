@@ -7,7 +7,7 @@ export const seedSnapshot: ContentSnapshot = {
   site: {
     name: 'Ali Afthab',
     role: 'Full-Stack Engineer | Backend & Distributed Systems',
-    heroHeadline: 'Full-stack engineer for multi-tenant SaaS backends',
+    heroHeadline: 'Full-Stack Engineer | Backend & Distributed Systems',
     summary:
       'Specialized in Node.js, Bun, Microservices, Message Queues & Real-time WebSockets with database-per-tenant isolation, caching and resilient fault tolerance.',
     about:
