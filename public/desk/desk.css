@@ -531,19 +531,60 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 .frame__img { width: 100%; height: auto; }
 .chapter__figures { display: flex; flex-wrap: wrap; gap: 24px 40px; padding: 20px; border: 1px dashed var(--line-2); border-radius: var(--r); }
 
-.pipe { position: relative; display: grid; gap: 28px var(--gap); grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); counter-reset: s; }
-.pipe__stage { position: relative; display: grid; gap: 8px; align-content: start; padding: 16px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s, transform 0.3s; }
-.pipe__num { font: 700 12px var(--type); letter-spacing: 0.1em; color: var(--ink-3); }
-.pipe__stage h3 { font-size: 16px; }
-.pipe__stage p { font-size: 14px; line-height: 1.5; color: var(--ink-2); }
-.pipe__pick { padding: 0; border: 0; background: none; font: inherit; text-align: left; cursor: default; }
-.js .pipe__pick { cursor: pointer; }
-.js .pipe__pick::after { content: ""; position: absolute; inset: 0; }
-.pipe__stage.is-done { border-color: color-mix(in oklab, var(--amber) 45%, transparent); }
-.pipe__stage.is-active { border-color: var(--amber); box-shadow: var(--glow); transform: translateY(-4px); }
-.pipe__stage.is-active .pipe__num { color: var(--amber-text); }
-.pipe__packet { position: absolute; z-index: 3; left: 0; top: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 2px; background: var(--amber); box-shadow: 0 0 14px var(--amber), 0 0 4px #fff inset; pointer-events: none; opacity: 0; }
-.pipe__replay { margin-top: 20px; }
+/* what a business gets: plain divided rows, no cards */
+.gets { display: grid; gap: 0 clamp(24px, 5vw, 64px); margin: 0; padding: 0; list-style: none; grid-template-columns: 1fr; }
+@media (min-width: 800px) { .gets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.gets li { display: grid; align-content: start; gap: 8px; padding: 22px 0 28px; border-top: 1px solid var(--line-2); }
+.gets h3 { font-size: clamp(19px, 2vw, 22px); }
+.gets p { margin: 0; max-width: 46ch; color: var(--ink-2); font-size: 17px; line-height: 1.6; text-wrap: pretty; }
+
+/* the route of a message: the paper plane flies stop to stop along an amber trail */
+.route { position: relative; --reach: 0px; }
+.route__stops { position: relative; display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; }
+.route__stops::before { content: ""; position: absolute; left: calc(50% / var(--n)); right: calc(50% / var(--n)); top: 31px; border-top: 2px dashed var(--line-2); }
+.route__stop { position: relative; display: grid; justify-items: center; align-content: start; gap: 8px; padding: 0 6px; text-align: center; }
+.route__node { position: relative; z-index: 1; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--panel); border: 2px solid var(--line-2); transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s; }
+.route__dot { width: 12px; height: 12px; border-radius: 50%; background: var(--amber); }
+.route__stop h3 { font-size: 15px; }
+.route__pick { padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: center; cursor: default; }
+.js .route__pick { cursor: pointer; }
+.js .route__pick::after { content: ""; position: absolute; inset: 0; }
+.route__line { color: var(--ink-3); font: 500 12px/1.4 var(--mono); }
+.route__why { margin: 6px 0 0; color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+.is-ready .route__why { display: none; }
+.route__stop.is-done .route__node { border-color: color-mix(in oklab, var(--amber) 65%, transparent); }
+.route__stop.is-active .route__node { border-color: var(--amber); box-shadow: 0 8px 16px -8px rgba(0, 0, 0, 0.65); transform: translateY(-3px); }
+.route__stop.is-active h3 { color: var(--amber-text); }
+.route__trail { position: absolute; left: calc(50% / var(--n)); top: 30px; z-index: 0; width: 0; height: 3px; border-radius: 2px; background: var(--amber); pointer-events: none; opacity: 0; }
+.is-ready .route__trail { opacity: 1; }
+.route__plane { position: absolute; left: 0; top: 0; z-index: 3; width: 40px; height: 40px; margin: -20px 0 0 -20px; pointer-events: none; filter: var(--drop); opacity: 0; will-change: transform; }
+.is-ready .route__plane { opacity: 1; }
+.route__plane svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; }
+.route__says { display: grid; gap: 6px; max-width: 60ch; min-height: 5.5em; margin: 36px 0 0; padding: 18px 22px; border: 1px solid var(--line); border-radius: var(--r); background: var(--panel); }
+.route__says strong { color: var(--amber-text); font: 700 12px/1.4 var(--type); letter-spacing: 0.14em; text-transform: uppercase; }
+.route__says span { font-size: 18px; line-height: 1.5; color: var(--ink); }
+.route:not(.is-ready) .route__says { display: none; }
+.route__replay { margin-top: 20px; }
+@media (max-width: 899px) {
+  .route__stops { grid-template-columns: 1fr; gap: 22px; }
+  .route__stops::before { left: 31px; right: auto; top: 31px; bottom: 31px; border-top: 0; border-left: 2px dashed var(--line-2); }
+  .route__stop { grid-template-columns: 64px 1fr; justify-items: start; column-gap: 16px; padding: 0; text-align: left; }
+  .route__node { grid-row: 1 / span 3; }
+  .route__pick { text-align: left; }
+  .route__trail { left: 30px; top: 31px; width: 3px; height: 0; }
+}
+
+/* the apps, as the owner supplied them */
+.shots { display: flex; flex-wrap: wrap; align-items: flex-end; gap: clamp(20px, 3vw, 36px); }
+.shot { margin: 0; display: grid; gap: 10px; }
+.shot--web, .shot--admin { flex: 1 1 380px; max-width: 760px; }
+.shot--mobile { flex: 0 1 220px; }
+.shot__bar { display: flex; gap: 6px; padding: 10px 12px; border: 1px solid var(--line-2); border-bottom: 0; border-radius: var(--r) var(--r) 0 0; background: var(--panel); }
+.shot__bar i { width: 9px; height: 9px; border-radius: 50%; background: var(--line-2); }
+.shot__img { display: block; width: 100%; height: auto; border: 1px solid var(--line-2); box-shadow: var(--panel-shadow); }
+.shot--web .shot__img, .shot--admin .shot__img { border-radius: 0 0 var(--r) var(--r); }
+.shot--mobile .shot__img { border: 3px solid var(--ink); border-radius: 26px; }
+.shot figcaption { color: var(--ink-3); font: 500 12px/1.4 var(--mono); }
 
 /* ------------------------------------------------------------------ about */
 .story { display: grid; gap: clamp(28px, 4vw, 56px); }

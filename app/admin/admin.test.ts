@@ -345,6 +345,28 @@ describe('admin', () => {
     assert.match(html, /stackchip--amber/)
   })
 
+  it('saves the case study fields and turns uploaded screenshots into screens', async () => {
+    let cookie = await login()
+    let body = new FormData()
+    body.set('title', 'Case Study')
+    body.set('published', 'on')
+    body.set('gains', 'One inbox | The team answers from one place')
+    body.set('stages', 'Queue | Safe ingestion | Redis | Nothing is lost')
+    for (let name of ['inbox.png', 'agent.png']) {
+      body.append('screensUpload', new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0])], name, { type: 'image/png' }))
+    }
+    let response = await request('/admin/c/projects/new', { method: 'POST', body, cookie })
+    assert.equal(response.status, 303)
+    let project = await store.getProject('case-study')
+    assert.deepEqual(project?.gains, [{ title: 'One inbox', text: 'The team answers from one place' }])
+    assert.equal(project?.stages?.[0]?.name, 'Queue')
+    assert.equal(project?.screens?.length, 2)
+    assert.deepEqual(project?.screens?.map((screen) => screen.label), ['inbox', 'agent'])
+    assert.ok(project?.screens?.every((screen) => screen.device === 'web' && screen.image.startsWith('/media/')))
+    let html = await (await request('/work/case-study')).text()
+    assert.match(html, /id="screens"/)
+  })
+
   it('downloads a backup', async () => {
     let cookie = await login()
     let response = await request('/admin/backup', { cookie })

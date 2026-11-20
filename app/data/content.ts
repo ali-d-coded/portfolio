@@ -14,6 +14,28 @@ export interface Detail {
   value: string
 }
 
+/** One thing a client gets from a project, in plain words. */
+export interface Gain {
+  title: string
+  text: string
+}
+
+/** One stop on a project's route: where a message goes, and what that protects, in plain words. */
+export interface Stage {
+  name: string
+  line: string
+  /** A tool name for the stop's logo. */
+  tool: string
+  benefit: string
+}
+
+/** An app screenshot: a path under `public/` or an uploaded `/media/` link. */
+export interface Screen {
+  device: 'web' | 'mobile' | 'admin'
+  label: string
+  image: string
+}
+
 export interface Education {
   degree: string
   school: string
@@ -50,6 +72,12 @@ export interface Project {
   badge?: string
   /** Key facts on the home page card, shown as label and value rows. */
   details?: Detail[]
+  /** What a business gets, shown as plain rows on the project page. */
+  gains?: Gain[]
+  /** The route a message takes through the product, drawn as a path with a plane carrying it. */
+  stages?: Stage[]
+  /** App screenshots, supplied by the owner. */
+  screens?: Screen[]
   /** The project's live site, shown as a link with a preview. */
   liveUrl?: string
   /** A screenshot of the live site, a path under `public/`. */

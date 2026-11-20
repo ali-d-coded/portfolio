@@ -62,43 +62,74 @@ export function initSkills(): void {
   })
 }
 
-/** The EazyCRM pipeline: a message travels stage by stage; pick any stage to follow it from there. */
+/**
+ * The route of a message through a project: the desk's paper plane flies from stop to stop along an amber trail
+ * while one line says, in plain words, what that stop protects. Pick any stop to follow the message from there.
+ */
 export function initPipeline(reduced: boolean): void {
-  let list = document.querySelector<HTMLElement>('[data-pipeline]')
-  if (!list) return
-  let stages = [...list.querySelectorAll<HTMLElement>('.pipe__stage')]
-  if (stages.length === 0) return
-
-  let packet = document.createElement('span')
-  packet.className = 'pipe__packet'
-  packet.setAttribute('aria-hidden', 'true')
-  list.append(packet)
-
-  let replay = document.createElement('button')
-  replay.type = 'button'
-  replay.className = 'btn btn--ghost pipe__replay'
-  replay.textContent = 'Send the message again'
-  list.after(replay)
+  let route = document.querySelector<HTMLElement>('[data-route]')
+  if (!route) return
+  let root = route
+  let stops = [...root.querySelectorAll<HTMLElement>('.route__stop')]
+  let plane = root.querySelector<HTMLElement>('.route__plane')
+  let trail = root.querySelector<HTMLElement>('.route__trail')
+  let says = root.querySelector<HTMLElement>('[data-route-says]')
+  let replay = document.querySelector<HTMLElement>('[data-route-replay]')
+  if (stops.length < 2 || !plane || !trail || !says) return
+  let flight = plane
+  let line = trail
+  let note = says
 
   let active = -1
   let timer = 0
 
+  function centre(index: number) {
+    let from = root.getBoundingClientRect()
+    let box = stops[index]!.querySelector<HTMLElement>('.route__node')!.getBoundingClientRect()
+    return { x: box.left - from.left + box.width / 2, y: box.top - from.top + box.height / 2 }
+  }
+
+  // The stops sit in a row on wide screens and in a column on narrow ones.
+  function vertical() {
+    return stops[1]!.getBoundingClientRect().top > stops[0]!.getBoundingClientRect().top + 10
+  }
+
+  function say(index: number) {
+    let stop = stops[index]!
+    let name = stop.querySelector('.route__pick')?.textContent ?? ''
+    let benefit = stop.querySelector<HTMLElement>('.route__pick')?.dataset.benefit ?? ''
+    note.querySelector('strong')!.textContent = name
+    note.querySelector('span')!.textContent = benefit
+    if (!reduced) gsap.fromTo(note.children, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: 'power3.out', stagger: 0.05 })
+  }
+
   function place(index: number, instant: boolean) {
-    let stage = stages[index]
-    if (!stage) return
-    let from = list!.getBoundingClientRect()
-    let box = stage.getBoundingClientRect()
-    let vars = { x: box.left - from.left + box.width / 2, y: box.top - from.top, opacity: 1 }
-    if (instant || reduced) gsap.set(packet, vars)
-    else gsap.to(packet, { ...vars, duration: 0.6, ease: 'power2.inOut', overwrite: 'auto' })
+    let here = centre(index)
+    let start = centre(0)
+    let up = vertical()
+    // The plane's nose points up and to the left in the drawing; turn it to the way it is travelling.
+    let before = index > 0 ? centre(index - 1) : centre(1)
+    let heading = (Math.atan2(here.y - before.y, here.x - before.x) * 180) / Math.PI
+    if (index === 0) heading = up ? 90 : 0
+    let vars = { x: here.x, y: here.y, rotation: heading + 135 }
+    let reach = up ? { height: here.y - start.y, width: 3 } : { width: here.x - start.x, height: 3 }
+    if (instant || reduced) {
+      gsap.set(flight, vars)
+      gsap.set(line, reach)
+    } else {
+      gsap.to(flight, { ...vars, duration: 0.75, ease: 'power2.inOut', overwrite: 'auto' })
+      gsap.fromTo(flight.firstElementChild, { scale: 1 }, { scale: 1.3, duration: 0.37, yoyo: true, repeat: 1, ease: 'power2.out', overwrite: 'auto' })
+      gsap.to(line, { ...reach, duration: 0.75, ease: 'power2.inOut', overwrite: 'auto' })
+    }
   }
 
   function go(index: number, instant = false) {
     active = index
-    stages.forEach((stage, position) => {
-      stage.classList.toggle('is-active', position === index)
-      stage.classList.toggle('is-done', position < index)
+    stops.forEach((stop, position) => {
+      stop.classList.toggle('is-active', position === index)
+      stop.classList.toggle('is-done', position < index)
     })
+    say(index)
     place(index, instant)
   }
 
@@ -112,21 +143,26 @@ export function initPipeline(reduced: boolean): void {
     let step = () => {
       go(index)
       index += 1
-      if (index < stages.length) timer = window.setTimeout(step, reduced ? 500 : 820)
+      if (index < stops.length) timer = window.setTimeout(step, reduced ? 600 : 1100)
     }
     step()
   }
 
-  stages.forEach((stage, index) => {
-    stage.querySelector('.pipe__pick')?.addEventListener('click', () => {
+  // The plane waits at the first stop until the route comes into view, then flies it once.
+  root.classList.add('is-ready')
+  gsap.set(line, { transformOrigin: '0 0' })
+  go(0, true)
+
+  stops.forEach((item, index) => {
+    item.querySelector('.route__pick')?.addEventListener('click', () => {
       stop()
       play(index)
     })
   })
-  replay.addEventListener('click', () => play(0))
+  replay?.addEventListener('click', () => play(0))
   window.addEventListener('resize', () => {
     if (active >= 0) place(active, true)
   })
 
-  ScrollTrigger.create({ trigger: list, start: 'top 75%', once: true, onEnter: () => play(0) })
+  ScrollTrigger.create({ trigger: root, start: 'top 70%', once: true, onEnter: () => play(0) })
 }

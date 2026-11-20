@@ -40,16 +40,18 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
         frame={frame}
       >
         <Hero frame={frame} project={project} />
+        <Gains project={project} />
+        <Route project={project} />
+        <Screens project={project} />
         {chapters(blocks, media).length > 0 ? (
           <section class="section" id="story" aria-labelledby="story-h" data-ruler-section="Story">
             <div class="wrap">
-              <SectionHead id="story-h" title={`What I built on ${project.title}`} />
+              <SectionHead id="story-h" title={project.stages?.length ? 'Under the hood' : `What I built on ${project.title}`} />
               <Blocks blocks={blocks} media={media} />
             </div>
           </section>
         ) : null}
         <LivePreview project={project} />
-        {project.slug === 'eazycrm' ? <Pipeline /> : null}
         {next ? (
           <Statement
             id="next"
@@ -176,46 +178,119 @@ function LivePreview(handle: Handle<{ project: Project }>) {
   }
 }
 
-// The EazyCRM message pipeline, in the resume's own order and words.
-const STAGES: Array<{ name: string; line: string; tool: string }> = [
-  { name: 'Webhook', line: 'Meta WhatsApp Cloud API', tool: 'WhatsApp' },
-  { name: 'BullMQ queue', line: 'Queued, fault-tolerant ingestion', tool: 'Redis' },
-  { name: 'Worker', line: 'Processes each event', tool: 'Bun' },
-  { name: 'MongoDB', line: 'One database per tenant', tool: 'MongoDB' },
-  { name: 'Redis Streams', line: 'Tenant-scoped broadcast', tool: 'Redis' },
-  { name: 'Socket.IO', line: 'Real-time delivery', tool: 'Socket.IO' },
-  { name: 'Inbox', line: 'Agents see only their assigned chats', tool: 'React' },
-]
-
-function Pipeline() {
-  return () => (
-    <section class="section section--band" id="pipeline" aria-labelledby="pipeline-h" data-ruler-section="Pipeline">
-      <div class="wrap">
-        <SectionHead id="pipeline-h" title="How a WhatsApp message reaches the inbox" meta="// 7 stages">
-          <p class="section-head__lead">
-            Webhooks from the Meta WhatsApp Cloud API are queued with BullMQ, processed by workers, saved to
-            MongoDB and broadcast through Redis Streams and Socket.IO. Pick a stage to follow the message
-            from there.
-          </p>
-        </SectionHead>
-        <ol class="pipe" data-pipeline="">
-          {STAGES.map((stage, index) => {
-            let icon = toolIcon(stage.tool)
-            return (
-              <li key={stage.name} class="pipe__stage" data-stage={index + 1}>
-                {icon ? <ToolTile icon={icon} name={stage.tool} size={48} /> : null}
-                <span class="pipe__num">{String(index + 1).padStart(2, '0')}</span>
-                <h3>
-                  <button type="button" class="pipe__pick" data-cursor="link">
-                    {stage.name}
-                  </button>
-                </h3>
-                <p>{stage.line}</p>
+/** What a business gets, set as plain divided rows: the first thing a client wants to know. */
+function Gains(handle: Handle<{ project: Project }>) {
+  return () => {
+    let { project } = handle.props
+    let gains = project.gains ?? []
+    if (gains.length === 0) return null
+    return (
+      <section class="section" id="gets" aria-labelledby="gets-h" data-ruler-section="What you get">
+        <div class="wrap">
+          <SectionHead id="gets-h" title={`What a business gets from ${project.title}`} />
+          <ul class="gets">
+            {gains.map((gain) => (
+              <li key={gain.title} data-reveal="">
+                <h3>{gain.title}</h3>
+                <p>{gain.text}</p>
               </li>
-            )
-          })}
-        </ol>
-      </div>
-    </section>
-  )
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+}
+
+/**
+ * The route one message takes through the product. The desk's paper plane carries it from stop to stop, and each
+ * stop says in plain words what it protects. Without script every stop shows its sentence.
+ */
+function Route(handle: Handle<{ project: Project }>) {
+  return () => {
+    let { project } = handle.props
+    let stages = project.stages ?? []
+    if (stages.length < 2) return null
+    return (
+      <section class="section section--band" id="route" aria-labelledby="route-h" data-ruler-section="Route">
+        <div class="wrap">
+          <SectionHead id="route-h" title="Follow one message from WhatsApp to the right inbox">
+            <p class="section-head__lead">
+              A customer writes. These are the stops before an agent sees the message, and what each one protects.
+            </p>
+          </SectionHead>
+          <div class="route" data-route="" style={`--n: ${stages.length}`}>
+            <ol class="route__stops">
+              {stages.map((stage, index) => {
+                let icon = stage.tool ? toolIcon(stage.tool) : null
+                return (
+                  <li key={stage.name} class="route__stop" data-stop={index}>
+                    <span class="route__node" aria-hidden="true">
+                      {icon ? <ToolTile icon={icon} name={stage.tool} size={32} /> : <i class="route__dot"></i>}
+                    </span>
+                    <h3>
+                      <button type="button" class="route__pick" data-cursor="link" data-benefit={stage.benefit}>
+                        {stage.name}
+                      </button>
+                    </h3>
+                    <span class="route__line">{stage.line}</span>
+                    <p class="route__why">{stage.benefit}</p>
+                  </li>
+                )
+              })}
+            </ol>
+            <span class="route__trail" aria-hidden="true"></span>
+            <span class="route__plane" aria-hidden="true">
+              <svg viewBox="0 0 52 52">
+                <path class="cp__flap" d="M27 27 L40 15 L37 33 Z" />
+                <path class="cp__wing cp__wing--b" d="M3 3 Q6 23 15 40 L27 27 Z" />
+                <path class="cp__wing cp__wing--a" d="M3 3 Q23 6 40 15 L27 27 Z" />
+                <path class="cp__fold" d="M3 3 L27 27" />
+              </svg>
+            </span>
+            <p class="route__says" data-route-says="" aria-live="polite">
+              <strong>{stages[0]!.name}</strong>
+              <span>{stages[0]!.benefit}</span>
+            </p>
+          </div>
+          <p>
+            <button type="button" class="btn btn--ghost route__replay" data-route-replay="" data-cursor="link">
+              Send the message again
+            </button>
+          </p>
+        </div>
+      </section>
+    )
+  }
+}
+
+/** The apps, as the owner supplied them: framed screenshots. With none supplied the section does not render. */
+function Screens(handle: Handle<{ project: Project }>) {
+  return () => {
+    let { project } = handle.props
+    let screens = project.screens ?? []
+    if (screens.length === 0) return null
+    return (
+      <section class="section" id="screens" aria-labelledby="screens-h" data-ruler-section="The apps">
+        <div class="wrap">
+          <SectionHead id="screens-h" title={`The ${project.title} apps`} />
+          <div class="shots">
+            {screens.map((screen) => (
+              <figure key={screen.image} class={`shot shot--${screen.device}`} data-reveal="">
+                {screen.device === 'mobile' ? null : (
+                  <span class="shot__bar" aria-hidden="true">
+                    <i></i>
+                    <i></i>
+                    <i></i>
+                  </span>
+                )}
+                <img class="shot__img" src={screen.image} alt={`${screen.label || screen.device} screen of ${project.title}`} loading="lazy" />
+                {screen.label ? <figcaption>{screen.label}</figcaption> : null}
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
 }

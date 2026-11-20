@@ -253,7 +253,7 @@ function FieldRow(handle: Handle<{ field: Field; value: string; error?: string }
     return (
       <div class={error ? 'field field--bad' : 'field'}>
         <label for={id}>{field.label}</label>
-        {field.type === 'textarea' ? (
+        {field.type === 'textarea' || field.type === 'screens' ? (
           <textarea id={id} name={field.name} rows={field.rows ?? 4} aria-describedby={describedBy} aria-invalid={error ? true : undefined} defaultValue={value} />
         ) : field.type === 'pdf' ? null : (
           <input
@@ -270,6 +270,11 @@ function FieldRow(handle: Handle<{ field: Field; value: string; error?: string }
           <div class="upload">
             {value ? <img src={value} alt="" class="upload__thumb" /> : null}
             <input name={`${field.name}Upload`} type="file" accept="image/png,image/jpeg,image/webp,image/gif" aria-label={`Upload ${field.label.toLowerCase()}`} />
+          </div>
+        ) : null}
+        {field.type === 'screens' ? (
+          <div class="upload">
+            <input name="screensUpload" type="file" multiple accept="image/png,image/jpeg,image/webp,image/gif" aria-label="Upload app screenshots" />
           </div>
         ) : null}
         {field.type === 'pdf' ? (

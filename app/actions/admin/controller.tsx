@@ -20,6 +20,7 @@ import { saveSiteValues, siteFields, siteValues } from '../../admin/site.ts'
 import { FormPage, ListPage, LoginPage, OverviewPage } from '../../admin/ui.tsx'
 import { deleteUpload, saveUpload } from '../../admin/uploads.ts'
 import { store } from '../../data/store.ts'
+import { oneLine } from '../../mail.ts'
 import { routes } from '../../routes.ts'
 import { resumeHref } from '../../ui/layout.tsx'
 
@@ -145,7 +146,7 @@ export const loginController = createController(routes.admin.login, {
 })
 
 export default createController(routes.admin, {
-  middleware: [guard, formData({ maxFileSize: UPLOAD_LIMIT, maxFiles: 2, maxParts: MAX_FIELDS + 2, maxTotalSize: UPLOAD_LIMIT * 2 })],
+  middleware: [guard, formData({ maxFileSize: UPLOAD_LIMIT, maxFiles: 10, maxParts: MAX_FIELDS + 10, maxTotalSize: UPLOAD_LIMIT * 8 })],
   actions: {
     async home(context) {
       let [projects, experience, skills] = await Promise.all([
@@ -276,6 +277,7 @@ export default createController(routes.admin, {
       if (!parsed) return TOO_BIG()
       let { values, files } = parsed
       let uploadError: string | undefined
+      let uploadField = 'previewImage'
       let upload = files.get('previewImageUpload')
       if (upload) {
         let saved = await saveUpload(store, upload, values.title ?? '')
@@ -283,9 +285,25 @@ export default createController(routes.admin, {
         else uploadError = saved.error
       }
 
+      // Screenshots: each file is stored and added to the list as a web screen the owner can relabel.
+      let screenFiles = context.formData.getAll('screensUpload').filter((file): file is File => typeof file !== 'string' && file.size > 0).slice(0, 8)
+      for (let file of screenFiles) {
+        let dot = file.name.lastIndexOf('.')
+        let label = oneLine(file.name.slice(0, dot > 0 ? dot : undefined).split('|').join(' ')).slice(0, 60) || 'screen'
+        let saved = await saveUpload(store, file, label)
+        if (saved.ok) {
+          let existing = (values.screens ?? '').trimEnd()
+          values.screens = `${existing}${existing ? '\n' : ''}web | ${label} | /media/${saved.media.id}`
+        } else {
+          uploadError = saved.error
+          uploadField = 'screens'
+          break
+        }
+      }
+
       let result = uploadError ? null : await collection.save(store, creating ? null : id, values)
       if (!result || !result.ok) {
-        let errors = result && !result.ok ? result.errors : { previewImage: uploadError ?? '' }
+        let errors = result && !result.ok ? result.errors : { [uploadField]: uploadError ?? '' }
         return context.render(
           <FormPage
             title={creating ? `New ${collection.singular}` : `Edit ${collection.singular}`}

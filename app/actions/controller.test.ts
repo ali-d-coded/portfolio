@@ -72,7 +72,7 @@ describe('public pages', () => {
       let html = await response.text()
       assert.doesNotMatch(html, /<ul[^>]*>\s*<\/ul>/, path)
       assert.doesNotMatch(html, /<ol[^>]*>\s*<\/ol>/, path)
-      assert.doesNotMatch(html, /data-project-list|data-skills|data-timeline|data-pipeline/, path)
+      assert.doesNotMatch(html, /data-project-list|data-skills|data-timeline|data-pipeline|data-route|class="gets"|class="shots"/, path)
       assert.doesNotMatch(html, /id="(work|skills|experience|projects)"/, path)
     }
 
@@ -213,6 +213,6 @@ describe('public pages', () => {
     assert.match(about, /data-timeline="sticky"/)
     assert.match(about, /data-timeline-link=/)
     let pipeline = await (await get('/work/eazycrm')).text()
-    assert.match(pipeline, /data-pipeline/)
+    assert.match(pipeline, /data-route/)
   })
 })

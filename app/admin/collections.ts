@@ -7,11 +7,17 @@ import {
   formatBlocks,
   formatDetails,
   formatFigures,
+  formatGains,
+  formatScreens,
+  formatStages,
   isMonth,
   isSafeUrl,
   parseBlocks,
   parseDetails,
   parseFigures,
+  parseGains,
+  parseScreens,
+  parseStages,
   parseLines,
   parseTags,
   slugify,
@@ -28,7 +34,7 @@ export function isKind(value: string): value is Kind {
 export interface Field {
   name: string
   label: string
-  type: 'text' | 'textarea' | 'month' | 'checkbox' | 'url' | 'image' | 'pdf'
+  type: 'text' | 'textarea' | 'month' | 'checkbox' | 'url' | 'image' | 'pdf' | 'screens'
   hint?: string
   rows?: number
   required?: boolean
@@ -72,6 +78,9 @@ const projects: Collection = {
     { name: 'tagline', label: 'Tagline', type: 'text' },
     { name: 'headline', label: 'Home page card title', type: 'text', hint: 'Optional. Left empty, the card uses the title.' },
     { name: 'badge', label: 'Badge', type: 'text', hint: 'A short label on the home page card, such as Flagship SaaS.' },
+    { name: 'gains', label: 'What a business gets', type: 'textarea', rows: 5, hint: 'Shown as plain rows at the top of the project page, up to six. One per line: Title | One sentence in plain words' },
+    { name: 'stages', label: 'Route of a message', type: 'textarea', rows: 8, hint: 'The stops a plane flies through on the project page. One per line: Name | Short line | Tool name for the logo | What it means for the client' },
+    { name: 'screens', label: 'App screenshots', type: 'screens', rows: 4, hint: 'One per line: web, mobile or admin | Label | /media/link. Upload screenshots below and they are added here.' },
     { name: 'details', label: 'Card facts', type: 'textarea', rows: 4, hint: 'Up to six rows on the home page card, one per line: Architecture | API Gateway + Tenant RBAC' },
     { name: 'summary', label: 'Summary', type: 'textarea', rows: 4, hint: 'Shown on the project cards.' },
     { name: 'stack', label: 'Tools', type: 'text', hint: 'Separated by commas.' },
@@ -107,6 +116,9 @@ const projects: Collection = {
       headline: project.headline ?? '',
       badge: project.badge ?? '',
       details: formatDetails(project.details ?? []),
+      gains: formatGains(project.gains ?? []),
+      stages: formatStages(project.stages ?? []),
+      screens: formatScreens(project.screens ?? []),
       summary: project.summary,
       stack: project.stack.join(', '),
       liveUrl: project.liveUrl ?? '',
@@ -153,6 +165,12 @@ const projects: Collection = {
     if (badge) project.badge = badge
     let details = parseDetails(values.details ?? '')
     if (details.length > 0) project.details = details
+    let gains = parseGains(values.gains ?? '')
+    if (gains.length > 0) project.gains = gains
+    let stages = parseStages(values.stages ?? '')
+    if (stages.length > 0) project.stages = stages
+    let screens = parseScreens(values.screens ?? '')
+    if (screens.length > 0) project.screens = screens
     if (liveUrl) project.liveUrl = liveUrl
     if (previewImage) project.previewImage = previewImage
     try {

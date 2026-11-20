@@ -1,4 +1,4 @@
-import type { Block, Detail, Education, Figure } from '../data/content.ts'
+import type { Block, Detail, Education, Figure, Gain, Screen, Stage } from '../data/content.ts'
 
 /** Plain-text forms of the structured content, so every field in the admin is just text. */
 
@@ -144,4 +144,53 @@ export function parseDetails(text: string): Detail[] {
 
 export function formatDetails(rows: Detail[]): string {
   return rows.map((row) => `${row.label} | ${row.value}`).join('\n')
+}
+
+/** One per line: `One inbox for the team | Customers write on WhatsApp and your team answers from one place.` */
+export function parseGains(text: string): Gain[] {
+  let gains: Gain[] = []
+  for (let line of parseLines(text)) {
+    let [title = '', ...rest] = line.split('|')
+    let body = rest.join('|').trim()
+    if (title.trim() && body) gains.push({ title: title.trim(), text: body })
+  }
+  return gains.slice(0, 6)
+}
+
+export function formatGains(gains: Gain[]): string {
+  return gains.map((gain) => `${gain.title} | ${gain.text}`).join('\n')
+}
+
+/** One stop per line: `Name | Short line | Tool | What it means for the client`. */
+export function parseStages(text: string): Stage[] {
+  let stages: Stage[] = []
+  for (let line of parseLines(text)) {
+    let [name = '', short = '', tool = '', ...rest] = line.split('|').map((part) => part.trim())
+    let benefit = rest.join(' | ').trim()
+    if (name && benefit) stages.push({ name, line: short, tool, benefit })
+  }
+  return stages.slice(0, 10)
+}
+
+export function formatStages(stages: Stage[]): string {
+  return stages.map((stage) => `${stage.name} | ${stage.line} | ${stage.tool} | ${stage.benefit}`).join('\n')
+}
+
+const DEVICES: Screen['device'][] = ['web', 'mobile', 'admin']
+
+/** One screenshot per line: `mobile | The agent inbox | /media/<id>`. Only web links and paths on this site are kept. */
+export function parseScreens(text: string): Screen[] {
+  let screens: Screen[] = []
+  for (let line of parseLines(text)) {
+    let [device = '', label = '', ...rest] = line.split('|').map((part) => part.trim())
+    let image = rest.join('|').trim()
+    if ((DEVICES as string[]).includes(device) && image && isSafeUrl(image, { allowPath: true })) {
+      screens.push({ device: device as Screen['device'], label, image })
+    }
+  }
+  return screens.slice(0, 12)
+}
+
+export function formatScreens(screens: Screen[]): string {
+  return screens.map((screen) => `${screen.device} | ${screen.label} | ${screen.image}`).join('\n')
 }
