@@ -16,36 +16,27 @@ export function NotFoundPage(handle: Handle<{ frame: Frame }>) {
         pageType="not-found"
         frame={frame}
       >
-        <section class="hero hero--statement" data-enter="" aria-labelledby="hero-h">
-          <div class="wrap">
-            <div class="hero-text hero__in">
-              <div>
-                <h1 id="hero-h" data-split="">
-                  Page not found
-                </h1>
-                <p class="hero__lead">
-                  The address may be out of date, or the project may be hidden for now.
-                </p>
-                <div class="btn-row">
-                  {frame.projects.length > 0 ? (
-                    <a
-                      class="btn btn--secondary"
-                      href={routes.work.index.href()}
-                      data-cursor="link"
-                    >
-                      See the case studies
-                    </a>
-                  ) : (
-                    <a
-                      class="btn btn--secondary"
-                      href={routes.home.href()}
-                      data-cursor="link"
-                    >
-                      See the home page
-                    </a>
-                  )}
-                </div>
-              </div>
+        <section class="hero hero--page" aria-labelledby="hero-h" data-ruler-section="Intro">
+          <div class="wrap hero__stack">
+            <p class="term" data-enter="">
+              <span aria-hidden="true">&gt;</span> 404
+            </p>
+            <h1 id="hero-h" class="hero__title" data-split="" data-hero="">
+              Page not found
+            </h1>
+            <p class="lead" data-enter="">
+              The address may be out of date, or the project may be hidden for now.
+            </p>
+            <div class="btns" data-enter="">
+              {frame.projects.length > 0 ? (
+                <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
+                  See the case studies
+                </a>
+              ) : (
+                <a class="btn btn--ghost" href={routes.home.href()} data-cursor="link">
+                  See the home page
+                </a>
+              )}
             </div>
           </div>
         </section>

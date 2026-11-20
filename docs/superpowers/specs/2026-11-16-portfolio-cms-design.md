@@ -236,3 +236,30 @@ Rules for all of it:
 - The taste gate may finish open, with only brief-driven motion and contact failures left.
 - Case-study sections optional; the skills panel links to experience entries as well as projects.
 - Export is one JSON file plus separately copied uploads; import only into an empty store.
+
+## Design update, 2026-11-17: the desk redesign
+
+This supersedes the Design section above wherever they differ. The owner's own design, in
+`stitch_portfolio_design/` (`DESIGN.md`, `code.html`, `screen.png`), replaces the taste skill's palette, type
+and layout. The taste kit (`public/assets/system.css` and the rest) is removed; nothing is checked against
+the taste gate any more.
+
+- **Look**: Obsidian Atelier, a dark drafting desk (the default), with a light "paper" theme behind the
+  sun and moon note. Body text is Geist, headings and labels JetBrains Mono, annotations Courier Prime,
+  handwriting Caveat. All of it lives in `public/desk/desk.css` as tokens plus plain classes.
+- **Doodles** (`app/ui/doodles.tsx`, `app/ui/public/desk/toys.ts`): a badge on a lanyard, a sticky note of
+  figures from the store, three sticker links, a mug, gears and a rocket. They are real markup first. On a
+  wide screen with a mouse they can be dragged and thrown a short way; Scatter and Tidy move them all. The badge swings
+  when brushed or when the page is scrolled fast. Pressing the mug, gears or rocket does something on any screen.
+- **Motion** (GSAP, ScrollTrigger, SplitText, Draggable, Inertia, Lenis): headline line reveals, scroll
+  reveals, light parallax, counters, a ruler under the header that tracks scroll and the section in view,
+  a scrubbed line on the Home experience rail, a sticky role list on About, the EazyCRM pipeline that steps
+  through its stages, the Work page's cycling headline word and cursor-following preview, a custom cursor,
+  magnetic buttons, and a curtain between pages.
+- **No client router.** `app/actions/public/entry.ts` only imports the motion code. Every link is an ordinary
+  navigation; the curtain is a flag in `sessionStorage` read by an inline script in the head.
+- **Content rules kept**: no phone number, no invented labels or figures, no availability claim, every role
+  and project in the HTML. Hidden-then-revealed states are set by script only, and a 2.5 second failsafe in
+  the head shows everything if the script never runs. Under `prefers-reduced-motion` there is no smooth
+  scroll, no reveal, no parallax and no curtain; dragging and the theme switch still work.
+- **Not covered**: the admin area is still unbuilt and unstyled by this design.

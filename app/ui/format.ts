@@ -40,3 +40,16 @@ export function firstName(name: string): string {
 export function displayUrl(url: string): string {
   return url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')
 }
+
+/** "https://github.com/ali-d-coded" as "ali-d-coded": the last path segment of a profile URL. */
+export function handleOf(url: string): string {
+  let path = url.replace(/^https?:\/\/(www\.)?[^/]+\/?/, '').replace(/\/+$/, '')
+  return path.split('/').pop() ?? path
+}
+
+/** The last two words of a headline, to set apart; null when the headline is too short to split. */
+export function splitTail(text: string): { head: string; tail: string } | null {
+  let words = text.trim().split(/\s+/)
+  if (words.length < 4) return null
+  return { head: words.slice(0, -2).join(' '), tail: words.slice(-2).join(' ') }
+}

@@ -63,14 +63,14 @@ export function Blocks(handle: Handle<BlocksProps>) {
     return (
       <div class="chapters">
         {list.map((chapter, index) => (
-          <div key={index} class="chapter grid">
+          <div key={index} class="chapter">
             {chapter.heading ? (
-              <h3 class="span-4" data-split="">
+              <h3 class="chapter__title" data-split="">
                 {chapter.heading}
               </h3>
             ) : null}
             {chapter.body.length > 0 ? (
-              <div class="chapter__body span-7 start-6">
+              <div class="chapter__body">
                 {chapter.body.map((block, blockIndex) => (
                   <BlockView key={blockIndex} block={block} media={media} />
                 ))}
@@ -99,14 +99,12 @@ function BlockView(handle: Handle<{ block: Block; media: Map<string, Media> }>) 
         let item = media.get(block.mediaId)
         if (!item) return null
         return (
-          <figure class="frame frame--photo" data-parallax="0.08">
+          <figure class="frame" data-parallax="0.06">
             <img
               class="frame__img"
               src={routes.media.href({ id: item.id })}
               alt={item.alt}
               loading="lazy"
-              data-source="client"
-              data-subject={item.alt}
             />
           </figure>
         )
@@ -118,8 +116,8 @@ function BlockView(handle: Handle<{ block: Block; media: Map<string, Media> }>) 
           <ul class="chapter__figures">
             {items.map((figure, index) => (
               <li key={index}>
-                <p class="t-stat">{figure.value}</p>
-                <p class="t-small muted">{figure.label}</p>
+                <p class="fig__value" data-count="">{figure.value}</p>
+                <p class="fig__label">{figure.label}</p>
               </li>
             ))}
           </ul>

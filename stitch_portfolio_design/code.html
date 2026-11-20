@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ali Afthab // Full-Stack &amp; Distributed Systems Engineer</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&amp;family=Courier+Prime:ital,wght@0,400;0,700;1,400&amp;family=Geist:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        fontFamily: {
+          mono: ["'JetBrains Mono'", "monospace"],
+          script: ["'Courier Prime'", "monospace"],
+          hand: ["'Caveat'", "cursive"],
+        }
+      }
+    }
+  };
+</script>
+<style>
+  body { margin: 0; padding: 0; overscroll-behavior-y: none; }
+  ::-webkit-scrollbar { display: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  html { transition: background-color 0.25s ease, color 0.25s ease; }
+
+  /* Dark mode blueprint desk */
+  html.dark body {
+    background-color: #0c0c10;
+    color: #f4f4f6;
+    background-size: 28px 28px;
+    background-image: 
+      radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px),
+      linear-gradient(to right, rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.015) 1px, transparent 1px);
+  }
+  .ruler-ticks {
+    background-image: repeating-linear-gradient(to right, #3f3f46 0, #3f3f46 1px, transparent 1px, transparent 8px);
+  }
+
+  /* Light mode paper desk */
+  html.light body {
+    background-color: #f7f7f4;
+    color: #18181b;
+    background-size: 24px 24px;
+    background-image: 
+      radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px),
+      linear-gradient(to right, rgba(0,0,0,0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.035) 1px, transparent 1px);
+  }
+  html.light .ruler-ticks {
+    background-color: #ededeb !important;
+    border-color: #dcdcd6 !important;
+    color: #71717a !important;
+    background-image: repeating-linear-gradient(to right, #b4b4aa 0, #b4b4aa 1px, transparent 1px, transparent 8px);
+  }
+  html.light header {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border-color: #e4e4dc !important;
+  }
+  html.light .desk-card {
+    background-color: #ffffff !important;
+    border-color: #e5e5dc !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04) !important;
+  }
+  html.light .sub-box {
+    background-color: #f7f7f5 !important;
+    border-color: #e4e4dd !important;
+  }
+  html.light .text-heading { color: #111827 !important; }
+  html.light .text-muted { color: #52525b !important; }
+  html.light .chip {
+    background-color: #efefea !important;
+    border-color: #deded6 !important;
+    color: #18181b !important;
+  }
+  html.light footer {
+    background-color: #eeeeeb !important;
+    border-color: #deded6 !important;
+  }
+
+  /* Interactive tactile desk objects */
+  .desk-toy {
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.2s ease;
+  }
+  .desk-toy:active, .desk-toy.is-dragging {
+    cursor: grabbing !important;
+    transition: none !important;
+    z-index: 100 !important;
+    filter: drop-shadow(0 16px 24px rgba(0,0,0,0.4)) scale(1.06);
+  }
+  .washi-tape {
+    background: repeating-linear-gradient(45deg, rgba(254,240,138,0.75), rgba(254,240,138,0.75) 6px, rgba(253,224,71,0.75) 6px, rgba(253,224,71,0.75) 12px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .washi-tape-cyan {
+    background: repeating-linear-gradient(-45deg, rgba(125,211,252,0.7), rgba(125,211,252,0.7) 5px, rgba(56,189,248,0.65) 5px, rgba(56,189,248,0.65) 10px);
+  }
+  .washi-tape-rose {
+    background: repeating-linear-gradient(45deg, rgba(244,114,182,0.7), rgba(244,114,182,0.7) 5px, rgba(251,113,133,0.65) 5px, rgba(251,113,133,0.65) 10px);
+  }
+</style>
+</head>
+<body class="font-mono antialiased selection:bg-yellow-400/20 selection:text-yellow-300 min-h-screen relative overflow-x-hidden w-full">
+<!-- ======================================================== -->
+<!-- 1. FLOATING SUN & MOON DOODLE (THEME TOGGLE)             -->
+<!-- ======================================================== -->
+<div class="fixed top-16 sm:top-20 right-3 sm:right-6 md:right-8 z-50 select-none group" id="celestial-theme-toggle">
+<button aria-label="Toggle Dark / White Mode" class="relative block p-2 sm:p-2.5 rounded-2xl bg-[#171720]/95 dark:bg-[#171720]/95 light:bg-white/95 border-2 border-yellow-400/60 shadow-[0_12px_28px_rgba(0,0,0,0.45)] backdrop-blur-md cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300 focus:outline-none" onclick="toggleTheme()">
+<!-- Washi tape pin -->
+<div class="washi-tape absolute -top-2 left-1/2 -translate-x-1/2 w-7 sm:w-8 h-2 sm:h-2.5 rounded-xs transform -rotate-3 pointer-events-none"></div>
+<div class="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center relative">
+<!-- Sun Doodle (Dark Mode active) -->
+<svg class="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400 fill-current block transition-transform duration-500" id="sun-doodle" viewbox="0 0 100 100">
+<g stroke="#facc15" stroke-linecap="round" stroke-width="4">
+<line x1="50" x2="50" y1="8" y2="20"></line>
+<line x1="50" x2="50" y1="80" y2="92"></line>
+<line x1="8" x2="20" y1="50" y2="50"></line>
+<line x1="80" x2="92" y1="50" y2="50"></line>
+<line x1="20" x2="29" y1="20" y2="29"></line>
+<line x1="71" x2="80" y1="71" y2="80"></line>
+<line x1="20" x2="29" y1="80" y2="71"></line>
+<line x1="71" x2="80" y1="20" y2="29"></line>
+</g>
+<circle cx="50" cy="50" fill="#fde047" r="21" stroke="#eab308" stroke-width="2.5"></circle>
+<circle cx="43" cy="46" fill="#18181b" r="2.5"></circle>
+<circle cx="57" cy="46" fill="#18181b" r="2.5"></circle>
+<path d="M42 53 Q50 61 58 53" fill="none" stroke="#18181b" stroke-linecap="round" stroke-width="2.2"></path>
+<circle cx="38" cy="52" fill="#f43f5e" opacity="0.7" r="2"></circle>
+<circle cx="62" cy="52" fill="#f43f5e" opacity="0.7" r="2"></circle>
+</svg>
+<!-- Moon Doodle (Light Mode active) -->
+<svg class="w-8 h-8 sm:w-10 sm:h-10 text-indigo-600 fill-current hidden transition-transform duration-500" id="moon-doodle" viewbox="0 0 100 100">
+<path d="M62 18 C40 20 24 38 24 60 C24 82 42 98 64 98 C50 90 42 74 42 58 C42 40 50 26 62 18 Z" fill="#6366f1" stroke="#4338ca" stroke-linejoin="round" stroke-width="3"></path>
+<path d="M38 52 Q43 56 48 52" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-width="2.5"></path>
+<circle cx="42" cy="60" fill="#f472b6" r="2.2"></circle>
+<path d="M68 28 L70 23 L72 28 L77 30 L72 32 L70 37 L68 32 L63 30 Z" fill="#facc15"></path>
+<path d="M78 54 L79 50 L81 54 L84 55 L81 56 L80 60 L78 56 L74 55 Z" fill="#38bdf8"></path>
+</svg>
+</div>
+<!-- Hand-drawn Label Tape -->
+<div class="mt-0.5 text-center">
+<span class="font-hand text-[10px] sm:text-xs font-bold text-yellow-300 dark:text-yellow-300 light:text-zinc-800 bg-black/60 dark:bg-black/60 light:bg-zinc-200/90 px-1 sm:px-1.5 py-0.5 rounded border border-yellow-400/40 block leading-tight">
+<span id="theme-caption">toggle mod ☀️</span>
+</span>
+</div>
+</button>
+</div>
+<!-- ======================================================== -->
+<!-- 2. DECLUTTERED TOP NAVIGATION (FULLY RESPONSIVE)          -->
+<!-- ======================================================== -->
+<header class="fixed top-0 left-0 right-0 z-40 bg-[#0d0d12]/95 backdrop-blur-md border-b border-[#232328]">
+<div class="h-14 w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+<!-- Brand Identity Moniker -->
+<a class="flex items-center gap-2 sm:gap-2.5 group shrink-0 min-w-0" href="#hero">
+<div class="w-7 h-7 shrink-0 rounded bg-zinc-900 border border-zinc-700/80 text-yellow-400 flex items-center justify-center text-xs font-bold shadow-inner">
+        AA
+      </div>
+<div class="flex items-center gap-1.5 sm:gap-2 truncate">
+<span class="text-xs sm:text-sm font-semibold tracking-tight text-[#f4f4f6] group-hover:text-yellow-400 transition-colors uppercase truncate">
+          ALI AFTHAB
+        </span>
+<span class="text-zinc-500 text-xs hidden md:inline">//</span>
+<span class="text-[10px] sm:text-[11px] text-[#a1a1aa] tracking-wider uppercase hidden md:inline truncate">
+          FULL-STACK &amp; DISTRIBUTED SYSTEMS
+        </span>
+</div>
+</a>
+<!-- Minimal Anchor Links: Responsive Horizontal Scroll on Mobile -->
+<nav class="flex items-center gap-1 sm:gap-2 overflow-x-auto no-scrollbar py-1 shrink-0">
+<a class="px-2 sm:px-3 py-1 text-[11px] sm:text-xs text-[#a1a1aa] hover:text-white hover:bg-zinc-800/60 rounded transition-colors whitespace-nowrap" href="#skills-arsenal">[01_Skills]</a>
+<a class="px-2 sm:px-3 py-1 text-[11px] sm:text-xs bg-yellow-400/10 text-yellow-300 border border-yellow-400/30 font-medium rounded transition-colors whitespace-nowrap" href="#experience-matrix">[02_Experience]</a>
+<a class="px-2 sm:px-3 py-1 text-[11px] sm:text-xs text-[#a1a1aa] hover:text-white hover:bg-zinc-800/60 rounded transition-colors whitespace-nowrap" href="#projects-showcase">[03_Projects]</a>
+</nav>
+</div>
+</header>
+<!-- MAIN CONTENT CANVAS -->
+<main class="w-full pt-14 relative overflow-x-hidden" id="desk-canvas">
+<!-- Tactile Metric Strip -->
+<div class="w-full h-5 border-b border-[#232328] bg-[#101014] flex items-center px-3 sm:px-4 justify-between text-[8px] sm:text-[9px] text-zinc-500 ruler-ticks select-none overflow-x-auto no-scrollbar whitespace-nowrap gap-4">
+<span class="shrink-0">00ms // P99 LATENCY</span>
+<span class="hidden sm:inline shrink-0">25ms // REDIS CACHE</span>
+<span class="hidden md:inline shrink-0">50ms // BULLMQ DISPATCH</span>
+<span class="hidden sm:inline shrink-0">75ms // MONGO PER-TENANT</span>
+<span class="hidden lg:inline shrink-0">100ms // SOCKET.IO BROADCAST</span>
+<span class="shrink-0">HIGH-VOLUME STREAM PIPELINE // METRIC PROJECTION</span>
+</div>
+<!-- ======================================================== -->
+<!-- 3. SOCIAL ACCOUNT LINKS TIED TO DOODLE STICKERS (DESKTOP) -->
+<!-- ======================================================== -->
+<!-- GitHub Doodle Sticker (Top Right Gutter on Large Screens) -->
+<div class="desk-toy absolute z-20 select-none top-24 right-16 sm:right-28 hidden xl:block" id="toy-social-github" title="Inspect GitHub Repository @ali-d-coded">
+<a class="block group p-2 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.55)] transform rotate-6 hover:-rotate-3 hover:scale-105 transition-transform" href="https://github.com/ali-d-coded" target="_blank">
+<div class="washi-tape absolute -top-2 left-6 w-10 h-3 transform rotate-6 z-10 pointer-events-none"></div>
+<div class="bg-[#1b1b22] border-2 border-dashed border-zinc-600 group-hover:border-yellow-400 p-2.5 rounded-lg flex flex-col items-center justify-center text-center shadow-md bg-opacity-95">
+<svg class="w-9 h-9 text-zinc-200 group-hover:text-yellow-400 transition-colors" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"></path>
+</svg>
+<span class="font-hand text-xs font-bold text-yellow-300 mt-1">🐙 {ali-d-coded}</span>
+<span class="text-[8px] text-zinc-400 group-hover:text-zinc-200">github doodle ↗</span>
+</div>
+</a>
+</div>
+<!-- LinkedIn Doodle Stamp (Left Gutter on Large Screens) -->
+<div class="desk-toy absolute z-20 select-none top-72 left-2 sm:left-4 hidden xl:block" id="toy-social-linkedin" title="Connect on LinkedIn /in/ali-afthab">
+<a class="block group p-2 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.55)] transform -rotate-6 hover:rotate-3 hover:scale-105 transition-transform" href="https://linkedin.com/in/ali-afthab" target="_blank">
+<div class="washi-tape-cyan absolute -top-2 right-4 w-9 h-3 transform -rotate-12 z-10 pointer-events-none"></div>
+<div class="bg-[#151d2c] border-2 border-sky-400/80 p-2.5 rounded-md flex flex-col items-center justify-center text-center shadow-md">
+<div class="w-8 h-8 rounded bg-sky-500 text-white flex items-center justify-center font-bold text-lg shadow-inner group-hover:bg-sky-400 transition-colors">
+          in
+        </div>
+<span class="font-hand text-xs font-bold text-sky-300 mt-1">/ali-afthab</span>
+<span class="text-[8px] text-zinc-400 uppercase">linkedin stamp ↗</span>
+</div>
+</a>
+</div>
+<!-- Email Doodle Envelope (Right Gutter on Large Screens) -->
+<div class="desk-toy absolute z-20 select-none top-[520px] right-2 sm:right-6 hidden xl:block" id="toy-social-mail" title="Send Direct Email: aliallu3xa@gmail.com">
+<a class="block group p-2 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.55)] transform rotate-8 hover:-rotate-2 hover:scale-105 transition-transform" href="mailto:aliallu3xa@gmail.com">
+<div class="washi-tape-rose absolute -top-2 left-5 w-10 h-3 transform rotate-3 z-10 pointer-events-none"></div>
+<div class="bg-[#241d22] border-2 border-rose-400/80 p-2.5 rounded flex flex-col items-center justify-center text-center shadow-md">
+<svg class="w-8 h-7 text-rose-300 group-hover:text-rose-200 transition-colors" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
+<rect height="14" rx="2" width="20" x="2" y="5"></rect>
+<path d="M2 7l10 7 10-7"></path>
+</svg>
+<span class="font-hand text-xs font-bold text-rose-300 mt-0.5">💌 dispatch mail</span>
+<span class="text-[8px] text-zinc-400">aliallu3xa@gmail.com ↗</span>
+</div>
+</a>
+</div>
+<!-- Additional Playful Desk Toys in Margins (Non-blocking & Hidden on Mobile) -->
+<!-- Coffee Mug -->
+<div class="desk-toy absolute z-10 select-none top-[420px] left-3 sm:left-5 hidden xl:block" id="toy-coffee" title="Drag me! Coffee fuel">
+<div class="p-2 filter drop-shadow-md hover:scale-105 transition-transform">
+<svg class="w-14 h-16" fill="none" viewbox="0 0 80 90">
+<path d="M34 20 C32 14 38 10 36 4" stroke="#cbd5e1" stroke-dasharray="2 2" stroke-linecap="round" stroke-width="2"></path>
+<path d="M44 22 C42 15 48 11 46 5" stroke="#cbd5e1" stroke-dasharray="2 2" stroke-linecap="round" stroke-width="2"></path>
+<rect fill="#1e1e24" height="42" rx="4" stroke="#facc15" stroke-width="2" width="36" x="25" y="26"></rect>
+<path d="M61 32 C71 32 71 50 61 52" fill="none" stroke="#facc15" stroke-linecap="round" stroke-width="2.5"></path>
+<ellipse cx="43" cy="69" fill="#141418" rx="24" ry="4" stroke="#71717a" stroke-width="1.5"></ellipse>
+</svg>
+<span class="font-hand text-xs text-amber-300 font-bold block text-center -mt-1">coffee &amp; queues ☕</span>
+</div>
+</div>
+<!-- BullMQ Mechanical Gears -->
+<div class="desk-toy absolute z-10 select-none top-[840px] right-3 sm:right-6 hidden xl:block" id="toy-gears" title="Drag me! BullMQ Workers">
+<div class="p-2 filter drop-shadow-md hover:scale-105 transition-transform">
+<svg class="w-16 h-16" fill="none" viewbox="0 0 90 90">
+<circle cx="40" cy="40" fill="#1a1a20" r="24" stroke="#facc15" stroke-dasharray="7 5" stroke-width="4"></circle>
+<circle cx="40" cy="40" fill="#141418" r="12" stroke="#eab308" stroke-width="2"></circle>
+<circle cx="66" cy="66" fill="#1a1a20" r="13" stroke="#38bdf8" stroke-dasharray="5 3" stroke-width="3"></circle>
+</svg>
+<span class="text-[9px] text-yellow-400 bg-black/80 px-1 py-0.5 rounded border border-yellow-500/40 block text-center mt-1">BULLMQ // WORKERS</span>
+</div>
+</div>
+<!-- Rocket Ship -->
+<div class="desk-toy absolute z-10 select-none top-[1120px] left-3 sm:left-5 hidden xl:block" id="toy-rocket" title="Drag me! Fast shipping">
+<div class="p-2 filter drop-shadow-md hover:scale-105 transition-transform">
+<svg class="w-14 h-18" fill="none" viewbox="0 0 90 100">
+<path d="M45 15 C33 30 31 55 31 72 L59 72 C59 55 57 30 45 15 Z" fill="#18181f" stroke="#facc15" stroke-width="2"></path>
+<circle cx="45" cy="42" fill="#38bdf8" fill-opacity="0.3" r="7" stroke="#38bdf8" stroke-width="2"></circle>
+<path d="M30 62 L18 72 L32 75 Z" fill="#67e8f9"></path>
+<path d="M60 62 L72 72 L58 75 Z" fill="#67e8f9"></path>
+</svg>
+<span class="font-hand text-xs text-emerald-300 font-bold block text-center">fast ship 🚀</span>
+</div>
+</div>
+<!-- Floating Desk Toys Dock Controller -->
+<div class="fixed bottom-3 sm:bottom-5 right-3 sm:right-5 z-40 bg-[#141418]/95 dark:bg-[#141418]/95 light:bg-white/95 backdrop-blur-md border border-zinc-700/80 rounded-full px-2.5 sm:px-3 py-1 sm:py-1.5 shadow-2xl flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs">
+<span class="flex items-center gap-1 text-yellow-400 font-medium">
+<span class="material-symbols-outlined text-[14px] sm:text-[16px]">touch_app</span>
+<span class="hidden sm:inline">Desk Toys</span>
+</span>
+<span class="text-zinc-600">|</span>
+<button class="hover:text-yellow-300 text-zinc-400 px-1.5 sm:px-2 py-0.5 rounded hover:bg-zinc-800 transition" onclick="scatterToys()" title="Randomly fling objects">
+      🎲 Scatter
+    </button>
+<button class="hover:text-yellow-300 text-zinc-400 px-1.5 sm:px-2 py-0.5 rounded hover:bg-zinc-800 transition" onclick="tidyDesk()" title="Reset toys to default">
+      🧹 Tidy
+    </button>
+</div>
+<!-- ======================================================== -->
+<!-- HERO SECTION                                             -->
+<!-- ======================================================== -->
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative" id="hero">
+<section class="pt-6 sm:pt-10 pb-12 sm:pb-16 relative">
+<!-- Responsive Mobile Social Shortcuts (Visible on Mobile/Tablet where gutters hide) -->
+<div class="flex xl:hidden items-center justify-center gap-2 sm:gap-3 flex-wrap mb-6 select-none">
+<a class="px-2.5 py-1 rounded bg-[#1b1b22] border border-zinc-700 text-yellow-300 text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition" href="https://github.com/ali-d-coded" target="_blank">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.1-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"></path></svg>
+<span class="font-hand">🐙 @ali-d-coded</span>
+</a>
+<a class="px-2.5 py-1 rounded bg-[#151d2c] border border-sky-500/60 text-sky-300 text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition" href="https://linkedin.com/in/ali-afthab" target="_blank">
+<span class="w-3.5 h-3.5 rounded-xs bg-sky-500 text-white font-bold flex items-center justify-center text-[9px] leading-none">in</span>
+<span class="font-hand">/ali-afthab</span>
+</a>
+<a class="px-2.5 py-1 rounded bg-[#241d22] border border-rose-500/60 text-rose-300 text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition" href="mailto:aliallu3xa@gmail.com">
+<span>💌</span>
+<span class="font-hand">dispatch mail</span>
+</a>
+</div>
+<!-- Top Artifacts: Lanyard Badge & Verified Sticky Note (Fluid Grid & Stack) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-6 items-start mb-8 sm:mb-14">
+<!-- Left: Lanyard Pass Badge -->
+<div class="md:col-span-6 lg:col-span-5 flex justify-center md:justify-start">
+<div class="desk-toy desk-card group bg-[#16161b]/95 border border-zinc-800 rounded-lg p-3.5 sm:p-4 shadow-xl relative w-full max-w-[340px] transform sm:-rotate-1 hover:rotate-0 transition-transform">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full bg-zinc-800 border border-zinc-600 flex items-center justify-center">
+<div class="w-4 h-1 bg-zinc-950 rounded-full"></div>
+</div>
+<div class="flex items-center gap-2.5 pb-2.5 mb-2.5 border-b border-zinc-800">
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+<span class="text-xs font-semibold text-zinc-200 text-heading">ALI AFTHAB</span>
+<span class="text-[9px] text-zinc-500 ml-auto">VERIFIED BADGE</span>
+</div>
+<div class="text-[10px] text-yellow-500 font-bold mb-1">
+              FULL-STACK / DISTRIBUTED SYSTEMS
+            </div>
+<p class="text-[11px] text-zinc-400 text-muted leading-relaxed">
+              5 yrs designing scalable, multi-tenant SaaS &amp; high-volume event-driven backend systems. Expert in Node.js, TS, Bun, Microservices, BullMQ, Redis, Mongo/Postgres.
+            </p>
+<div class="mt-2.5 pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[9px] text-zinc-500">
+<span>STATUS: ACTIVE</span>
+<span class="text-emerald-500 font-bold">OPEN TO ENGAGEMENTS</span>
+</div>
+</div>
+</div>
+<div class="hidden lg:block lg:col-span-2"></div>
+<!-- Right: Classic Warm Yellow Pinned Sticky Note -->
+<div class="md:col-span-6 lg:col-span-5 flex justify-center md:justify-end">
+<div class="desk-toy relative bg-[#fef08a] text-[#1c1917] p-4 sm:p-5 rounded-sm border border-yellow-400 shadow-2xl transform sm:rotate-2 hover:rotate-0 transition-transform w-full max-w-[380px]">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-red-600 border border-red-800 shadow-md flex items-center justify-center z-10 pointer-events-none">
+<div class="w-1.5 h-1.5 bg-red-200 rounded-full"></div>
+</div>
+<p class="font-script text-xs sm:text-sm md:text-base text-stone-950 leading-snug">
+              "5 years designing and shipping scalable multi-tenant SaaS platforms and high-volume, event-driven backend systems. Strong record of <span class="bg-yellow-300 px-1 font-bold border-b border-stone-800">end-to-end ownership</span>, performance optimization, and system design."
+            </p>
+<div class="mt-2.5 flex items-center justify-between text-[11px] text-stone-700">
+<span>~ Ali Afthab verified note</span>
+<span class="text-xs">✦</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Centered Typographic Statement (Responsive scaling text) -->
+<div class="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 pt-2 pb-4 sm:pb-6 px-1">
+<div class="inline-flex items-center gap-2 px-3 sm:px-3.5 py-1 rounded-full bg-[#18181f] sub-box border border-zinc-800 text-zinc-400 text-[11px] sm:text-xs shadow-inner max-w-full truncate">
+<span class="text-zinc-500 font-mono">&gt;</span>
+<span class="text-zinc-300 truncate">ali-afthab — zsh — distributed-systems</span>
+</div>
+<h1 class="text-2xl sm:text-4xl md:text-5xl lg:text-[44px] text-zinc-100 text-heading font-medium leading-[1.3] sm:leading-[1.35] tracking-tight">
+          I build resilient distributed systems 
+          <span class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded bg-zinc-800/90 border border-zinc-700 text-yellow-400 text-xs sm:text-base align-middle mx-1 shadow-sm">
+            ⚡
+          </span> 
+          , event-driven pipelines, and high-volume multi-tenant SaaS 
+          <span class="text-yellow-500 dark:text-yellow-400 underline decoration-yellow-500/40 decoration-wavy underline-offset-4 sm:underline-offset-8">
+            [ at scale. ]
+          </span>
+</h1>
+<p class="text-zinc-300 text-muted text-xs sm:text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
+<span class="text-yellow-500 dark:text-yellow-400 font-bold">✦</span>
+<span class="text-zinc-100 font-medium">[ Specialized in Node.js, Bun, Microservices, Message Queues &amp; Real-time WebSockets ]</span> with database-per-tenant isolation, caching and resilient fault tolerance.
+        </p>
+<div class="pt-2 sm:pt-4 flex flex-col items-center gap-3">
+<a class="inline-flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 rounded-full bg-yellow-400/10 hover:bg-yellow-400/20 text-yellow-500 dark:text-yellow-300 border border-yellow-400/30 text-xs transition duration-200 group font-semibold shadow-sm text-center max-w-full" href="#experience-matrix">
+<span class="truncate">✦ Multi-tenant SaaS &amp; Distributed Architectures (5 Years Experience)</span>
+<span class="group-hover:translate-x-1 transition-transform shrink-0">→</span>
+</a>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- TECHNICAL SKILLS ARSENAL (RESPONSIVE FLUID GRID)         -->
+<!-- ======================================================== -->
+<section class="my-10 sm:my-16 lg:my-20 relative z-10" id="skills-arsenal">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-zinc-800 gap-2">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<span class="w-2.5 h-2.5 rounded bg-yellow-400 shrink-0"></span>
+<h2 class="text-base sm:text-lg font-semibold text-zinc-100 text-heading tracking-tight">Technical Skills Arsenal &amp; Stack Matrix</h2>
+<span class="hidden sm:inline-block text-xs text-zinc-500">// 07 VERIFIED DOMAINS</span>
+</div>
+<div class="text-[11px] sm:text-xs text-zinc-400 bg-zinc-900 sub-box px-2.5 sm:px-3 py-1 rounded border border-zinc-800 self-start sm:self-auto">
+          CORE CAPABILITIES // HIGH CONCURRENCY
+        </div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-6 bg-[#121216] desk-card border border-zinc-800 rounded-xl p-4 sm:p-6 lg:p-7 shadow-2xl">
+<!-- 1. Languages -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Languages</span>
+<span class="text-[9px] text-zinc-500">POLYGLOT</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-500 dark:text-yellow-300 font-medium">JavaScript (ES6+)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-500 dark:text-yellow-300 font-medium">TypeScript</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Java</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Python</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400">Go (Golang)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-amber-400">Rust</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">PHP</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400">SQL</span>
+</div>
+</div>
+<!-- 2. Backend & APIs -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Backend &amp; API</span>
+<span class="text-[9px] text-zinc-500">HIGH RUNTIME</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400 font-semibold">Node.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-semibold">Bun</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Express.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400 font-semibold">Fastify</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400 font-semibold">NestJS</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Spring Boot</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Laravel</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400">Socket.IO / WebSockets</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">JWT · OAuth 2.0 · RBAC</span>
+</div>
+</div>
+<!-- 3. Frontend & Mobile -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Frontend &amp; Mobile</span>
+<span class="text-[9px] text-zinc-500">UI / CLIENT</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400 font-semibold">React</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-200 font-semibold">Next.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400">Vue.js / Nuxt.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Redux Toolkit · Zustand</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-cyan-400">Tailwind CSS · shadcn/ui</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400 font-semibold">React Native (Expo)</span>
+</div>
+</div>
+<!-- 4. Databases & Caching -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Databases &amp; Caching</span>
+<span class="text-[9px] text-zinc-500">STORAGE TIER</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400 font-semibold">MongoDB (Mongoose)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400 font-semibold">PostgreSQL</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-amber-400">MySQL</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400 font-semibold">Redis</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Prisma · Drizzle ORM</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400">Query Optimization &amp; Indexing</span>
+</div>
+</div>
+<!-- 5. Messaging & Queues -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Messaging &amp; Queues</span>
+<span class="text-[9px] text-zinc-500">EVENT PIPELINES</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-semibold">BullMQ · Bull</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400 font-semibold">Redis Streams</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400">Redis Pub/Sub</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Asynchronous Job Processing</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Cron Scheduling</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Meta Webhook Ingestion</span>
+</div>
+</div>
+<!-- 6. Cloud, DevOps & Arch -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">Cloud, DevOps &amp; Arch</span>
+<span class="text-[9px] text-zinc-500">INFRA &amp; SAAS</span>
+</div>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px]">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-amber-400 font-semibold">AWS (Lambda, ECS, S3)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400 font-semibold">Docker · Docker Compose</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">CI/CD Pipelines</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400">Nginx · Linux (Ubuntu)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-semibold">Multi-Tenant SaaS (DB-per-tenant)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">API Gateway · Microservices</span>
+</div>
+</div>
+<!-- 7. AI-Augmented Engineering -->
+<div class="bg-zinc-900/80 sub-box border border-zinc-800/90 hover:border-yellow-400/40 rounded-lg p-3.5 sm:p-4 transition-all sm:col-span-2 lg:col-span-3">
+<div class="flex items-center justify-between mb-2.5 pb-2 border-b border-zinc-800">
+<span class="text-xs font-semibold text-zinc-200 text-heading uppercase">AI-Augmented Engineering &amp; Testing</span>
+<span class="text-[9px] text-zinc-500">ACCELERATION</span>
+</div>
+<div class="flex flex-wrap gap-2 items-center text-xs">
+<span class="px-2.5 py-1 rounded bg-yellow-400/10 text-yellow-500 dark:text-yellow-300 border border-yellow-400/30 font-semibold">✦ Claude Code</span>
+<span class="px-2.5 py-1 rounded bg-zinc-800 chip text-zinc-200 border border-zinc-700">ChatGPT</span>
+<span class="px-2.5 py-1 rounded bg-zinc-800 chip text-zinc-200 border border-zinc-700">GitHub Copilot</span>
+<span class="text-zinc-500 text-xs w-full sm:w-auto my-1 sm:my-0">// AI-assisted development, debugging, code reviews &amp; automated workflow pipelines</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400 text-[11px]">Unit &amp; Integration Testing (Node runner, Bun test)</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300 text-[11px]">Agile/Scrum &amp; Mentorship</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- WORK EXPERIENCE TIMELINE & SWITCHBOARD                   -->
+<!-- ======================================================== -->
+<section class="my-10 sm:my-16 lg:my-20 relative z-10" id="experience-matrix">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-3 border-b border-zinc-800 gap-2">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<span class="w-2.5 h-2.5 rounded bg-yellow-400 shrink-0"></span>
+<h2 class="text-base sm:text-lg font-semibold text-zinc-100 text-heading tracking-tight">Work Experience &amp; Engineering Dossiers</h2>
+<span class="hidden sm:inline-block text-xs text-zinc-500">// 04 PRODUCTION TENURES</span>
+</div>
+<div class="text-[11px] sm:text-xs text-zinc-400 bg-zinc-900 sub-box px-2.5 sm:px-3 py-1 rounded border border-zinc-800 self-start sm:self-auto">
+          TACTILE DOSSIER ARCHIVE // 2022 - 2025+
+        </div>
+</div>
+<div class="flex flex-col lg:grid lg:grid-cols-12 gap-5 sm:gap-6 bg-[#131317] desk-card border border-zinc-800 rounded-xl p-4 sm:p-6 lg:p-7 shadow-2xl">
+<!-- Switchboard Tabs: Horizontal scroll on mobile/tablet, vertical stack on desktop -->
+<div class="lg:col-span-5 flex flex-col gap-3 sm:gap-4 border-b lg:border-b-0 lg:border-r border-zinc-800/80 pb-5 lg:pb-0 lg:pr-6">
+<div class="flex items-center justify-between text-xs text-zinc-400 mb-1">
+<span class="text-[10px] text-zinc-500 uppercase">Career Timeline Selector</span>
+<span class="text-yellow-500 dark:text-yellow-400 text-[11px] font-semibold">[Select Role]</span>
+</div>
+<!-- Role selector list: flex-row with overflow on mobile, column on lg -->
+<div class="flex lg:flex-col gap-2 overflow-x-auto no-scrollbar pb-2 lg:pb-0">
+<button class="matrix-btn min-w-[240px] sm:min-w-[280px] lg:min-w-0 w-full text-left p-2.5 sm:p-3 rounded bg-zinc-800/90 border border-yellow-400/60 transition-all flex items-center justify-between group shadow-sm shrink-0" id="btn-ginger" onclick="switchDossier('ginger')">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<div class="w-7 h-7 sm:w-8 sm:h-8 rounded bg-yellow-500/20 border border-yellow-400/40 text-yellow-500 flex items-center justify-center font-bold text-xs shrink-0">01</div>
+<div class="truncate">
+<span class="text-xs font-semibold text-zinc-100 text-heading block group-hover:text-yellow-400 truncate">Ginger Technologies</span>
+<span class="text-[9px] text-zinc-400 truncate block">FULL-STACK ENGINEER · JUN 2025 - PRESENT</span>
+</div>
+</div>
+<span class="indicator-dot w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_6px_#facc15] shrink-0 ml-2"></span>
+</button>
+<button class="matrix-btn min-w-[240px] sm:min-w-[280px] lg:min-w-0 w-full text-left p-2.5 sm:p-3 rounded bg-zinc-900/60 sub-box border border-zinc-800/80 hover:border-zinc-700 transition-all flex items-center justify-between group shrink-0" id="btn-brixton" onclick="switchDossier('brixton')">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<div class="w-7 h-7 sm:w-8 sm:h-8 rounded bg-sky-500/20 border border-sky-400/40 text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">02</div>
+<div class="truncate">
+<span class="text-xs font-semibold text-zinc-300 block group-hover:text-yellow-400 truncate">Brixton Corporate and Media</span>
+<span class="text-[9px] text-zinc-500 truncate block">SDE (CONTRACT) · FEB 2025 - MAY 2025</span>
+</div>
+</div>
+<span class="indicator-dot w-2 h-2 rounded-full bg-zinc-700 shrink-0 ml-2"></span>
+</button>
+<button class="matrix-btn min-w-[240px] sm:min-w-[280px] lg:min-w-0 w-full text-left p-2.5 sm:p-3 rounded bg-zinc-900/60 sub-box border border-zinc-800/80 hover:border-zinc-700 transition-all flex items-center justify-between group shrink-0" id="btn-ashcorp" onclick="switchDossier('ashcorp')">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<div class="w-7 h-7 sm:w-8 sm:h-8 rounded bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 flex items-center justify-center font-bold text-xs shrink-0">03</div>
+<div class="truncate">
+<span class="text-xs font-semibold text-zinc-300 block group-hover:text-yellow-400 truncate">ASHCORP Technologies LLP</span>
+<span class="text-[9px] text-zinc-500 truncate block">SDE · APR 2024 - FEB 2025</span>
+</div>
+</div>
+<span class="indicator-dot w-2 h-2 rounded-full bg-zinc-700 shrink-0 ml-2"></span>
+</button>
+<button class="matrix-btn min-w-[240px] sm:min-w-[280px] lg:min-w-0 w-full text-left p-2.5 sm:p-3 rounded bg-zinc-900/60 sub-box border border-zinc-800/80 hover:border-zinc-700 transition-all flex items-center justify-between group shrink-0" id="btn-rootsys" onclick="switchDossier('rootsys')">
+<div class="flex items-center gap-2.5 sm:gap-3">
+<div class="w-7 h-7 sm:w-8 sm:h-8 rounded bg-purple-500/20 border border-purple-400/40 text-purple-400 flex items-center justify-center font-bold text-xs shrink-0">04</div>
+<div class="truncate">
+<span class="text-xs font-semibold text-zinc-300 block group-hover:text-yellow-400 truncate">RootSys International</span>
+<span class="text-[9px] text-zinc-500 truncate block">SDE · JAN 2022 - APR 2024</span>
+</div>
+</div>
+<span class="indicator-dot w-2 h-2 rounded-full bg-zinc-700 shrink-0 ml-2"></span>
+</button>
+</div>
+<div class="mt-2 sm:mt-4 p-2.5 sm:p-3 bg-zinc-950/80 sub-box rounded border border-zinc-800/80 text-[10px] sm:text-[11px] text-zinc-400 space-y-1">
+<div class="flex justify-between flex-wrap gap-1">
+<span>PATH:</span>
+<span class="text-zinc-200 truncate" id="dossier-path">~/aliafthab/exp/ginger-tech</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>ARCH PATTERN:</span>
+<span class="text-emerald-400 font-semibold truncate" id="dossier-pattern">DB-PER-TENANT + BULLMQ</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>TENANT ISOLATION:</span>
+<span class="text-yellow-400 font-semibold">STRICT SCOPED RBAC</span>
+</div>
+</div>
+</div>
+<!-- Dossier Detail Panel: Responsive padding and flow -->
+<div class="lg:col-span-7 flex flex-col justify-between pt-1 sm:pt-0" id="dossier-display">
+<div>
+<div class="flex flex-wrap items-center justify-between pb-3 mb-3 sm:mb-4 border-b border-zinc-800 text-xs gap-2">
+<div class="flex flex-wrap items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-yellow-950/70 border border-yellow-600/50 text-yellow-300 text-[10px]" id="dossier-badge">
+                  SAAS &amp; MICROSERVICES LEAD
+                </span>
+<span class="text-zinc-500 text-[10px]" id="dossier-code">
+                  ROLE // 01 · GINGER TECHNOLOGIES
+                </span>
+</div>
+<a class="inline-flex items-center gap-1 px-2.5 sm:px-3 py-1 bg-yellow-400 hover:bg-yellow-300 text-zinc-950 font-semibold rounded text-[11px] sm:text-xs transition shadow-sm" href="https://github.com/ali-d-coded" target="_blank">
+<span>Inspect Codebase</span>
+<span class="material-symbols-outlined text-[13px] sm:text-[14px]">arrow_forward</span>
+</a>
+</div>
+<h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-zinc-100 text-heading tracking-tight mb-3" id="dossier-title">
+              Ginger Technologies — Full-Stack Engineer (Jun 2025 - Present)
+            </h3>
+<div class="text-zinc-300 text-muted text-xs sm:text-sm leading-relaxed mb-5 sm:mb-6 space-y-2.5" id="dossier-bullets">
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Architected and built a multi-tenant WhatsApp Business CRM (SaaS) serving 30+ client businesses and thousands of users, with database-per-tenant MongoDB isolation and tenant-scoped role-based access control (RBAC).</span>
+</p>
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Decomposed the CRM into Bun/TypeScript microservices (API Gateway, messages, campaigns, webhooks) behind a single API Gateway handling JWT verification, tenant context propagation and request proxying.</span>
+</p>
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Designed an event-driven message pipeline: Meta WhatsApp Cloud API webhooks queued with BullMQ, processed by workers, persisted to MongoDB, and broadcast via Redis Streams and Socket.IO for real-time inbox updates.</span>
+</p>
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Built bulk campaign and drip-scheduling services with BullMQ workers, plus cron jobs for scheduled messages, chat escalation, follow-ups and review requests.</span>
+</p>
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Developed e-commerce connectors for Shopify (React Router, Prisma, webhooks) and Magento 2 (PHP module) to sync orders, carts, customers and products for automated messaging.</span>
+</p>
+<p class="flex items-start gap-2">
+<span class="text-yellow-400 mt-1 shrink-0">▸</span>
+<span>Built platform admin dashboard (React, TypeScript, shadcn/ui) and contributed to React Native (Expo) mobile inbox with offline sync; migrated monolith to Fastify for higher throughput.</span>
+</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mb-5 sm:mb-6 text-xs" id="dossier-stats">
+<div class="p-2.5 sm:p-3 bg-zinc-900/80 sub-box border border-zinc-800 rounded">
+<span class="text-[10px] text-zinc-500 block uppercase">Tenants &amp; Users</span>
+<span class="text-zinc-200 font-medium text-xs sm:text-sm block mt-1">30+ B2B / 1000s Users</span>
+</div>
+<div class="p-2.5 sm:p-3 bg-zinc-900/80 sub-box border border-zinc-800 rounded">
+<span class="text-[10px] text-zinc-500 block uppercase">Pipeline Stack</span>
+<span class="text-yellow-400 font-medium text-xs sm:text-sm block mt-1">Bun + BullMQ + Redis</span>
+</div>
+<div class="p-2.5 sm:p-3 bg-zinc-900/80 sub-box border border-zinc-800 rounded">
+<span class="text-[10px] text-zinc-500 block uppercase">Isolation</span>
+<span class="text-sky-400 font-medium text-xs sm:text-sm block mt-1">Database-per-Tenant</span>
+</div>
+</div>
+</div>
+<div class="pt-3 sm:pt-4 border-t border-zinc-800 flex flex-col sm:flex-row items-start sm:items-center justify-between text-[10px] sm:text-xs text-zinc-500 gap-1">
+<span>VERIFIED TIMELINE ENTRY AA-2025</span>
+<span>SEALED BY ENGINEERING LEADERSHIP</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- KEY FEATURED PROJECTS (RESPONSIVE GRID)                  -->
+<!-- ======================================================== -->
+<section class="my-10 sm:my-16 lg:my-24 relative z-10" id="projects-showcase">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-2 border-b border-zinc-800 gap-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-yellow-400 text-[18px]">account_tree</span>
+<span class="text-zinc-200 text-heading text-sm font-semibold tracking-wide">Key Featured Projects &amp; Systems</span>
+</div>
+<span class="text-[10px] text-zinc-500">SHOWCASE // 02 FLAGSHIP BUILDS</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+<!-- EazyCRM -->
+<div class="bg-[#121215] desk-card border border-zinc-800 hover:border-yellow-400/50 rounded-xl p-4 sm:p-6 lg:p-7 shadow-2xl transition-all duration-300 group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3 text-xs">
+<span class="px-2.5 py-0.5 rounded bg-yellow-400/10 text-yellow-400 border border-yellow-400/30 font-semibold text-[10px]">FLAGSHIP SAAS</span>
+<span class="text-zinc-500">PROJECT #01</span>
+</div>
+<h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-zinc-100 text-heading group-hover:text-yellow-400 transition-colors mb-2">
+              EazyCRM — Multi-Tenant WhatsApp Business CRM
+            </h3>
+<p class="text-xs sm:text-sm text-zinc-300 text-muted leading-relaxed mb-4">
+              Gateway-centric microservices platform built for team inboxes, automated bulk drip campaigns, WhatsApp Groups, and e-commerce automation. Implements fault-tolerant webhook ingestion with BullMQ and tenant-scoped real-time delivery via Redis Streams and Socket.IO.
+            </p>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px] mb-5">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-medium">Node.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-medium">Bun</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">TypeScript</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400">MongoDB</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400">Redis</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-medium">BullMQ</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400">Redis Streams</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400">Socket.IO</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400">React</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">React Native</span>
+</div>
+</div>
+<div class="p-3 bg-zinc-900/90 sub-box rounded border border-zinc-800 text-[11px] sm:text-xs space-y-1.5 text-zinc-400">
+<div class="flex justify-between flex-wrap gap-1">
+<span>Architecture:</span>
+<span class="text-zinc-200">API Gateway + Tenant RBAC</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>Ingestion:</span>
+<span class="text-emerald-400 font-medium">Meta Cloud Webhooks &gt; BullMQ Queue</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>Mobile Client:</span>
+<span class="text-sky-400 font-medium">Expo Native with Offline Sync</span>
+</div>
+</div>
+</div>
+<!-- POS Platform -->
+<div class="bg-[#121215] desk-card border border-zinc-800 hover:border-yellow-400/50 rounded-xl p-4 sm:p-6 lg:p-7 shadow-2xl transition-all duration-300 group flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3 text-xs">
+<span class="px-2.5 py-0.5 rounded bg-sky-400/10 text-sky-400 border border-sky-400/30 font-semibold text-[10px]">ENTERPRISE POS</span>
+<span class="text-zinc-500">PROJECT #02</span>
+</div>
+<h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-zinc-100 text-heading group-hover:text-yellow-400 transition-colors mb-2">
+              Restaurant Point of Sale (POS) Platform
+            </h3>
+<p class="text-xs sm:text-sm text-zinc-300 text-muted leading-relaxed mb-4">
+              High-performance Point of Sale engine engineered with real-time operational workflows and sales analytics. Built scalable RESTful APIs with Node.js and Laravel, optimizing heavy PostgreSQL and MySQL queries and indexes for fast reporting under lunch/dinner spikes.
+            </p>
+<div class="flex flex-wrap gap-1.5 sm:gap-2 text-[11px] mb-5">
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-yellow-400 font-medium">Node.js</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-red-400">Laravel</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-sky-400">PostgreSQL</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-amber-400">MySQL</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-emerald-400">Real-time Analytics</span>
+<span class="px-2 py-0.5 rounded bg-zinc-800 chip text-zinc-300">Query Optimization</span>
+</div>
+</div>
+<div class="p-3 bg-zinc-900/90 sub-box rounded border border-zinc-800 text-[11px] sm:text-xs space-y-1.5 text-zinc-400">
+<div class="flex justify-between flex-wrap gap-1">
+<span>Primary Focus:</span>
+<span class="text-zinc-200">High-Concurrency POS Engine</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>Data Tier:</span>
+<span class="text-emerald-400 font-medium">PostgreSQL Composite Indexing</span>
+</div>
+<div class="flex justify-between flex-wrap gap-1">
+<span>Lifecycle:</span>
+<span class="text-yellow-400 font-medium">End-to-End SDLC &amp; Performance Tuning</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ======================================================== -->
+<!-- EDUCATION DOSSIER                                        -->
+<!-- ======================================================== -->
+<section class="my-10 sm:my-16 lg:my-20 relative z-10">
+<div class="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-yellow-400 text-[18px]">school</span>
+<span class="text-zinc-200 text-heading text-sm font-semibold tracking-wide">Academic Credentials &amp; Continuous Learning</span>
+</div>
+<span class="text-[10px] text-zinc-500">ACADEMICS // 01</span>
+</div>
+<div class="bg-[#121215] desk-card border border-zinc-800 rounded-xl p-4 sm:p-6 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+<div class="flex items-center gap-3 sm:gap-4">
+<div class="w-10 h-10 sm:w-12 sm:h-12 rounded bg-yellow-400/10 border border-yellow-400/30 flex items-center justify-center text-yellow-400 shrink-0">
+<span class="material-symbols-outlined text-[20px] sm:text-[24px]">workspace_premium</span>
+</div>
+<div>
+<h4 class="text-sm sm:text-base font-bold text-zinc-100 text-heading">
+              Bachelor of Computer Applications (BCA)
+            </h4>
+<p class="text-[11px] sm:text-xs text-zinc-400 text-muted mt-0.5">
+              Indira Gandhi National Open University (IGNOU)
+            </p>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs w-full sm:w-auto justify-start sm:justify-end">
+<span class="px-2.5 sm:px-3 py-1 rounded bg-zinc-900 sub-box border border-zinc-800 text-yellow-400 font-medium text-[11px] sm:text-xs">
+            Jun 2024 - Present
+          </span>
+<span class="px-2.5 sm:px-3 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium text-[11px] sm:text-xs">
+            Active Degree
+          </span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- ======================================================== -->
+<!-- 4. FOOTER WITH RELOCATED PERSONAL INFO & CONTACT CARD    -->
+<!-- ======================================================== -->
+<footer class="w-full bg-[#0a0a0d] border-t border-[#232328] py-8 sm:py-12 mt-12 relative z-20">
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 pb-6 sm:pb-8 border-b border-zinc-800/80">
+<!-- Direct Contact Dossier Card (Relocated Personal Info) -->
+<div class="lg:col-span-6 bg-[#121217] desk-card border border-zinc-800 rounded-xl p-4 sm:p-5 shadow-lg relative">
+<div class="washi-tape-cyan absolute -top-2 left-6 w-12 h-3.5 transform -rotate-1 pointer-events-none"></div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800">
+<span class="text-yellow-400 text-xs font-bold tracking-tight">// DIRECT CONTACT TELEMETRY</span>
+<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
+<div class="space-y-1">
+<span class="text-zinc-500 uppercase text-[10px] block">Engineer:</span>
+<span class="text-zinc-200 text-heading font-semibold block">Ali Afthab</span>
+</div>
+<div class="space-y-1">
+<span class="text-zinc-500 uppercase text-[10px] block">Direct Phone:</span>
+<a class="text-yellow-400 hover:underline font-semibold block truncate" href="tel:+919072283042">+91 9072283042</a>
+</div>
+<div class="space-y-1">
+<span class="text-zinc-500 uppercase text-[10px] block">Direct Email:</span>
+<a class="text-yellow-400 hover:underline font-semibold block truncate" href="mailto:aliallu3xa@gmail.com">aliallu3xa@gmail.com</a>
+</div>
+<div class="space-y-1">
+<span class="text-zinc-500 uppercase text-[10px] block">Status:</span>
+<span class="text-emerald-400 font-medium block">Open to Roles</span>
+</div>
+<div class="sm:col-span-2 pt-1 border-t border-zinc-800/60">
+<span class="text-zinc-500 uppercase text-[10px] block mb-0.5">Specialization:</span>
+<span class="text-zinc-300 text-muted block text-[11px] sm:text-xs">Distributed Systems, Event Pipelines &amp; Multi-Tenant SaaS</span>
+</div>
+</div>
+</div>
+<!-- Verified Social Repositories & Fast Links -->
+<div class="lg:col-span-6 flex flex-col justify-between bg-[#121217] desk-card border border-zinc-800 rounded-xl p-4 sm:p-5 shadow-lg">
+<div>
+<div class="flex items-center justify-between pb-3 mb-3 border-b border-zinc-800">
+<span class="text-zinc-400 text-xs font-semibold">// PROFILES &amp; REPOSITORIES</span>
+<span class="text-[9px] text-zinc-500">AUTHENTICATED</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs">
+<a class="p-2 sm:p-2.5 rounded bg-zinc-900 sub-box border border-zinc-800 hover:border-yellow-400/50 flex items-center justify-between group transition" href="https://github.com/ali-d-coded" target="_blank">
+<span class="text-zinc-300 group-hover:text-yellow-400 truncate">{GH: ali-d-coded}</span>
+<span class="material-symbols-outlined text-[14px] text-zinc-500 group-hover:text-yellow-400 shrink-0">arrow_outward</span>
+</a>
+<a class="p-2 sm:p-2.5 rounded bg-zinc-900 sub-box border border-zinc-800 hover:border-yellow-400/50 flex items-center justify-between group transition" href="https://linkedin.com/in/ali-afthab" target="_blank">
+<span class="text-zinc-300 group-hover:text-yellow-400 truncate">{LI: ali-afthab}</span>
+<span class="material-symbols-outlined text-[14px] text-zinc-500 group-hover:text-yellow-400 shrink-0">arrow_outward</span>
+</a>
+<a class="p-2 sm:p-2.5 rounded bg-zinc-900 sub-box border border-zinc-800 hover:border-yellow-400/50 flex items-center justify-between group transition" href="mailto:aliallu3xa@gmail.com">
+<span class="text-zinc-300 group-hover:text-yellow-400 truncate">{Mail Dispatch}</span>
+<span class="material-symbols-outlined text-[14px] text-zinc-500 group-hover:text-yellow-400 shrink-0">send</span>
+</a>
+<a class="p-2 sm:p-2.5 rounded bg-zinc-900 sub-box border border-zinc-800 hover:border-yellow-400/50 flex items-center justify-between group transition" href="#hero">
+<span class="text-zinc-300 group-hover:text-yellow-400 truncate">{Back to Top}</span>
+<span class="material-symbols-outlined text-[14px] text-zinc-500 group-hover:text-yellow-400 shrink-0">arrow_upward</span>
+</a>
+</div>
+</div>
+<div class="pt-3 mt-3 border-t border-zinc-800/80 flex items-center justify-between text-[9px] text-zinc-500">
+<span>ARCHITECTURAL DOSSIER AA-2025</span>
+<span class="text-yellow-500">VERIFIED SPECIMEN</span>
+</div>
+</div>
+</div>
+<div class="pt-5 sm:pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+<div class="flex items-center gap-2 text-[11px] sm:text-xs text-zinc-400 text-muted">
+<span class="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#34d399] shrink-0"></span>
+<span>Available for Full-Stack, Backend &amp; Distributed Systems Engineering Roles</span>
+</div>
+<p class="text-[11px] sm:text-xs text-zinc-500">Crafted with Precision · Ali Afthab Portfolio</p>
+</div>
+</div>
+</footer>
+<!-- JAVASCRIPT CONTROLLERS -->
+<script>
+  // Dossier matrix records
+  const dossierMatrix = {
+    ginger: {
+      title: "Ginger Technologies — Full-Stack Engineer (Jun 2025 - Present)",
+      badge: "SAAS & MICROSERVICES LEAD",
+      badgeColor: "bg-yellow-950/70 border-yellow-600/50 text-yellow-300",
+      code: "ROLE // 01 · GINGER TECHNOLOGIES",
+      path: "~/aliafthab/exp/ginger-tech",
+      pattern: "DB-PER-TENANT + BULLMQ",
+      bullets: [
+        "Architected and built a multi-tenant WhatsApp Business CRM (SaaS) serving 30+ client businesses and thousands of users, with database-per-tenant MongoDB isolation and tenant-scoped role-based access control (RBAC).",
+        "Decomposed the CRM into Bun/TypeScript microservices (API Gateway, messages, campaigns, webhooks) behind a single API Gateway handling JWT verification, tenant context propagation and request proxying.",
+        "Designed an event-driven message pipeline: Meta WhatsApp Cloud API webhooks queued with BullMQ, processed by workers, persisted to MongoDB, and broadcast via Redis Streams and Socket.IO for real-time inbox updates.",
+        "Built bulk campaign and drip-scheduling services with BullMQ workers, plus cron jobs for scheduled messages, chat escalation, follow-ups and review requests.",
+        "Developed e-commerce connectors for Shopify (React Router, Prisma, webhooks) and Magento 2 (PHP module) to sync orders, carts, customers and products for automated messaging.",
+        "Built platform admin dashboard (React, TypeScript, shadcn/ui) and contributed to React Native (Expo) mobile inbox with offline sync; migrated monolith to Fastify for higher throughput."
+      ],
+      stats: [
+        { label: "Tenants & Users", val: "30+ B2B / 1000s Users", color: "text-zinc-200" },
+        { label: "Pipeline Stack", val: "Bun + BullMQ + Redis", color: "text-yellow-400" },
+        { label: "Isolation", val: "Database-per-Tenant", color: "text-sky-400" }
+      ]
+    },
+    brixton: {
+      title: "Brixton Corporate and Media — SDE (Contract) (Feb 2025 - May 2025)",
+      badge: "CONTRACT LEAD",
+      badgeColor: "bg-sky-950/70 border-sky-600/50 text-sky-300",
+      code: "ROLE // 02 · BRIXTON CORP",
+      path: "~/aliafthab/exp/brixton-pos",
+      pattern: "RESTFUL + PG OPTIMIZATION",
+      bullets: [
+        "Led development of a high-concurrency restaurant Point of Sale (POS) platform with real-time sales analytics and scalable backend services.",
+        "Designed RESTful APIs and backend services with Node.js and Laravel, optimizing complex PostgreSQL and MySQL queries and indexes for fast reporting.",
+        "Owned the full SDLC — requirements gathering, architecture design, development, unit testing, cloud deployment, and performance tuning."
+      ],
+      stats: [
+        { label: "Product", val: "Restaurant POS Engine", color: "text-sky-400" },
+        { label: "Data Architecture", val: "PostgreSQL & MySQL", color: "text-zinc-200" },
+        { label: "Ownership", val: "Full SDLC End-to-End", color: "text-emerald-400" }
+      ]
+    },
+    ashcorp: {
+      title: "ASHCORP Technologies LLP — SDE (Apr 2024 - Feb 2025)",
+      badge: "CLOUD & BACKEND SDE",
+      badgeColor: "bg-emerald-950/70 border-emerald-600/50 text-emerald-300",
+      code: "ROLE // 03 · ASHCORP TECH",
+      path: "~/aliafthab/exp/ashcorp",
+      pattern: "NESTJS + BUN + AWS",
+      bullets: [
+        "Built scalable, resilient backend services with NestJS and Bun.js deployed on AWS infrastructure.",
+        "Engineered multi-tenant platforms (Doctor Appointment, E-commerce, Recharge SaaS) using React, Next.js and Flutter, with secure multi-role authentication and real-time dashboards for 50+ organizations and 500+ daily users.",
+        "Managed deployments for 10+ applications on Ubuntu/Nginx using Docker and CI/CD pipelines.",
+        "Mentored junior developers through continuous code reviews, architectural pairing, and technical guidance."
+      ],
+      stats: [
+        { label: "Scale", val: "50+ Orgs / 500+ DAU", color: "text-emerald-400" },
+        { label: "Deployments", val: "10+ Apps (Docker/CI/CD)", color: "text-yellow-400" },
+        { label: "Leadership", val: "Junior Dev Mentorship", color: "text-zinc-200" }
+      ]
+    },
+    rootsys: {
+      title: "RootSys International — Software Development Engineer (Jan 2022 - Apr 2024)",
+      badge: "FOUNDATIONAL ENGINEERING",
+      badgeColor: "bg-purple-950/70 border-purple-600/50 text-purple-300",
+      code: "ROLE // 04 · ROOTSYS INTL",
+      path: "~/aliafthab/exp/rootsys",
+      pattern: "SAAS CORE + RBAC + BILLING",
+      bullets: [
+        "Developed multi-tenant SaaS platforms supporting 50+ organizations with secure authentication and real-time features.",
+        "Implemented core modules including subscription billing, fine-grained authentication/authorization (RBAC), and real-time event notifications.",
+        "Participated actively in Agile/Scrum sprints, code reviews, and continuous improvement of system reliability."
+      ],
+      stats: [
+        { label: "Clients", val: "50+ Organizations", color: "text-purple-400" },
+        { label: "Core Modules", val: "Billing & Auth RBAC", color: "text-zinc-200" },
+        { label: "Practices", val: "Agile/Scrum Sprints", color: "text-sky-400" }
+      ]
+    }
+  };
+
+  function switchDossier(key) {
+    const data = dossierMatrix[key];
+    if (!data) return;
+
+    document.getElementById("dossier-title").innerText = data.title;
+    document.getElementById("dossier-code").innerText = data.code;
+    document.getElementById("dossier-path").innerText = data.path;
+    document.getElementById("dossier-pattern").innerText = data.pattern;
+
+    const badgeEl = document.getElementById("dossier-badge");
+    badgeEl.innerText = data.badge;
+    badgeEl.className = `px-2 py-0.5 rounded text-[10px] border ${data.badgeColor}`;
+
+    const bulletsContainer = document.getElementById("dossier-bullets");
+    bulletsContainer.innerHTML = data.bullets.map(b => `
+      <p class="flex items-start gap-2">
+        <span class="text-yellow-400 mt-1 shrink-0">▸</span>
+        <span>${b}</span>
+      </p>
+    `).join("");
+
+    const statsContainer = document.getElementById("dossier-stats");
+    statsContainer.innerHTML = data.stats.map(s => `
+      <div class="p-2.5 sm:p-3 bg-zinc-900/80 sub-box border border-zinc-800 rounded">
+        <span class="text-[10px] text-zinc-500 block uppercase">${s.label}</span>
+        <span class="${s.color} font-medium text-xs sm:text-sm block mt-1">${s.val}</span>
+      </div>
+    `).join("");
+
+    document.querySelectorAll(".matrix-btn").forEach(btn => {
+      const isCurrent = btn.id === `btn-${key}`;
+      if (isCurrent) {
+        btn.classList.remove("bg-zinc-900/60", "border-zinc-800/80");
+        btn.classList.add("bg-zinc-800/90", "border-yellow-400/60");
+        const dot = btn.querySelector(".indicator-dot");
+        if (dot) dot.className = "indicator-dot w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_6px_#facc15] shrink-0 ml-2";
+      } else {
+        btn.classList.remove("bg-zinc-800/90", "border-yellow-400/60");
+        btn.classList.add("bg-zinc-900/60", "border-zinc-800/80");
+        const dot = btn.querySelector(".indicator-dot");
+        if (dot) dot.className = "indicator-dot w-2 h-2 rounded-full bg-zinc-700 shrink-0 ml-2";
+      }
+    });
+  }
+
+  // ==========================================
+  // FLOATING CELESTIAL THEME CONTROLLER
+  // ==========================================
+  function applyTheme(isLight) {
+    const htmlEl = document.documentElement;
+    const sunIcon = document.getElementById("sun-doodle");
+    const moonIcon = document.getElementById("moon-doodle");
+    const caption = document.getElementById("theme-caption");
+
+    if (isLight) {
+      htmlEl.classList.remove("dark");
+      htmlEl.classList.add("light");
+      if (sunIcon) sunIcon.classList.add("hidden");
+      if (moonIcon) {
+        moonIcon.classList.remove("hidden");
+        moonIcon.style.transform = "rotate(360deg)";
+      }
+      if (caption) caption.innerText = "dark term 🌙";
+      localStorage.setItem("theme_pref", "light");
+    } else {
+      htmlEl.classList.add("dark");
+      htmlEl.classList.remove("light");
+      if (moonIcon) moonIcon.classList.add("hidden");
+      if (sunIcon) {
+        sunIcon.classList.remove("hidden");
+        sunIcon.style.transform = "rotate(0deg)";
+      }
+      if (caption) caption.innerText = "light mode ☀️";
+      localStorage.setItem("theme_pref", "dark");
+    }
+  }
+
+  function toggleTheme() {
+    const isCurrentlyDark = document.documentElement.classList.contains("dark");
+    applyTheme(isCurrentlyDark);
+  }
+
+  // ==========================================
+  // DESK OBJECT DRAG & TOUCH PHYSICS
+  // ==========================================
+  let highestZ = 30;
+
+  function initDeskToys() {
+    const toys = document.querySelectorAll(".desk-toy");
+    toys.forEach(toy => {
+      let isDragging = false;
+      let startX, startY;
+      let initialLeft = 0;
+      let initialTop = 0;
+
+      toy.dataset.tx = 0;
+      toy.dataset.ty = 0;
+
+      toy.addEventListener("mousedown", dragStart);
+      toy.addEventListener("touchstart", dragStart, { passive: true });
+
+      function dragStart(e) {
+        if (e.type === "mousedown" && e.button !== 0) return;
+        // Don't drag if clicking an anchor or link directly
+        if (e.target.closest("a") && !e.target.closest(".desk-toy-handle")) {
+          // let normal click happen unless dragged
+        }
+        isDragging = true;
+        highestZ++;
+        toy.style.zIndex = highestZ;
+        toy.classList.add("is-dragging");
+
+        const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+
+        startX = clientX;
+        startY = clientY;
+        initialLeft = parseFloat(toy.dataset.tx || 0);
+        initialTop = parseFloat(toy.dataset.ty || 0);
+
+        window.addEventListener("mousemove", dragMove);
+        window.addEventListener("touchmove", dragMove, { passive: false });
+        window.addEventListener("mouseup", dragEnd);
+        window.addEventListener("touchend", dragEnd);
+      }
+
+      function dragMove(e) {
+        if (!isDragging) return;
+        const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        // If significant motion on touch, prevent browser native page scroll
+        if (e.type === "touchmove" && (Math.abs(dx) > 4 || Math.abs(dy) > 4)) {
+          if (e.cancelable) e.preventDefault();
+        }
+
+        const newX = initialLeft + dx;
+        const newY = initialTop + dy;
+        toy.dataset.tx = newX;
+        toy.dataset.ty = newY;
+        toy.style.transform = `translate(${newX}px, ${newY}px)`;
+      }
+
+      function dragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        toy.classList.remove("is-dragging");
+        window.removeEventListener("mousemove", dragMove);
+        window.removeEventListener("touchmove", dragMove);
+        window.removeEventListener("mouseup", dragEnd);
+        window.removeEventListener("touchend", dragEnd);
+      }
+    });
+  }
+
+  function scatterToys() {
+    const toys = document.querySelectorAll(".desk-toy");
+    const isMobile = window.innerWidth < 768;
+    toys.forEach(toy => {
+      const spreadX = isMobile ? 60 : 200;
+      const spreadY = isMobile ? 50 : 160;
+      const rx = (Math.random() - 0.5) * spreadX;
+      const ry = (Math.random() - 0.5) * spreadY;
+      const rRot = (Math.random() - 0.5) * 16;
+      toy.dataset.tx = rx;
+      toy.dataset.ty = ry;
+      toy.style.transform = `translate(${rx}px, ${ry}px) rotate(${rRot}deg)`;
+    });
+  }
+
+  function tidyDesk() {
+    const toys = document.querySelectorAll(".desk-toy");
+    toys.forEach(toy => {
+      toy.dataset.tx = 0;
+      toy.dataset.ty = 0;
+      toy.style.transform = `translate(0px, 0px) rotate(0deg)`;
+    });
+  }
+
+  // Init on DOM load
+  document.addEventListener("DOMContentLoaded", () => {
+    initDeskToys();
+    const saved = localStorage.getItem("theme_pref");
+    if (saved === "light") {
+      applyTheme(true);
+    } else {
+      applyTheme(false);
+    }
+  });
+</script>
+</body></html>

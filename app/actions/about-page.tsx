@@ -6,14 +6,16 @@ import { paragraphs } from '../ui/blocks.tsx'
 import { formatMonth, formatSpan } from '../ui/format.ts'
 import { EmailButton, Layout, type Frame } from '../ui/layout.tsx'
 import {
+  SectionHead,
   Statement,
-  ToolIconImg,
+  ToolTile,
+  ToolTiles,
   currentRole,
   earliestStart,
   firstRole,
   studying,
 } from '../ui/parts.tsx'
-import { toolIcon } from '../ui/tool-icons.ts'
+import { toolIcon, toolIcons } from '../ui/tool-icons.ts'
 
 export function AboutPage(handle: Handle<{ frame: Frame }>) {
   return () => {
@@ -36,6 +38,7 @@ export function AboutPage(handle: Handle<{ frame: Frame }>) {
         <History experience={frame.experience} />
         <Statement
           id="statement"
+          kicker="// how I work"
           heading="End-to-end ownership, from requirements to release"
           lead="On the Brixton POS contract I owned requirements, development, testing, deployment and performance tuning."
         />
@@ -54,57 +57,54 @@ function Hero(handle: Handle<{ frame: Frame }>) {
     let hasFacts = Boolean(now || first || degree)
 
     return (
-      <section class="hero hero--word bg-field" data-enter="" aria-labelledby="hero-h">
-        <div class="wrap">
-          <div class="hero-text hero__in">
-            <h1 id="hero-h" data-split="">
-              {since ? `Engineer since ${formatMonth(since)}` : `About ${site?.name ?? 'me'}`}
-            </h1>
-            <div class="grid hero__foot">
-              <div class="span-6">
-                <p class="hero__lead">
-                  Backend services in Node.js, TypeScript and Bun, plus the React and React Native
-                  clients that use them.
-                </p>
-                <div class="btn-row">
-                  <EmailButton site={site} />
-                  {projects.length > 0 ? (
-                    <a class="btn btn--secondary" href={routes.work.index.href()} data-cursor="link">
-                      See the case studies
-                    </a>
-                  ) : null}
-                </div>
-              </div>
-              {hasFacts ? (
-                <dl class="hero__facts hero__facts--col span-5 start-8">
-                  {now ? (
-                    <div>
-                      <dt>Now</dt>
-                      <dd>{now.company}</dd>
-                    </div>
-                  ) : null}
-                  {now ? (
-                    <div>
-                      <dt>Role</dt>
-                      <dd>{now.role}</dd>
-                    </div>
-                  ) : null}
-                  {first && first !== now ? (
-                    <div>
-                      <dt>First role</dt>
-                      <dd>{first.company}</dd>
-                    </div>
-                  ) : null}
-                  {degree ? (
-                    <div>
-                      <dt>Studying</dt>
-                      <dd>{degree.degree}</dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : null}
-            </div>
+      <section class="hero hero--page" aria-labelledby="hero-h" data-ruler-section="Intro">
+        <div class="wrap hero__stack">
+          <p class="term" data-enter="">
+            <span aria-hidden="true">&gt;</span> whoami
+          </p>
+          <h1 id="hero-h" class="hero__title" data-split="" data-hero="">
+            {since ? `Engineer since ${formatMonth(since)}` : `About ${site?.name ?? 'me'}`}
+          </h1>
+          <p class="lead" data-enter="">
+            Backend services in Node.js, TypeScript and Bun, plus the React and React Native clients that
+            use them.
+          </p>
+          <div class="btns" data-enter="">
+            <EmailButton site={site} />
+            {projects.length > 0 ? (
+              <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
+                See the case studies
+              </a>
+            ) : null}
           </div>
+          {hasFacts ? (
+            <dl class="facts" data-enter="">
+              {now ? (
+                <div>
+                  <dt>Now</dt>
+                  <dd>{now.company}</dd>
+                </div>
+              ) : null}
+              {now ? (
+                <div>
+                  <dt>Role</dt>
+                  <dd>{now.role}</dd>
+                </div>
+              ) : null}
+              {first && first !== now ? (
+                <div>
+                  <dt>First role</dt>
+                  <dd>{first.company}</dd>
+                </div>
+              ) : null}
+              {degree ? (
+                <div>
+                  <dt>Studying</dt>
+                  <dd>{degree.degree}</dd>
+                </div>
+              ) : null}
+            </dl>
+          ) : null}
         </div>
       </section>
     )
@@ -124,30 +124,28 @@ function Story(handle: Handle<{ site: Site | null }>) {
     if (story.length === 0 && education.length === 0 && links.length === 0) return null
 
     return (
-      <section class="section" id="story" aria-labelledby="story-h">
+      <section class="section" id="story" aria-labelledby="story-h" data-ruler-section="Background">
         <div class="wrap">
-          <div class="section-head">
-            <h2 id="story-h" data-split="">
-              Background and education
-            </h2>
-          </div>
-          <div class="grid">
+          <SectionHead id="story-h" title="Background and education" />
+          <div class="story">
             {story.length > 0 ? (
-              <div class="story span-7">
+              <div class="story__text">
                 {story.map((text, index) => (
-                  <p key={index}>{text}</p>
+                  <p key={index} data-reveal="">
+                    {text}
+                  </p>
                 ))}
               </div>
             ) : null}
-            <div class="span-4 start-9">
+            <aside class="story__aside">
               {education.length > 0 ? (
-                <div class="aside-block">
-                  <p class="t-label muted">Education</p>
+                <div class="panel aside-block" data-reveal="">
+                  <p class="label">Education</p>
                   {education.map((entry, index) => (
-                    <div key={index} class="stack-2">
-                      <h3 class="t-card">{entry.degree}</h3>
+                    <div key={index} class="aside-block__item">
+                      <h3>{entry.degree}</h3>
                       <p>{entry.school}</p>
-                      <p class="t-small muted">
+                      <p class="muted">
                         {entry.end ? formatSpan(entry.start, entry.end) : `From ${formatMonth(entry.start)}`}
                       </p>
                     </div>
@@ -155,14 +153,14 @@ function Story(handle: Handle<{ site: Site | null }>) {
                 </div>
               ) : null}
               {links.length > 0 ? (
-                <div class="aside-block">
-                  <p class="t-label muted">Elsewhere</p>
-                  <div class="ic-chip-row">
+                <div class="panel aside-block" data-reveal="">
+                  <p class="label">Elsewhere</p>
+                  <div class="aside-block__links">
                     {links.map((link) => {
                       let icon = toolIcon(link.name)
                       return (
-                        <a key={link.name} class="ic-chip ic-chip--lg" href={link.href} rel="me" data-cursor="link">
-                          {icon ? <ToolIconImg icon={icon} name={link.name} size={24} decorative /> : null}
+                        <a key={link.name} class="chip-link" href={link.href} rel="me" data-cursor="link">
+                          {icon ? <ToolTile icon={icon} name={link.name} size={24} /> : null}
                           {link.name}
                         </a>
                       )
@@ -170,7 +168,7 @@ function Story(handle: Handle<{ site: Site | null }>) {
                   </div>
                 </div>
               ) : null}
-            </div>
+            </aside>
           </div>
         </div>
       </section>
@@ -183,46 +181,68 @@ function History(handle: Handle<{ experience: Experience[] }>) {
     let { experience } = handle.props
     if (experience.length === 0) return null
     let since = earliestStart(experience)
-    let bullets = experience.reduce((sum, entry) => sum + entry.bullets.length, 0)
 
     return (
       <section
-        class="section ground-surface"
+        class="section section--band"
         id="experience"
-        style={{ '--h': bullets > 8 ? 2 : 1 }}
-        data-timeline=""
         aria-labelledby="experience-h"
+        data-ruler-section="Experience"
       >
         <div class="wrap">
-          <div class="section-head">
-            <h2 id="experience-h" data-split="">
-              Roles and what I shipped in each
-            </h2>
+          <SectionHead
+            id="experience-h"
+            title="Roles and what I shipped in each"
+            meta={`// ${experience.length} ${experience.length === 1 ? 'role' : 'roles'}`}
+          >
             {since ? (
-              <p>
-                {experience.length} {experience.length === 1 ? 'role' : 'roles'} since{' '}
-                {formatMonth(since)}.
+              <p class="section-head__lead">
+                {experience.length} {experience.length === 1 ? 'role' : 'roles'} since {formatMonth(since)}.
               </p>
             ) : null}
-          </div>
-          <ol class="history">
-            {experience.map((entry) => (
-              <li key={entry.id} class="grid" data-timeline-entry={entry.id}>
-                <div class="span-4">
-                  <p class="t-label history__when">{formatSpan(entry.start, entry.end)}</p>
+          </SectionHead>
+          <div class="tl" data-timeline="sticky">
+            <nav class="tl__nav" aria-label="Roles">
+              <ol>
+                {experience.map((entry) => (
+                  <li key={entry.id}>
+                    <a href={`#role-${entry.id}`} data-timeline-link={entry.id} data-cursor="link">
+                      <span class="tl__company">{entry.company}</span>
+                      <span class="tl__when">{formatSpan(entry.start, entry.end)}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+            <ol class="tl__entries">
+              {experience.map((entry) => (
+                <li
+                  key={entry.id}
+                  id={`role-${entry.id}`}
+                  class="panel tl__entry"
+                  data-timeline-entry={entry.id}
+                  data-tools={entry.skills.join('|')}
+                  data-reveal=""
+                >
+                  <p class="label">{formatSpan(entry.start, entry.end)}</p>
                   <h3>{entry.company}</h3>
-                  <p>{entry.role}</p>
-                </div>
-                {entry.bullets.length > 0 ? (
-                  <ul class="span-8 start-5">
-                    {entry.bullets.map((bullet, index) => (
-                      <li key={index}>{bullet}</li>
-                    ))}
-                  </ul>
-                ) : null}
-              </li>
-            ))}
-          </ol>
+                  <p class="tl__role">{entry.role}</p>
+                  {entry.bullets.length > 0 ? (
+                    <ul class="tl__bullets">
+                      {entry.bullets.map((bullet, index) => (
+                        <li key={index}>{bullet}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {toolIcons(entry.skills).length > 0 ? (
+                    <div class="tl__tools" aria-hidden="true">
+                      <ToolTiles names={entry.skills} limit={8} size={24} />
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
     )

@@ -3,8 +3,8 @@ import type { Handle } from 'remix/component'
 import type { Media, Project } from '../../data/content.ts'
 import { routes } from '../../routes.ts'
 import { Blocks, chapters } from '../../ui/blocks.tsx'
-import { EmailButton, Layout, type Frame } from '../../ui/layout.tsx'
-import { Statement, ToolIconImg } from '../../ui/parts.tsx'
+import { Arrow, EmailButton, Layout, type Frame } from '../../ui/layout.tsx'
+import { SectionHead, Statement, ToolTile, ToolTiles } from '../../ui/parts.tsx'
 import { toolIcon } from '../../ui/tool-icons.ts'
 
 export interface ProjectPageProps {
@@ -40,18 +40,9 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
       >
         <Hero frame={frame} project={project} />
         {chapters(blocks, media).length > 0 ? (
-          <section
-            class="section bg-dots"
-            id="story"
-            style={{ '--h': blocks.length > 8 ? 2 : 1 }}
-            aria-labelledby="story-h"
-          >
+          <section class="section" id="story" aria-labelledby="story-h" data-ruler-section="Story">
             <div class="wrap">
-              <div class="section-head">
-                <h2 id="story-h" data-split="">
-                  What I built on {project.title}
-                </h2>
-              </div>
+              <SectionHead id="story-h" title={`What I built on ${project.title}`} />
               <Blocks blocks={blocks} media={media} />
             </div>
           </section>
@@ -60,22 +51,33 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
         {next ? (
           <Statement
             id="next"
+            kicker="// next case study"
             heading={next.title}
-            lead={next.tagline ? `The next case study: ${next.tagline.charAt(0).toLowerCase()}${next.tagline.slice(1)}.` : undefined}
+            lead={
+              next.tagline
+                ? `${next.tagline.charAt(0).toUpperCase()}${next.tagline.slice(1)}.`
+                : undefined
+            }
           >
-            <a
-              class="link"
-              href={routes.work.show.href({ slug: next.slug })}
-              data-cursor="link"
-            >
-              Read the {next.title} case study
-            </a>
+            <p data-reveal="">
+              <a
+                class="btn btn--ghost"
+                href={routes.work.show.href({ slug: next.slug })}
+                data-cursor="link"
+              >
+                Read the {next.title} case study
+                <Arrow />
+              </a>
+            </p>
           </Statement>
         ) : (
-          <Statement id="next" heading="Every case study">
-            <a class="link" href={routes.work.index.href()} data-cursor="link">
-              See all work
-            </a>
+          <Statement id="next" kicker="// more" heading="Every case study">
+            <p data-reveal="">
+              <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
+                See all work
+                <Arrow />
+              </a>
+            </p>
           </Statement>
         )}
       </Layout>
@@ -89,40 +91,46 @@ function Hero(handle: Handle<{ frame: Frame; project: Project }>) {
     let hasFacts = Boolean(project.tagline) || project.stack.length > 0
 
     return (
-      <section class="hero hero--word bg-mist" data-enter="" aria-labelledby="hero-h">
-        <div class="wrap">
-          <div class="hero-text hero__in">
-            <h1 id="hero-h" data-split="">
-              {project.title}
-            </h1>
-            <div class="grid hero__foot">
-              <div class="span-6">
-                {project.summary ? <p class="hero__lead">{project.summary}</p> : null}
-                <div class="btn-row">
-                  <EmailButton site={frame.site} />
-                  <a class="btn btn--secondary" href={routes.work.index.href()} data-cursor="link">
-                    See all work
-                  </a>
-                </div>
-              </div>
-              {hasFacts ? (
-                <dl class="hero__facts hero__facts--col span-5 start-8">
-                  {project.tagline ? (
-                    <div>
-                      <dt>What it is</dt>
-                      <dd>{project.tagline}</dd>
-                    </div>
-                  ) : null}
-                  {project.stack.length > 0 ? (
-                    <div>
-                      <dt>Stack</dt>
-                      <dd>{project.stack.join(', ')}</dd>
-                    </div>
-                  ) : null}
-                </dl>
-              ) : null}
-            </div>
+      <section class="hero hero--page" aria-labelledby="hero-h" data-ruler-section="Intro">
+        <div class="wrap hero__stack">
+          <p class="term" data-enter="">
+            <span aria-hidden="true">&gt;</span> cat work/{project.slug}
+          </p>
+          <h1 id="hero-h" class="hero__title" data-split="" data-hero="">
+            {project.title}
+          </h1>
+          {project.summary ? (
+            <p class="lead" data-enter="">
+              {project.summary}
+            </p>
+          ) : null}
+          <div class="btns" data-enter="">
+            <EmailButton site={frame.site} />
+            <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
+              See all work
+            </a>
           </div>
+          {hasFacts ? (
+            <dl class="facts" data-enter="">
+              {project.tagline ? (
+                <div>
+                  <dt>What it is</dt>
+                  <dd>{project.tagline}</dd>
+                </div>
+              ) : null}
+              {project.stack.length > 0 ? (
+                <div>
+                  <dt>Stack</dt>
+                  <dd>
+                    <span class="facts__tiles" aria-hidden="true">
+                      <ToolTiles names={project.stack} limit={6} size={24} />
+                    </span>
+                    {project.stack.join(', ')}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+          ) : null}
         </div>
       </section>
     )
@@ -140,32 +148,29 @@ const STAGES: Array<{ name: string; line: string; tool: string }> = [
   { name: 'Inbox', line: 'Agents see only their assigned chats', tool: 'React' },
 ]
 
-
 function Pipeline() {
   return () => (
-    <section class="section ground-surface" id="pipeline" aria-labelledby="pipeline-h">
+    <section class="section section--band" id="pipeline" aria-labelledby="pipeline-h" data-ruler-section="Pipeline">
       <div class="wrap">
-        <div class="section-head">
-          <h2 id="pipeline-h" data-split="">
-            How a WhatsApp message reaches the inbox
-          </h2>
-          <p>
-            Webhooks from the Meta WhatsApp Cloud API are queued with BullMQ, processed by workers,
-            saved to MongoDB and broadcast through Redis Streams and Socket.IO.
+        <SectionHead id="pipeline-h" title="How a WhatsApp message reaches the inbox" meta="// 7 stages">
+          <p class="section-head__lead">
+            Webhooks from the Meta WhatsApp Cloud API are queued with BullMQ, processed by workers, saved to
+            MongoDB and broadcast through Redis Streams and Socket.IO. Pick a stage to follow the message
+            from there.
           </p>
-        </div>
-        <ol class="pipeline" data-pipeline="" data-parallax="0.05">
+        </SectionHead>
+        <ol class="pipe" data-pipeline="">
           {STAGES.map((stage, index) => {
             let icon = toolIcon(stage.tool)
             return (
-              <li key={stage.name} data-stage={index + 1}>
-                {icon ? (
-                  <span class="pipeline__node" aria-hidden="true">
-                    <ToolIconImg icon={icon} name={stage.tool} size={24} decorative />
-                  </span>
-                ) : null}
-                <span class="pipeline__num">{String(index + 1).padStart(2, '0')}</span>
-                <h3>{stage.name}</h3>
+              <li key={stage.name} class="pipe__stage" data-stage={index + 1}>
+                {icon ? <ToolTile icon={icon} name={stage.tool} size={48} /> : null}
+                <span class="pipe__num">{String(index + 1).padStart(2, '0')}</span>
+                <h3>
+                  <button type="button" class="pipe__pick" data-cursor="link">
+                    {stage.name}
+                  </button>
+                </h3>
                 <p>{stage.line}</p>
               </li>
             )

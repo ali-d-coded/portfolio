@@ -27,6 +27,8 @@ Refer to ./.agents/skills/remix/SKILL.md for the Remix mental model and how to f
 - `app/actions/home-page.tsx` and `app/actions/document.tsx` render the route-owned starter UI
 - `app/actions/public/` contains the browser runtime entry and interactive prompt button
 - `app/assets.ts` owns the server-side asset pipeline used by the asset route and render middleware
+- `app/ui/public/desk/` is the browser motion code (GSAP, Lenis, the desk toys); `app/actions/public/entry.ts` only imports it
+- `app/ui/doodles.tsx` holds the desk objects; `public/desk/desk.css` is the whole stylesheet (dark and paper themes)
 - Root `public/` contains static files served unchanged from the app root
 
 This starter intentionally begins small; add directories like `app/data/`, `app/middleware/`, `app/ui/`, and `test/` only when you need them.

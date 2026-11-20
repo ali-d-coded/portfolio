@@ -12,7 +12,7 @@ export const assets = createAssetServer({
   rootDir,
 
   allowFiles: ['app/routes.ts', 'app/**/public/**'],
-  allowPackages: ['remix'],
+  allowPackages: ['remix', 'gsap', 'lenis'],
   denyFiles: ['app/**/*.test.*'],
   sourceMaps: isDevelopment ? 'external' : undefined,
   minify: !isDevelopment,

@@ -2,7 +2,7 @@ import type { Handle, RemixNode } from 'remix/component'
 
 import type { Education, Experience, Media, Project, Site } from '../data/content.ts'
 import { routes } from '../routes.ts'
-import { iconClass, iconSrc, toolIcons, type ToolIcon } from './tool-icons.ts'
+import { iconSrc, toolIcons, type ToolIcon } from './tool-icons.ts'
 
 /** The role with no end date, else the newest one. */
 export function currentRole(experience: Experience[]): Experience | null {
@@ -22,7 +22,7 @@ export function firstRole(experience: Experience[]): Experience | null {
   return experience.find((entry) => entry.start === start) ?? null
 }
 
-/** The education entry still running, else the first one. */
+/** The education entry still running, else null. */
 export function studying(site: Site | null): Education | null {
   if (!site) return null
   return site.education.find((entry) => entry.end === null) ?? null
@@ -33,35 +33,54 @@ export function lowerFirst(text: string): string {
   return text.charAt(0).toLowerCase() + text.slice(1)
 }
 
+/** A section heading: a status light, the title, and a small count on the right. */
+export function SectionHead(
+  handle: Handle<{ id: string; title: string; meta?: string; children?: RemixNode }>,
+) {
+  return () => {
+    let { id, title, meta, children } = handle.props
+    return (
+      <div class="section-head">
+        <div class="section-head__row">
+          <span class="led" aria-hidden="true"></span>
+          <h2 id={id} data-split="">
+            {title}
+          </h2>
+          {meta ? <span class="label">{meta}</span> : null}
+        </div>
+        {children}
+      </div>
+    )
+  }
+}
+
 /**
- * A statement section of its own: one short headline set large (the liquid-type moment), one line under it,
- * and at most one link. It is the page's dealt moment, one screen tall.
+ * A statement section of its own: one short headline set large, one line under it, and at most one link.
  */
 export function Statement(
   handle: Handle<{
     id: string
     heading: string
     lead?: string
-    ground?: string
+    kicker?: string
     children?: RemixNode
   }>,
 ) {
   return () => {
-    let { id, heading, lead, ground, children } = handle.props
+    let { id, heading, lead, kicker, children } = handle.props
     return (
-      <section
-        class={ground ? `section statement ${ground}` : 'section statement'}
-        id={id}
-        aria-labelledby={`${id}-h`}
-      >
+      <section class="section statement" id={id} aria-labelledby={`${id}-h`}>
         <div class="wrap">
-          <div data-moment="liquid-type">
-            <h2 id={`${id}-h`} class="mo-lt__type" data-split="">
-              {heading}
-            </h2>
-            {lead ? <p class="statement__lead">{lead}</p> : null}
-            {children}
-          </div>
+          {kicker ? <p class="label statement__kicker">{kicker}</p> : null}
+          <h2 id={`${id}-h`} class="statement__line" data-split="">
+            {heading}
+          </h2>
+          {lead ? (
+            <p class="lead" data-reveal="">
+              {lead}
+            </p>
+          ) : null}
+          {children}
         </div>
       </section>
     )
@@ -75,7 +94,7 @@ export function ToolIconImg(
     let { icon, name, size, decorative = false } = handle.props
     return (
       <img
-        class={iconClass(icon, size)}
+        class="ic"
         src={iconSrc(icon)}
         alt={decorative ? '' : name}
         height={size}
@@ -85,9 +104,36 @@ export function ToolIconImg(
   }
 }
 
+/** A tool's real logo on a light plate, so every brand colour reads on both themes. */
+export function ToolTile(handle: Handle<{ icon: ToolIcon; name: string; size?: 24 | 32 | 40 | 48 }>) {
+  return () => {
+    let { icon, name, size = 32 } = handle.props
+    return (
+      <span class={`tile tile--${size}`} title={name}>
+        <img class="ic" src={iconSrc(icon)} alt="" loading="lazy" />
+      </span>
+    )
+  }
+}
+
+export function ToolTiles(handle: Handle<{ names: string[]; limit?: number; size?: 24 | 32 | 40 | 48 }>) {
+  return () => {
+    let { names, limit = 6, size = 32 } = handle.props
+    let icons = toolIcons(names, limit)
+    if (icons.length === 0) return null
+    return (
+      <>
+        {icons.map(({ name, icon }) => (
+          <ToolTile key={icon.file} icon={icon} name={name} size={size} />
+        ))}
+      </>
+    )
+  }
+}
+
 /**
  * A project's picture: its cover image when the store holds that media, else the real logos of its stack
- * on a lit panel. A cover id with no media behind it shows the logos, never a broken image.
+ * on a drafting panel. A cover id with no media behind it shows the logos, never a broken image.
  */
 export function ProjectVisual(handle: Handle<{ project: Project; media: Map<string, Media> }>) {
   return () => {
@@ -95,27 +141,23 @@ export function ProjectVisual(handle: Handle<{ project: Project; media: Map<stri
     let cover = project.coverMediaId ? media.get(project.coverMediaId) : undefined
     if (cover) {
       return (
-        <div class="panel" data-parallax="0.1">
-          <img
-            class="frame__img"
-            src={routes.media.href({ id: cover.id })}
-            alt={cover.alt}
-            loading="lazy"
-            data-source="client"
-            data-subject={cover.alt}
-          />
+        <div class="visual" data-parallax="0.06">
+          <img class="visual__img" src={routes.media.href({ id: cover.id })} alt={cover.alt} loading="lazy" />
         </div>
       )
     }
     let icons = toolIcons(project.stack, 6)
     if (icons.length === 0) return null
     return (
-      <div class="panel" data-parallax="0.1" role="img" aria-label={`Built with ${project.stack.join(', ')}`}>
-        <div class="tool-tiles">
+      <div
+        class="visual visual--tiles"
+        data-parallax="0.06"
+        role="img"
+        aria-label={`Built with ${project.stack.join(', ')}`}
+      >
+        <div class="visual__tiles">
           {icons.map(({ name, icon }) => (
-            <span key={icon.file} class="ic-tile ic-tile--48">
-              <ToolIconImg icon={icon} name={name} size={28} decorative />
-            </span>
+            <ToolTile key={icon.file} icon={icon} name={name} size={48} />
           ))}
         </div>
       </div>

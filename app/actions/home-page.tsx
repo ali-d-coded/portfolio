@@ -2,11 +2,14 @@ import type { Handle } from 'remix/component'
 
 import type { Media, Project, SkillGroup } from '../data/content.ts'
 import { routes } from '../routes.ts'
-import { formatMonth, formatSpan } from '../ui/format.ts'
-import { EmailButton, Layout, type Frame } from '../ui/layout.tsx'
+import { Desk, type DeskFigure } from '../ui/doodles.tsx'
+import { formatMonth, formatSpan, splitTail } from '../ui/format.ts'
+import { Arrow, EmailButton, Layout, type Frame } from '../ui/layout.tsx'
 import {
   ProjectVisual,
-  ToolIconImg,
+  SectionHead,
+  ToolTile,
+  ToolTiles,
   currentRole,
   earliestStart,
   lowerFirst,
@@ -53,58 +56,59 @@ function Hero(handle: Handle<{ frame: Frame }>) {
     let { site, projects, experience } = handle.props.frame
     let now = currentRole(experience)
     let since = earliestStart(experience)
-    let stack = selected(projects)[0]?.stack.slice(0, 3) ?? []
-    let degree = studying(site)
+    let chosen = selected(projects)
+    let stack = chosen[0]?.stack.slice(0, 3) ?? []
+    let figures: DeskFigure[] = chosen
+      .flatMap((project) =>
+        project.figures
+          .filter((figure) => figure.value.trim() !== '')
+          .map((figure) => ({ ...figure, project: project.title })),
+      )
+      .slice(0, 3)
+    let headline = site?.heroHeadline || site?.name || 'Portfolio'
+    let tail = splitTail(headline)
 
     return (
-      <section class="hero hero--statement bg-halo" data-enter="" aria-labelledby="hero-h">
-        <div class="wrap">
-          <div class="hero-text hero__in">
-            <div>
-              <h1 id="hero-h" data-split="">
-                {site?.heroHeadline || site?.name || 'Portfolio'}
-              </h1>
-              {site?.summary ? <p class="hero__lead">{site.summary}</p> : null}
-              <div class="btn-row">
-                <EmailButton site={site} />
-                {projects.length > 0 ? (
-                  <a class="btn btn--secondary" href={routes.work.index.href()} data-cursor="link">
-                    See the case studies
-                  </a>
-                ) : null}
-              </div>
-            </div>
-            {now || since || stack.length > 0 || degree ? (
-              <dl class="hero__facts">
-                {now ? (
-                  <div>
-                    <dt>Now</dt>
-                    <dd>
-                      {now.role}, {now.company}
-                    </dd>
-                  </div>
-                ) : null}
-                {since ? (
-                  <div>
-                    <dt>Since</dt>
-                    <dd>{formatMonth(since)}</dd>
-                  </div>
-                ) : null}
-                {stack.length > 0 ? (
-                  <div>
-                    <dt>Stack</dt>
-                    <dd>{stack.join(', ')}</dd>
-                  </div>
-                ) : null}
-                {degree ? (
-                  <div>
-                    <dt>Studying</dt>
-                    <dd>{degree.degree}</dd>
-                  </div>
-                ) : null}
-              </dl>
+      <section class="hero" aria-labelledby="hero-h" data-ruler-section="Intro">
+        <div class="wrap hero__grid">
+          <div class="hero__text">
+            {site?.role ? (
+              <p class="term" data-enter="">
+                <span aria-hidden="true">&gt;</span> {site.role}
+              </p>
             ) : null}
+            <h1 id="hero-h" class="hero__title" data-split="" data-hero="">
+              {tail ? (
+                <>
+                  {tail.head} <span class="hl">{tail.tail}</span>
+                </>
+              ) : (
+                headline
+              )}
+            </h1>
+            {site?.summary ? (
+              <p class="lead" data-enter="">
+                {site.summary}
+              </p>
+            ) : null}
+            <div class="btns" data-enter="">
+              <EmailButton site={site} />
+              {projects.length > 0 ? (
+                <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
+                  See the case studies
+                </a>
+              ) : null}
+            </div>
           </div>
+          <Desk
+            variant="home"
+            site={site}
+            now={now}
+            since={since}
+            stack={stack}
+            degree={studying(site)}
+            figures={figures}
+          />
         </div>
       </section>
     )
@@ -115,56 +119,53 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
   return () => {
     let { projects, media } = handle.props
     if (projects.length === 0) return null
-    let span = projects.length === 1 ? 'span-12' : 'span-6'
-    let figures = projects
-      .flatMap((project) =>
-        project.figures
-          .filter((figure) => figure.value.trim() !== '')
-          .map((figure) => ({ ...figure, project: project.title })),
-      )
-      .slice(0, 3)
 
     return (
-      <section class="section" id="work" aria-labelledby="work-h">
+      <section class="section" id="work" aria-labelledby="work-h" data-ruler-section="Work">
         <div class="wrap">
-          <div class="section-head">
-            <h2 id="work-h" data-split="">
-              Selected work. <span class="muted">The stack each one runs on, and its case study.</span>
-            </h2>
-          </div>
-          <div class="grid" data-project-list="">
-            {projects.map((project) => (
-              <article
-                key={project.id}
-                class={`card card--open ${span}`}
-                data-project={project.slug}
-                data-cursor="view"
-              >
-                <h3>{project.title}</h3>
-                {project.tagline ? <p>{project.tagline}</p> : null}
-                <a
-                  class="link"
-                  href={routes.work.show.href({ slug: project.slug })}
+          <SectionHead id="work-h" title="Selected work" meta={`// ${projects.length} case ${projects.length === 1 ? 'study' : 'studies'}`}>
+            <p class="section-head__lead">The stack each one runs on, and its case study.</p>
+          </SectionHead>
+          <div class="projects" data-project-list="">
+            {projects.map((project, index) => {
+              let figures = project.figures.filter((figure) => figure.value.trim() !== '').slice(0, 3)
+              return (
+                <article
+                  key={project.id}
+                  class="panel project"
+                  data-project={project.slug}
+                  data-tools={project.stack.join('|')}
+                  data-reveal=""
                   data-cursor="view"
                 >
-                  Read the {project.title} case study
-                </a>
-                <ProjectVisual project={project} media={media} />
-              </article>
-            ))}
+                  <p class="label project__index">// {String(index + 1).padStart(2, '0')}</p>
+                  <h3>{project.title}</h3>
+                  {project.tagline ? <p class="project__tagline">{project.tagline}</p> : null}
+                  <ProjectVisual project={project} media={media} />
+                  {figures.length > 0 ? (
+                    <ul class="figs">
+                      {figures.map((figure, figureIndex) => (
+                        <li key={figureIndex}>
+                          <span class="fig__value" data-count="">
+                            {figure.value}
+                          </span>
+                          <span class="fig__label">{figure.label}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <a
+                    class="btn btn--ghost project__link"
+                    href={routes.work.show.href({ slug: project.slug })}
+                    data-cursor="view"
+                  >
+                    Read the {project.title} case study
+                    <Arrow />
+                  </a>
+                </article>
+              )
+            })}
           </div>
-          {figures.length > 0 ? (
-            <div class="grid figures" data-moment="counter-rolls">
-              {figures.map((figure, index) => (
-                <div key={index} class="span-4">
-                  <p class="t-stat">{figure.value}</p>
-                  <p class="t-small muted">
-                    {figure.label} on {figure.project}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : null}
         </div>
       </section>
     )
@@ -177,29 +178,43 @@ function Skills(handle: Handle<{ groups: SkillGroup[] }>) {
     if (groups.length === 0) return null
 
     return (
-      <section
-        class="section ground-surface"
-        id="skills"
-        style={{ '--hm': 2 }}
-        aria-labelledby="skills-h"
-      >
+      <section class="section section--band" id="skills" aria-labelledby="skills-h" data-ruler-section="Skills">
         <div class="wrap">
-          <div class="section-head">
-            <h2 id="skills-h" data-split="">
-              Skills by area
-            </h2>
-            <p>The tools I use, from languages to deployment.</p>
-          </div>
-          <div class="grid skill-groups" data-skills="">
+          <SectionHead id="skills-h" title="Skills by area" meta={`// ${groups.length} groups`}>
+            <p class="section-head__lead">
+              The tools I use, from languages to deployment. Pick a group to see which projects and roles
+              used it.
+            </p>
+          </SectionHead>
+          <p class="skills__status" data-skills-status="" aria-live="polite">
+            No group selected.
+          </p>
+          <div class="skills" data-skills="">
             {groups.map((group) => (
-              <div key={group.id} class="skill-group span-4" data-skill-group={group.id}>
-                <h3>{group.name}</h3>
-                <div class="skill-group__icons" aria-hidden="true">
-                  {toolIcons(group.items, 6).map(({ name, icon }) => (
-                    <ToolIconImg key={icon.file} icon={icon} name={name} size={24} decorative />
+              <div
+                key={group.id}
+                class="panel skill"
+                data-skill-group={group.id}
+                data-tools={group.items.join('|')}
+                data-reveal=""
+              >
+                <h3>
+                  <button type="button" class="skill__pick" aria-pressed="false" data-cursor="link">
+                    {group.name}
+                  </button>
+                </h3>
+                {toolIcons(group.items).length > 0 ? (
+                  <div class="skill__icons" aria-hidden="true">
+                    {toolIcons(group.items, 6).map(({ name, icon }) => (
+                      <ToolTile key={icon.file} icon={icon} name={name} size={24} />
+                    ))}
+                  </div>
+                ) : null}
+                <ul class="chips">
+                  {group.items.map((item, index) => (
+                    <li key={index}>{item}</li>
                   ))}
-                </div>
-                <p class="skill-group__items">{group.items.join(', ')}</p>
+                </ul>
               </div>
             ))}
           </div>
@@ -216,30 +231,35 @@ function ExperienceRail(handle: Handle<{ frame: Frame }>) {
     let since = earliestStart(experience)
 
     return (
-      <section class="section bg-field" id="experience" aria-labelledby="experience-h">
+      <section class="section" id="experience" aria-labelledby="experience-h" data-ruler-section="Experience">
         <div class="wrap">
-          <div class="section-head section-head--row">
-            <div>
-              <h2 id="experience-h" data-split="">
-                Experience, newest first
-              </h2>
-              {since ? <p>Every role since {formatMonth(since)}.</p> : null}
-            </div>
-            <a class="link" href={`${routes.about.href()}#experience`} data-cursor="link">
-              Read the full history
-            </a>
-          </div>
-          <ol class="grid rail" data-timeline="">
+          <SectionHead
+            id="experience-h"
+            title="Experience, newest first"
+            meta={since ? `// since ${formatMonth(since)}` : undefined}
+          >
+            <p class="section-head__lead">
+              {since ? `Every role since ${formatMonth(since)}. ` : ''}
+              <a class="link" href={`${routes.about.href()}#experience`} data-cursor="link">
+                Read the full history
+              </a>
+            </p>
+          </SectionHead>
+          <ol class="rail" data-timeline="rail">
             {experience.map((entry) => (
-              <li key={entry.id} class="span-3" data-timeline-entry={entry.id}>
-                <p class="t-label muted">{formatSpan(entry.start, entry.end)}</p>
-                <h3 class="t-card">{entry.company}</h3>
-                <p>{entry.role}</p>
+              <li
+                key={entry.id}
+                class="rail__item"
+                data-timeline-entry={entry.id}
+                data-tools={entry.skills.join('|')}
+                data-reveal=""
+              >
+                <p class="label">{formatSpan(entry.start, entry.end)}</p>
+                <h3>{entry.company}</h3>
+                <p class="rail__role">{entry.role}</p>
                 {toolIcons(entry.skills).length > 0 ? (
-                  <div class="rail__icons" aria-hidden="true">
-                    {toolIcons(entry.skills, 5).map(({ name, icon }) => (
-                      <ToolIconImg key={icon.file} icon={icon} name={name} size={20} decorative />
-                    ))}
+                  <div class="rail__tools" aria-hidden="true">
+                    <ToolTiles names={entry.skills} limit={5} size={24} />
                   </div>
                 ) : null}
               </li>

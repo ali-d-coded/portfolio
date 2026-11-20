@@ -154,13 +154,61 @@ describe('public pages', () => {
     assert.equal((await get('/media/anything')).status, 404)
   })
 
-  it('serves the design kit and the app modules side by side under /assets', async () => {
-    let kit = await get('/assets/system.css')
-    assert.equal(kit.status, 200)
-    assert.match(kit.headers.get('Content-Type') ?? '', /text\/css/)
+  it('serves the stylesheet, the tool icons and the app modules', async () => {
+    let css = await get('/desk/desk.css')
+    assert.equal(css.status, 200)
+    assert.match(css.headers.get('Content-Type') ?? '', /text\/css/)
+
+    let icon = await get('/assets/icons/nodejs.svg')
+    assert.equal(icon.status, 200)
 
     let module = await get('/assets/app/actions/public/entry.ts')
     assert.equal(module.status, 200)
     assert.match(module.headers.get('Content-Type') ?? '', /javascript/)
+  })
+
+  it('every page carries the theme switch, the ruler and the transition curtain', async () => {
+    await resetStore(seedCopy())
+
+    for (let path of publicPaths) {
+      let html = await (await get(path)).text()
+      assert.match(html, /data-theme-toggle/, path)
+      assert.match(html, /data-ruler/, path)
+      assert.match(html, /class="curtain"/, path)
+    }
+  })
+
+  it('the home page has the desk and every doodle, linked to the owner profiles', async () => {
+    await resetStore(seedCopy())
+
+    let html = await (await get('/')).text()
+    assert.match(html, /data-desk/)
+    for (let toy of ['badge', 'sticky', 'sticker', 'mug', 'gears', 'rocket']) {
+      assert.match(html, new RegExp(`data-toy="${toy}"`), toy)
+    }
+    assert.match(html, /href="https:\/\/github\.com\/ali-d-coded"/)
+    assert.match(html, /href="https:\/\/linkedin\.com\/in\/ali-afthab"/)
+  })
+
+  it('the contact page has the stickers and no badge', async () => {
+    await resetStore(seedCopy())
+
+    let html = await (await get('/contact')).text()
+    assert.match(html, /data-variant="contact"/)
+    assert.doesNotMatch(html, /data-toy="badge"/)
+    assert.match(html, /data-toy="sticker"/)
+  })
+
+  it('the skills panel and the experience entries carry the tools they use', async () => {
+    await resetStore(seedCopy())
+
+    let home = await (await get('/')).text()
+    assert.match(home, /data-skill-group=/)
+    assert.match(home, /data-timeline-entry=[^>]*data-tools=|data-tools=[^>]*data-timeline-entry=/)
+    let about = await (await get('/about')).text()
+    assert.match(about, /data-timeline="sticky"/)
+    assert.match(about, /data-timeline-link=/)
+    let pipeline = await (await get('/work/eazycrm')).text()
+    assert.match(pipeline, /data-pipeline/)
   })
 })
