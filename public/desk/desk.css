@@ -695,9 +695,9 @@ html.arrive .curtain.is-px { background: transparent; }
 .mb__letter { position: absolute; left: 0; top: 0; z-index: 2; visibility: hidden; pointer-events: none; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45)); will-change: transform; }
 .mb__sheet { position: absolute; inset: 0; background: #fbfbf9; clip-path: polygon(50% 0, 100% 0, 100% 100%, 0 100%, 0 0); }
 .mb__paper { position: absolute; inset: 0; padding: 7% 9%; color: #1c1c20; outline: 1px dashed rgba(28, 28, 32, 0.22); outline-offset: -12px; background: repeating-linear-gradient(to right, rgba(28, 28, 32, 0.12) 0 1px, transparent 1px 12px) bottom 9px left 9% / 82% 5px no-repeat; }
-.mb__date { font: 500 11px/1.4 var(--type); letter-spacing: 0.1em; color: rgba(28, 28, 32, 0.55); }
-.mb__text { max-width: 72%; margin-top: 18%; font: 400 clamp(14px, 1.7vw, 18px)/1.5 var(--type); color: #1c1c20; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
-.mb__stamp { position: absolute; top: 6%; right: 7%; display: grid; justify-items: center; align-content: center; gap: 6px; width: 19%; aspect-ratio: 4 / 5; border: 3px dotted #fbfbf9; outline: 1px solid rgba(28, 28, 32, 0.12); background: linear-gradient(160deg, #fde047, #facc15 55%, #eab308); color: #1c1c20; font: 700 7px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 0 0 1px rgba(28, 28, 32, 0.1); }
+.mb__date { font: 500 9px/1.4 var(--type); letter-spacing: 0.1em; color: rgba(28, 28, 32, 0.55); }
+.mb__text { max-width: 72%; margin-top: 18%; font: 400 clamp(11px, 1.2vw, 13px)/1.5 var(--type); color: #1c1c20; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.mb__stamp { position: absolute; top: 6%; right: 7%; display: grid; justify-items: center; align-content: center; gap: 4px; width: 19%; aspect-ratio: 4 / 5; border: 2px dotted #fbfbf9; outline: 1px solid rgba(28, 28, 32, 0.12); background: linear-gradient(160deg, #fde047, #facc15 55%, #eab308); color: #1c1c20; font: 700 6px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 0 0 1px rgba(28, 28, 32, 0.1); }
 .mb__stamp-icon { width: 46%; height: auto; }
 .mb__postmark { position: absolute; top: 10%; right: 22%; width: 34%; height: auto; color: rgba(28, 28, 32, 0.34); }
 .mb__flap { position: absolute; inset: 0; z-index: 2; opacity: 0; }

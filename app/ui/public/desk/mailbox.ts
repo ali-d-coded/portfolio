@@ -12,7 +12,8 @@ const SHEET = 'polygon(50% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%)'
 const HOUSE = 'polygon(50% 0%, 100% 28%, 100% 100%, 0% 100%, 0% 28%)'
 const TRIANGLE = 'polygon(50% 0%, 97% 88%, 100% 100%, 0% 100%, 3% 88%)'
 
-// The plane's loop around the page, as fractions of the window. It starts where the letter was folded.
+// The plane's loop around the page, as fractions of the window. It starts where the letter was folded and
+// finishes by dropping onto the send button's icon, which is worked out when it flies.
 const FLIGHT: Array<[number, number]> = [
   [0.62, 0.22],
   [0.4, 0.06],
@@ -24,9 +25,7 @@ const FLIGHT: Array<[number, number]> = [
   [0.96, 0.45],
   [0.9, 0.2],
   [0.68, 0.3],
-  [0.64, 0.55],
-  [0.66, 0.85],
-  [0.66, 1.12],
+  [0.64, 0.5],
 ]
 
 interface Point {
@@ -275,10 +274,10 @@ export function initMailbox(reduced: boolean): void {
     let barY = (vh - barHeight) / 2 - 24
     let barTop = vh - 24 - barHeight
 
-    let width = Math.min(340, vw * 0.82)
+    let width = Math.min(250, vw * 0.64)
     let height = width * 1.22
-    if (height > vh * 0.58) {
-      height = vh * 0.58
+    if (height > vh * 0.46) {
+      height = vh * 0.46
       width = height / 1.22
     }
     let left = vw / 2 - width / 2
@@ -295,7 +294,7 @@ export function initMailbox(reduced: boolean): void {
     gsap.set(letter, { x: left, y: startY, width, height, scale: 0.96, scaleX: 0.96, transformOrigin: '50% 100%', autoAlpha: 0 })
     gsap.set(plane, { autoAlpha: 0 })
 
-    let planeSize = width * 0.5
+    let planeSize = width * 0.4
     let centerX = left + width / 2
     let centerY = endY + height - (height * 0.74) / 2
 
@@ -337,12 +336,23 @@ export function initMailbox(reduced: boolean): void {
     })
   }
 
-  /** The plane loops around the window, drawing its trail, and leaves through the bottom. */
+  /** The plane loops around the window, drawing its trail, and comes down on the send button's icon. */
   function fly(): Promise<void> {
     let vw = window.innerWidth
     let vh = window.innerHeight
     let start: Point = { x: Number(gsap.getProperty(plane, 'x')), y: Number(gsap.getProperty(plane, 'y')) }
-    let table = spline([start, ...FLIGHT.map(([fx, fy]) => ({ x: fx * vw, y: fy * vh }))], 420)
+
+    // Where it lands: the spinner is on the button where the icon will be, so its centre is the target.
+    let spin = sendButton.querySelector<HTMLElement>('.mb__spin')!.getBoundingClientRect()
+    let target: Point = { x: spin.left + spin.width / 2, y: spin.top + spin.height / 2 }
+    let startSize = Number(gsap.getProperty(plane, 'width'))
+    let landedScale = Math.min(1, 18 / startSize)
+    // The icon points up and to the right, so the plane turns to that as it arrives.
+    let landedHeading = -45
+
+    // It comes down onto the button from above, steeply enough to read as a landing.
+    let approach: Point = { x: target.x - 40, y: Math.max(vh * 0.4, target.y - 190) }
+    let table = spline([start, ...FLIGHT.map(([fx, fy]) => ({ x: fx * vw, y: fy * vh })), approach, target], 460)
     let last = table.length - 1
     let heading = -90
     let progress = { t: 0 }
@@ -352,7 +362,7 @@ export function initMailbox(reduced: boolean): void {
     return new Promise((resolve) => {
       gsap.to(progress, {
         t: 1,
-        duration: 2.5,
+        duration: 2.6,
         ease: 'sine.inOut',
         onUpdate() {
           let at = progress.t * last
@@ -365,8 +375,15 @@ export function initMailbox(reduced: boolean): void {
           let ahead = table[Math.min(last, index + 3)]!
           let behind = table[Math.max(0, index - 3)]!
           let angle = (Math.atan2(ahead.y - behind.y, ahead.x - behind.x) * 180) / Math.PI
+          // In the last stretch it settles to the icon's angle.
+          let settle = Math.min(1, Math.max(0, (progress.t - 0.88) / 0.12))
+          angle += (landedHeading - angle) * settle * settle
           heading += ((((angle - heading) % 360) + 540) % 360) - 180
-          gsap.set(plane, { x: point.x, y: point.y, rotation: heading, scale: 1 - 0.25 * progress.t })
+
+          // Big for the loop, then it shrinks to the size of the icon as it lands.
+          let shrink = Math.min(1, Math.max(0, (progress.t - 0.78) / 0.22))
+          let scale = (1 - 0.25 * Math.min(1, progress.t / 0.78)) * (1 - shrink * shrink * (1 - landedScale / 0.75))
+          gsap.set(plane, { x: point.x, y: point.y, rotation: heading, scale })
 
           let tailIndex = Math.max(0, index - 110)
           let tail = table[tailIndex]!
@@ -379,17 +396,20 @@ export function initMailbox(reduced: boolean): void {
           gradient.setAttribute('y1', String(tail.y))
           gradient.setAttribute('x2', String(point.x))
           gradient.setAttribute('y2', String(point.y))
-
-          // The button gets its plane back as the real one leaves.
-          if (progress.t > 0.86) card.classList.add('is-flying')
         },
         onComplete() {
+          // The plane becomes the button's icon, with a small pop as it settles in.
           gsap.set(plane, { autoAlpha: 0 })
-          gsap.to([glow, line], { opacity: 0, duration: 0.3, onComplete: resolve })
+          card.classList.add('is-flying')
+          let icon = sendButton.querySelector<HTMLElement>('.mb__icon')
+          if (icon) gsap.fromTo(icon, { scale: 1.7, rotation: -12 }, { scale: 1, rotation: 0, duration: 0.45, ease: 'back.out(2.4)', clearProps: 'transform' })
+          gsap.to([glow, line], { opacity: 0, duration: 0.5, ease: 'power1.out' })
+          window.setTimeout(resolve, 650)
         },
       })
     })
   }
+
 
   // --- After sending ------------------------------------------------------------------------------------
 
