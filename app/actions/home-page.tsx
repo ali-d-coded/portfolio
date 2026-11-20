@@ -6,7 +6,6 @@ import { Desk } from '../ui/doodles.tsx'
 import { formatMonth, formatSpan, splitTail } from '../ui/format.ts'
 import { Arrow, EmailButton, Layout, ResumeButtons, type Frame } from '../ui/layout.tsx'
 import {
-  ProjectVisual,
   SectionHead,
   ToolTile,
   ToolTiles,
@@ -14,6 +13,7 @@ import {
   earliestStart,
   lowerFirst,
   studying,
+  toolTone,
 } from '../ui/parts.tsx'
 import { toolIcons } from '../ui/tool-icons.ts'
 
@@ -140,51 +140,69 @@ function Hero(handle: Handle<{ frame: Frame }>) {
 
 function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, Media> }>) {
   return () => {
-    let { projects, media } = handle.props
+    let { projects } = handle.props
     if (projects.length === 0) return null
 
+    let count = String(projects.length).padStart(2, '0')
     return (
       <section class="section" id="work" aria-labelledby="work-h" data-ruler-section="Work">
         <div class="wrap">
-          <SectionHead id="work-h" title="Selected work" meta={`// ${projects.length}`}>
-            <p class="section-head__lead">Built at my current and previous companies, with the stack each one runs on.</p>
-          </SectionHead>
+          <div class="showcase__head">
+            <svg class="showcase__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+              <rect x="3" y="3" width="6" height="6" />
+              <rect x="15" y="9" width="6" height="6" />
+              <rect x="3" y="15" width="6" height="6" />
+              <path d="M9 6h3v12H9M12 12h3" />
+            </svg>
+            <h2 id="work-h" data-split="">
+              Key Featured Projects &amp; Systems
+            </h2>
+            <span class="showcase__meta">
+              Showcase // {count} flagship build{projects.length === 1 ? '' : 's'}
+            </span>
+          </div>
           <div class="projects" data-project-list="">
             {projects.map((project, index) => {
-              let figures = project.figures.filter((figure) => figure.value.trim() !== '').slice(0, 3)
+              let details = (project.details ?? []).filter((row) => row.label.trim() && row.value.trim())
+              let rowTones = index % 2 === 0 ? ['', 'green', 'blue'] : ['', 'green', 'amber']
               return (
                 <article
                   key={project.id}
-                  class="panel project"
+                  class={`panel project project--${index % 2 === 0 ? 'amber' : 'blue'}`}
                   data-project={project.slug}
                   data-tools={project.stack.join('|')}
                   data-reveal=""
                   data-cursor="view"
                 >
-                  <p class="label project__index">// {String(index + 1).padStart(2, '0')}</p>
-                  <h3>{project.title}</h3>
-                  {project.tagline ? <p class="project__tagline">{project.tagline}</p> : null}
-                  <ProjectVisual project={project} media={media} />
-                  {figures.length > 0 ? (
-                    <ul class="figs">
-                      {figures.map((figure, figureIndex) => (
-                        <li key={figureIndex}>
-                          <span class="fig__value" data-count="">
-                            {figure.value}
-                          </span>
-                          <span class="fig__label">{figure.label}</span>
+                  <div class="project__top">
+                    {project.badge ? <span class="project__badge">{project.badge}</span> : <span></span>}
+                    <span class="project__index">Project #{String(index + 1).padStart(2, '0')}</span>
+                  </div>
+                  <h3>
+                    <a class="project__title" href={routes.work.show.href({ slug: project.slug })} data-cursor="view">
+                      {project.headline || project.title}
+                    </a>
+                  </h3>
+                  {project.summary ? <p class="project__summary">{project.summary}</p> : null}
+                  {project.stack.length > 0 ? (
+                    <ul class="stackchips" aria-label="Tools">
+                      {project.stack.map((tool) => (
+                        <li key={tool} class={`stackchip${toolTone(tool) ? ` stackchip--${toolTone(tool)}` : ''}`}>
+                          {tool}
                         </li>
                       ))}
                     </ul>
                   ) : null}
-                  <a
-                    class="btn btn--ghost project__link"
-                    href={routes.work.show.href({ slug: project.slug })}
-                    data-cursor="view"
-                  >
-                    See {project.title}
-                    <Arrow />
-                  </a>
+                  {details.length > 0 ? (
+                    <dl class="cardfacts">
+                      {details.map((row, rowIndex) => (
+                        <div key={row.label} class="cardfacts__row">
+                          <dt>{row.label}:</dt>
+                          <dd class={rowTones[rowIndex] ? `tone--${rowTones[rowIndex]}` : undefined}>{row.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  ) : null}
                 </article>
               )
             })}

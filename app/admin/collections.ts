@@ -5,10 +5,12 @@ import { SlugTakenError } from '../data/errors.ts'
 import type { ContentStore } from '../data/store.ts'
 import {
   formatBlocks,
+  formatDetails,
   formatFigures,
   isMonth,
   isSafeUrl,
   parseBlocks,
+  parseDetails,
   parseFigures,
   parseLines,
   parseTags,
@@ -68,6 +70,9 @@ const projects: Collection = {
     { name: 'title', label: 'Title', type: 'text', required: true },
     { name: 'slug', label: 'Address', type: 'text', hint: 'The end of the page URL. Left empty, it is made from the title.' },
     { name: 'tagline', label: 'Tagline', type: 'text' },
+    { name: 'headline', label: 'Home page card title', type: 'text', hint: 'Optional. Left empty, the card uses the title.' },
+    { name: 'badge', label: 'Badge', type: 'text', hint: 'A short label on the home page card, such as Flagship SaaS.' },
+    { name: 'details', label: 'Card facts', type: 'textarea', rows: 4, hint: 'Up to six rows on the home page card, one per line: Architecture | API Gateway + Tenant RBAC' },
     { name: 'summary', label: 'Summary', type: 'textarea', rows: 4, hint: 'Shown on the project cards.' },
     { name: 'stack', label: 'Tools', type: 'text', hint: 'Separated by commas.' },
     { name: 'liveUrl', label: 'Live site', type: 'url', hint: 'A link with a preview on the project page.' },
@@ -99,6 +104,9 @@ const projects: Collection = {
       title: project.title,
       slug: project.slug,
       tagline: project.tagline,
+      headline: project.headline ?? '',
+      badge: project.badge ?? '',
+      details: formatDetails(project.details ?? []),
       summary: project.summary,
       stack: project.stack.join(', '),
       liveUrl: project.liveUrl ?? '',
@@ -139,6 +147,12 @@ const projects: Collection = {
       published: checked(values, 'published'),
       position: existing?.position ?? all.length,
     }
+    let headline = (values.headline ?? '').trim().slice(0, 140)
+    if (headline) project.headline = headline
+    let badge = (values.badge ?? '').trim().slice(0, 40)
+    if (badge) project.badge = badge
+    let details = parseDetails(values.details ?? '')
+    if (details.length > 0) project.details = details
     if (liveUrl) project.liveUrl = liveUrl
     if (previewImage) project.previewImage = previewImage
     try {

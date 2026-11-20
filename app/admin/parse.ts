@@ -1,4 +1,4 @@
-import type { Block, Education, Figure } from '../data/content.ts'
+import type { Block, Detail, Education, Figure } from '../data/content.ts'
 
 /** Plain-text forms of the structured content, so every field in the admin is just text. */
 
@@ -129,4 +129,19 @@ const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/
 
 export function isMonth(value: string): boolean {
   return MONTH.test(value)
+}
+
+/** One row per line: `Architecture | API Gateway + Tenant RBAC`. */
+export function parseDetails(text: string): Detail[] {
+  let rows: Detail[] = []
+  for (let line of parseLines(text)) {
+    let [label = '', ...rest] = line.split('|')
+    let value = rest.join('|').trim()
+    if (label.trim() && value) rows.push({ label: label.trim().replace(/:$/, ''), value })
+  }
+  return rows.slice(0, 6)
+}
+
+export function formatDetails(rows: Detail[]): string {
+  return rows.map((row) => `${row.label} | ${row.value}`).join('\n')
 }

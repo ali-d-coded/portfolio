@@ -427,9 +427,37 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 @media (min-width: 900px) { .projects { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .project { display: flex; flex-direction: column; gap: 14px; transition: border-color 0.3s, box-shadow 0.3s, opacity 0.3s; }
 .project:hover { border-color: color-mix(in oklab, var(--amber) 45%, transparent); box-shadow: var(--panel-shadow), 0 0 35px -8px color-mix(in oklab, var(--amber) 22%, transparent); }
-.project h3 { font-size: clamp(22px, 2.6vw, 30px); }
-.project__tagline { color: var(--ink-2); }
-.project__link { align-self: flex-start; margin-top: auto; }
+.project { gap: 18px; --tone: var(--amber-text); }
+.project--blue { --tone: var(--cyan-text); }
+.project h3 { font-size: clamp(22px, 2.6vw, 30px); line-height: 1.25; }
+.project__top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.project__badge { padding: 4px 10px; border-radius: 4px; border: 1px solid color-mix(in oklab, var(--tone) 45%, transparent); background: color-mix(in oklab, var(--tone) 12%, transparent); color: var(--tone); font: 700 11px/1.4 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; }
+.project__index { color: var(--ink-3); font: 500 13px/1 var(--mono); letter-spacing: 0.05em; text-transform: uppercase; }
+/* the whole card is the link to the project page, through the title */
+.project__title { color: inherit; text-decoration: none; }
+.project__title::after { content: ""; position: absolute; inset: 0; border-radius: var(--r); }
+.project__title:focus-visible { outline: none; }
+.project__title:focus-visible::after { outline: 2px solid var(--amber); outline-offset: 3px; }
+.project__summary { margin: 0; color: var(--ink-2); font-size: 15px; line-height: 1.65; }
+.stackchips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.stackchip { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); background: color-mix(in oklab, var(--ink) 6%, transparent); color: var(--ink); font: 500 12px/1.5 var(--mono); }
+.stackchip--amber { color: var(--amber-text); border-color: color-mix(in oklab, var(--amber) 24%, transparent); background: color-mix(in oklab, var(--amber) 10%, transparent); }
+.stackchip--green { color: var(--green); border-color: color-mix(in oklab, var(--green) 26%, transparent); background: color-mix(in oklab, var(--green) 10%, transparent); }
+.stackchip--red { color: var(--rose); border-color: color-mix(in oklab, var(--rose) 26%, transparent); background: color-mix(in oklab, var(--rose) 10%, transparent); }
+.stackchip--blue { color: var(--cyan-text); border-color: color-mix(in oklab, var(--cyan) 26%, transparent); background: color-mix(in oklab, var(--cyan) 10%, transparent); }
+.cardfacts { display: grid; gap: 8px; margin: auto 0 0; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--r); background: color-mix(in oklab, var(--bg) 60%, transparent); font: 500 13px/1.5 var(--mono); }
+.cardfacts__row { display: flex; justify-content: space-between; gap: 16px; }
+.cardfacts dt { color: var(--ink-3); flex: none; }
+.cardfacts dd { margin: 0; text-align: right; color: var(--ink); }
+.tone--green { color: var(--green) !important; }
+.tone--blue { color: var(--cyan-text) !important; }
+.tone--amber { color: var(--amber-text) !important; }
+@media (max-width: 520px) { .cardfacts__row { flex-direction: column; gap: 2px; } .cardfacts dd { text-align: left; } }
+.showcase__head { display: flex; align-items: center; gap: 12px; margin-bottom: clamp(20px, 3vw, 32px); padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.showcase__icon { flex: none; width: 20px; height: 20px; color: var(--amber-text); }
+.showcase__head h2 { font-size: clamp(16px, 2vw, 20px); }
+.showcase__meta { margin-left: auto; color: var(--ink-3); font: 500 11px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; text-align: right; }
+@media (max-width: 560px) { .showcase__head { flex-wrap: wrap; } .showcase__meta { margin-left: 32px; text-align: left; flex-basis: 100%; } }
 .visual { overflow: hidden; border-radius: var(--r); background: color-mix(in oklab, var(--bg) 70%, var(--panel)); border: 1px solid var(--line); }
 .visual--tiles { display: grid; place-items: center; min-height: 132px; padding: 24px; background-image: radial-gradient(circle, var(--grid-dot) 1px, transparent 1px); background-size: 16px 16px; }
 .visual__tiles { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }

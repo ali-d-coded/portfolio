@@ -31,9 +31,16 @@ export const seedSnapshot: ContentSnapshot = {
       slug: 'eazycrm',
       title: 'EazyCRM',
       tagline: 'Multi-tenant WhatsApp Business CRM',
-      stack: ['Node.js', 'Bun', 'TypeScript', 'MongoDB', 'Redis'],
+      headline: 'EazyCRM — Multi-Tenant WhatsApp Business CRM',
+      badge: 'Flagship SaaS',
+      details: [
+        { label: 'Architecture', value: 'API Gateway + Tenant RBAC' },
+        { label: 'Ingestion', value: 'Meta Cloud Webhooks > BullMQ Queue' },
+        { label: 'Mobile Client', value: 'Expo Native with Offline Sync' },
+      ],
+      stack: ['Node.js', 'Bun', 'TypeScript', 'MongoDB', 'Redis', 'BullMQ', 'Redis Streams', 'Socket.IO', 'React', 'React Native'],
       summary:
-        'Gateway-centric microservices platform for team inbox, bulk campaigns, WhatsApp Groups and e-commerce automation, with React web, React Native mobile and admin dashboard clients.',
+        'Gateway-centric microservices platform built for team inboxes, automated bulk drip campaigns, WhatsApp Groups, and e-commerce automation. Implements fault-tolerant webhook ingestion with BullMQ and tenant-scoped real-time delivery via Redis Streams and Socket.IO.',
       figures: [
         { value: '30+', label: 'client businesses' },
         { value: '3', label: 'client apps: web, mobile and admin' },
@@ -76,9 +83,16 @@ export const seedSnapshot: ContentSnapshot = {
       slug: 'restaurant-pos',
       title: 'Restaurant POS Platform',
       tagline: 'Restaurant point of sale with real-time sales analytics',
-      stack: ['Node.js', 'Laravel', 'PostgreSQL'],
+      headline: 'Restaurant Point of Sale (POS) Platform',
+      badge: 'Enterprise POS',
+      details: [
+        { label: 'Primary Focus', value: 'High-Concurrency POS Engine' },
+        { label: 'Data Tier', value: 'PostgreSQL Composite Indexing' },
+        { label: 'Lifecycle', value: 'End-to-End SDLC & Performance Tuning' },
+      ],
+      stack: ['Node.js', 'Laravel', 'PostgreSQL', 'MySQL', 'Real-time Analytics', 'Query Optimization'],
       summary:
-        'Scalable APIs and backend services powering real-time analytics, order management and operational workflows.',
+        'High-performance Point of Sale engine engineered with real-time operational workflows and sales analytics. Built scalable RESTful APIs with Node.js and Laravel, optimizing heavy PostgreSQL and MySQL queries and indexes for fast reporting under lunch/dinner spikes.',
       figures: [],
       blocks: [
         { type: 'heading', text: 'Overview' },
@@ -104,6 +118,12 @@ export const seedSnapshot: ContentSnapshot = {
       slug: 'nanma-charitable-foundation',
       title: 'Nanma Charitable Foundation',
       tagline: 'Website for a registered charity in Kerala',
+      badge: 'Charity Website',
+      details: [
+        { label: 'Framework', value: 'Remix, server rendered' },
+        { label: 'Motion', value: 'GSAP scroll and page effects' },
+        { label: 'Design', value: 'Google Stitch + Tailwind CSS' },
+      ],
       stack: ['Remix', 'GSAP', 'Tailwind CSS', 'Google Stitch'],
       summary:
         'Website for Nanma Charitable Foundation Society, a registered charitable organisation in Pantharangadi, Malappuram, Kerala: its mission, focus areas, planned 2026 programmes and ways to volunteer, support or partner.',

@@ -323,6 +323,28 @@ describe('admin', () => {
     }
   })
 
+  it('shows a project badge and card facts on the home page', async () => {
+    let cookie = await login()
+    // The home page shows two featured projects at most, so the seeded ones step aside.
+    for (let seeded of await store.listProjects()) await store.saveProject({ ...seeded, featured: false })
+    let created = await post(
+      '/admin/c/projects/new',
+      { title: 'Showcase One', tagline: 'Tag', summary: 'Sum', stack: 'Node.js, Redis', headline: 'Showcase One — Tag', badge: 'Flagship SaaS', details: 'Architecture | API Gateway\nbroken line\nIngestion: | Queue', published: 'on', featured: 'on' },
+      cookie,
+    )
+    assert.equal(created.status, 303)
+    let project = await store.getProject('showcase-one')
+    assert.deepEqual(project?.details, [
+      { label: 'Architecture', value: 'API Gateway' },
+      { label: 'Ingestion', value: 'Queue' },
+    ])
+    let html = await (await request('/')).text()
+    assert.match(html, /Flagship SaaS/)
+    assert.match(html, /Showcase One — Tag/)
+    assert.match(html, /Architecture:/)
+    assert.match(html, /stackchip--amber/)
+  })
+
   it('downloads a backup', async () => {
     let cookie = await login()
     let response = await request('/admin/backup', { cookie })

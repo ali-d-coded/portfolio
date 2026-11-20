@@ -9,6 +9,11 @@ export type Block =
   | { type: 'image'; mediaId: string }
   | { type: 'figures'; items: Figure[] }
 
+export interface Detail {
+  label: string
+  value: string
+}
+
 export interface Education {
   degree: string
   school: string
@@ -39,6 +44,12 @@ export interface Project {
   figures: Figure[]
   blocks: Block[]
   coverMediaId: string | null
+  /** The title on the home page card, when it should read differently from `title`. */
+  headline?: string
+  /** A short label on the home page card, such as `Flagship SaaS`. */
+  badge?: string
+  /** Key facts on the home page card, shown as label and value rows. */
+  details?: Detail[]
   /** The project's live site, shown as a link with a preview. */
   liveUrl?: string
   /** A screenshot of the live site, a path under `public/`. */

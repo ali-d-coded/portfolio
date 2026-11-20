@@ -171,3 +171,16 @@ export function ProjectVisual(handle: Handle<{ project: Project; media: Map<stri
     )
   }
 }
+
+/** The colour a tool chip is drawn in. Tools with no entry stay plain. */
+const TONES: Array<[RegExp, 'amber' | 'green' | 'red' | 'blue']> = [
+  [/^(node|bun|bullmq|mysql)/, 'amber'],
+  [/^(mongodb|real-time|gsap)/, 'green'],
+  [/^(redis|laravel)/, 'red'],
+  [/^(postgres|socket|react$|tailwind|remix)/, 'blue'],
+]
+
+export function toolTone(name: string): 'amber' | 'green' | 'red' | 'blue' | null {
+  let key = name.trim().toLowerCase()
+  return TONES.find(([pattern]) => pattern.test(key))?.[1] ?? null
+}
