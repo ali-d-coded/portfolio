@@ -44,6 +44,11 @@ export default createController(routes, {
           'Content-Length': String(bytes.length),
           'Cache-Control': 'public, max-age=3600',
           'X-Content-Type-Options': 'nosniff',
+          // Even if an image were not what it claims, it can run nothing from this address. (A PDF needs
+          // the browser's viewer, which a sandbox would block.)
+          ...(media.contentType === 'application/pdf'
+            ? {}
+            : { 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; sandbox" }),
         },
       })
     },

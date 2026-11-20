@@ -10,9 +10,13 @@ import { formatBlocks, formatFigures, isSafeUrl, parseBlocks, parseFigures, slug
 
 const ORIGIN = 'http://localhost'
 
-function request(path: string, init: RequestInit & { cookie?: string } = {}) {
+/** `bare` sends a post with none of the headers a browser adds, as a script outside a browser would. */
+function request(path: string, init: RequestInit & { cookie?: string; bare?: boolean } = {}) {
   let headers = new Headers(init.headers)
   if (init.cookie) headers.set('cookie', init.cookie)
+  if (init.method === 'POST' && !init.bare && !headers.has('origin') && !headers.has('sec-fetch-site')) {
+    headers.set('origin', ORIGIN)
+  }
   return router.fetch(new Request(new URL(path, ORIGIN), { ...init, headers }))
 }
 
@@ -74,7 +78,7 @@ describe('admin', () => {
     assert.equal(response.status, 303)
     assert.equal(response.headers.get('location'), '/admin/login')
     assert.equal((await post('/admin/login', { password: 'nope' })).status, 401)
-    assert.equal((await request('/admin/c/projects', { cookie: 'admin=1.forged' })).status, 303)
+    assert.equal((await request('/admin/c/projects', { cookie: 'admin=forged' })).status, 303)
   })
 
   it('shows the dashboard once signed in, with no caching', async () => {
@@ -168,7 +172,7 @@ describe('admin', () => {
     let body = new FormData()
     body.set('title', 'With Image')
     body.set('published', 'on')
-    body.set('previewImageUpload', new File([new Uint8Array([137, 80, 78, 71])], 'shot.png', { type: 'image/png' }))
+    body.set('previewImageUpload', new File([new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10, 0, 0])], 'shot.png', { type: 'image/png' }))
     let response = await request('/admin/c/projects/new', { method: 'POST', body, cookie })
     assert.equal(response.status, 303)
     let project = await store.getProject('with-image')
@@ -216,6 +220,107 @@ describe('admin', () => {
     assert.notEqual(secondId, firstId)
     assert.equal(await store.getMedia(firstId!), null)
     assert.equal((await request(`/media/${firstId}`)).status, 404)
+  })
+
+  it('refuses a post with no origin, or from another site', async () => {
+    let cookie = await login()
+    let fields = new FormData()
+    fields.set('name', 'x')
+    let bare = await request('/admin/site', { method: 'POST', body: fields, cookie, bare: true })
+    assert.equal(bare.status, 403)
+    let cross = await request('/admin/site', { method: 'POST', body: fields, cookie, headers: { 'sec-fetch-site': 'cross-site' } })
+    assert.equal(cross.status, 403)
+    let loginCross = await post('/admin/login', { password: 'correct horse' }, undefined, { origin: 'https://evil.example' })
+    assert.equal(loginCross.status, 403)
+  })
+
+  it('signing out ends the session on the server', async () => {
+    let cookie = await login()
+    assert.equal((await request('/admin', { cookie })).status, 200)
+    await post('/admin/logout', {}, cookie)
+    // The old cookie, replayed, no longer works.
+    assert.equal((await request('/admin', { cookie })).status, 303)
+  })
+
+  it('each login gets its own unguessable token', async () => {
+    let first = await login()
+    let second = await login()
+    assert.notEqual(first, second)
+    assert.ok(first.split('=')[1]!.length >= 40)
+  })
+
+  it('pauses logins after repeated wrong passwords, even for the right one', async () => {
+    for (let attempt = 0; attempt < 5; attempt++) {
+      assert.equal((await post('/admin/login', { password: 'wrong' + attempt })).status, 401)
+    }
+    assert.equal((await post('/admin/login', { password: 'correct horse' })).status, 429)
+    // Another client is not held up by it.
+    let other = await post('/admin/login', { password: 'correct horse' }, undefined, { 'x-forwarded-for': '203.0.113.9' })
+    assert.equal(other.status, 303)
+  })
+
+  it('stays off when the password is short', async () => {
+    process.env.ADMIN_PASSWORD = 'short'
+    assert.equal((await request('/admin/login')).status, 404)
+    assert.equal((await post('/admin/login', { password: 'short' })).status, 404)
+  })
+
+  it('locks down every admin response and sends security headers sitewide', async () => {
+    let page = await request('/admin/login')
+    let csp = page.headers.get('content-security-policy') ?? ''
+    assert.match(csp, /default-src 'none'/)
+    assert.match(csp, /frame-ancestors 'none'/)
+    assert.doesNotMatch(csp, /script-src|unsafe-inline|unsafe-eval/)
+    assert.equal(page.headers.get('x-frame-options'), 'DENY')
+    assert.equal(page.headers.get('cache-control'), 'no-store')
+    assert.equal(page.headers.get('referrer-policy'), 'no-referrer')
+    assert.equal(page.headers.get('x-content-type-options'), 'nosniff')
+    assert.doesNotMatch(await page.text(), /<script/)
+
+    let redirected = await request('/admin')
+    assert.equal(redirected.headers.get('cache-control'), 'no-store')
+
+    let home = await request('/')
+    assert.equal(home.headers.get('x-content-type-options'), 'nosniff')
+    assert.equal(home.headers.get('referrer-policy'), 'strict-origin-when-cross-origin')
+  })
+
+  it('rejects an upload whose bytes are not what it claims', async () => {
+    let cookie = await login()
+    for (let [name, type, content] of [
+      ['a.png', 'image/png', '<script>alert(1)</script>'],
+      ['b.jpg', 'image/jpeg', 'GIF89a....'],
+    ] as const) {
+      let body = new FormData()
+      body.set('title', 'Fake ' + name)
+      body.set('previewImageUpload', new File([content], name, { type }))
+      let response = await request('/admin/c/projects/new', { method: 'POST', body, cookie })
+      assert.equal(response.status, 400, name)
+      assert.match(await response.text(), /not a real image/)
+    }
+  })
+
+  it('rejects an oversized field and a malformed email', async () => {
+    let cookie = await login()
+    let huge = await post('/admin/c/projects/new', { title: 'T', summary: 'x'.repeat(40_000) }, cookie)
+    assert.equal(huge.status, 413)
+    let site = (await store.getSite())!
+    let base = { name: site.name, role: site.role, heroHeadline: site.heroHeadline, summary: '', about: '', linkedinUrl: '', githubUrl: '', education: '' }
+    for (let email of ['a@b.co?bcc=evil@x.io', 'a b@c.io', '"><x@y.io']) {
+      assert.equal((await post('/admin/site', { ...base, email }, cookie)).status, 400, email)
+    }
+    assert.equal((await post('/admin/site', { ...base, email: 'ok.name+tag@example.com' }, cookie)).status, 303)
+  })
+
+  it('escapes what is typed into a page, in the admin and on the site', async () => {
+    let cookie = await login()
+    let attack = '<img src=x onerror=alert(1)>'
+    let created = await post('/admin/c/projects/new', { title: attack, slug: 'xss', summary: attack, blocks: attack, published: 'on' }, cookie)
+    assert.equal(created.status, 303)
+    for (let path of ['/work/xss', '/work', '/', '/admin/c/projects/xss', '/admin/c/projects']) {
+      let html = await (await request(path, { cookie })).text()
+      assert.equal(html.includes('<img src=x'), false, path)
+    }
   })
 
   it('downloads a backup', async () => {

@@ -5,13 +5,15 @@ import { createRedirectResponse } from 'remix/response/redirect'
 import {
   adminEnabled,
   clearFailures,
+  endSession,
+  insecureInProduction,
   isLoggedIn,
+  isSecure,
   loginBlocked,
-  loginCookie,
-  logoutCookie,
   passwordMatches,
   recordFailure,
   sameOrigin,
+  startSession,
 } from '../../admin/auth.ts'
 import { collections, isKind, type Values } from '../../admin/collections.ts'
 import { saveSiteValues, siteFields, siteValues } from '../../admin/site.ts'
@@ -22,6 +24,9 @@ import { routes } from '../../routes.ts'
 import { resumeHref } from '../../ui/layout.tsx'
 
 const UPLOAD_LIMIT = 6 * 1024 * 1024
+/** No single text field is longer than this; the biggest are the project story and the about text. */
+const MAX_FIELD_LENGTH = 30_000
+const MAX_FIELDS = 40
 
 function notFound() {
   return new Response('Not Found', { status: 404 })
@@ -31,66 +36,116 @@ function redirect(location: string, headers?: HeadersInit) {
   return createRedirectResponse(location, { status: 303, headers })
 }
 
-/** Noindex and no caching on every admin response. */
-function protect(response: Response): Response {
-  response.headers.set('Cache-Control', 'no-store')
-  response.headers.set('X-Robots-Tag', 'noindex, nofollow')
-  response.headers.set('X-Frame-Options', 'DENY')
+/**
+ * What every admin response says to the browser: never cache it, keep it out of search, and never run
+ * anything but this site's own stylesheet. There is no script on these pages at all.
+ */
+const ADMIN_CSP = [
+  "default-src 'none'",
+  "style-src 'self'",
+  "img-src 'self' https:",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "base-uri 'none'",
+].join('; ')
+
+function protect(response: Response, request: Request): Response {
+  let headers = response.headers
+  headers.set('Cache-Control', 'no-store')
+  headers.set('Pragma', 'no-cache')
+  headers.set('X-Robots-Tag', 'noindex, nofollow')
+  headers.set('X-Frame-Options', 'DENY')
+  headers.set('X-Content-Type-Options', 'nosniff')
+  headers.set('Referrer-Policy', 'no-referrer')
+  headers.set('Content-Security-Policy', ADMIN_CSP)
+  headers.set('Cross-Origin-Opener-Policy', 'same-origin')
+  headers.set('Cross-Origin-Resource-Policy', 'same-origin')
+  if (isSecure(request)) headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
   return response
 }
 
-/** Everything but sign-in needs a login; a form post from another site is refused before it runs. */
-const guard: Middleware = async (context, next) => {
+/** Runs the action, turning a failure into a plain page: a visitor never sees a stack trace. */
+async function run(context: { request: Request }, next: () => Promise<Response>): Promise<Response> {
+  try {
+    return protect(await next(), context.request)
+  } catch (error) {
+    console.error('admin request failed', error)
+    let tooBig = error instanceof Error && /max|limit|exceed|too large/i.test(error.message)
+    return protect(
+      new Response(tooBig ? 'That upload is too large.' : 'Something went wrong.', { status: tooBig ? 413 : 500 }),
+      context.request,
+    )
+  }
+}
+
+/** The checks before anything else: https in production, a form post from this site, and a login. */
+function checks(request: Request, options: { login: boolean }): Response | null {
   if (!adminEnabled()) return notFound()
-  if (context.request.method !== 'GET' && context.request.method !== 'HEAD' && !sameOrigin(context.request)) {
+  if (insecureInProduction(request)) {
+    let url = new URL(request.url)
+    url.protocol = 'https:'
+    url.host = request.headers.get('x-forwarded-host') ?? request.headers.get('host') ?? url.host
+    return redirect(url.toString())
+  }
+  if (request.method !== 'GET' && request.method !== 'HEAD' && !sameOrigin(request)) {
     return new Response('Forbidden', { status: 403 })
   }
-  if (!isLoggedIn(context.request)) return redirect(routes.admin.login.index.href())
-  return protect(await next())
+  if (!options.login && !isLoggedIn(request)) return redirect(routes.admin.login.index.href())
+  return null
+}
+
+const guard: Middleware = async (context, next) => {
+  let refusal = checks(context.request, { login: false })
+  return refusal ? protect(refusal, context.request) : run(context, next)
 }
 
 const loginGuard: Middleware = async (context, next) => {
-  if (!adminEnabled()) return notFound()
-  if (context.request.method === 'POST' && !sameOrigin(context.request)) {
-    return new Response('Forbidden', { status: 403 })
-  }
-  return protect(await next())
+  let refusal = checks(context.request, { login: true })
+  return refusal ? protect(refusal, context.request) : run(context, next)
 }
 
-function valuesOf(data: FormData): { values: Values; files: Map<string, File> } {
+function valuesOf(data: FormData): { values: Values; files: Map<string, File> } | null {
   let values: Values = {}
   let files = new Map<string, File>()
+  let count = 0
   for (let [name, value] of data) {
-    if (typeof value === 'string') values[name] = value
-    else if (value.size > 0) files.set(name, value)
+    if (++count > MAX_FIELDS) return null
+    if (typeof value === 'string') {
+      if (value.length > MAX_FIELD_LENGTH) return null
+      values[name] = value
+    } else if (value.size > 0) files.set(name, value)
   }
   return { values, files }
 }
 
+const TOO_BIG = () => new Response('Too much text in one field.', { status: 413 })
+
 export const loginController = createController(routes.admin.login, {
-  middleware: [loginGuard, formData({ maxFiles: 0 })],
+  middleware: [loginGuard, formData({ maxFiles: 0, maxParts: 5 })],
   actions: {
     index(context) {
       if (isLoggedIn(context.request)) return redirect(routes.admin.home.href())
       return context.render(<LoginPage />)
     },
     async action(context) {
-      if (loginBlocked()) {
+      if (loginBlocked(context.request)) {
         return context.render(<LoginPage error="Too many attempts. Try again in a few minutes." />, { status: 429 })
       }
-      let password = String(context.formData.get('password') ?? '')
+      let password = String(context.formData.get('password') ?? '').slice(0, 200)
       if (!passwordMatches(password)) {
-        recordFailure()
+        recordFailure(context.request)
+        // A pause on every wrong guess slows guessing down further.
+        await new Promise((resolve) => setTimeout(resolve, 400))
         return context.render(<LoginPage error="That password is not right." />, { status: 401 })
       }
       clearFailures()
-      return redirect(routes.admin.home.href(), { 'Set-Cookie': loginCookie(context.request) })
+      return redirect(routes.admin.home.href(), { 'Set-Cookie': startSession(context.request) })
     },
   },
 })
 
 export default createController(routes.admin, {
-  middleware: [guard, formData({ maxFileSize: UPLOAD_LIMIT, maxFiles: 2, maxTotalSize: UPLOAD_LIMIT * 2 })],
+  middleware: [guard, formData({ maxFileSize: UPLOAD_LIMIT, maxFiles: 2, maxParts: MAX_FIELDS + 2, maxTotalSize: UPLOAD_LIMIT * 2 })],
   actions: {
     async home(context) {
       let [projects, experience, skills] = await Promise.all([
@@ -120,7 +175,7 @@ export default createController(routes.admin, {
     },
 
     logout(context) {
-      return redirect(routes.admin.login.index.href(), { 'Set-Cookie': logoutCookie(context.request) })
+      return redirect(routes.admin.login.index.href(), { 'Set-Cookie': endSession(context.request) })
     },
 
     async site(context) {
@@ -140,7 +195,9 @@ export default createController(routes.admin, {
     },
 
     async saveSite(context) {
-      let { values, files } = valuesOf(context.formData)
+      let parsed = valuesOf(context.formData)
+      if (!parsed) return TOO_BIG()
+      let { values, files } = parsed
       let result = await saveSiteValues(store, values)
       let errors = result.ok ? {} : result.errors
 
@@ -215,7 +272,9 @@ export default createController(routes.admin, {
       let creating = id === 'new'
       if (!creating && !(await collection.values(store, id))) return notFound()
 
-      let { values, files } = valuesOf(context.formData)
+      let parsed = valuesOf(context.formData)
+      if (!parsed) return TOO_BIG()
+      let { values, files } = parsed
       let uploadError: string | undefined
       let upload = files.get('previewImageUpload')
       if (upload) {

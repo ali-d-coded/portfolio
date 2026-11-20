@@ -38,7 +38,7 @@ export async function saveSiteValues(store: ContentStore, values: Values): Promi
   if (!text('name')) errors.name = 'A name is needed.'
   if (!text('role')) errors.role = 'A role is needed.'
   if (!text('heroHeadline')) errors.heroHeadline = 'A headline is needed.'
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text('email'))) errors.email = 'Use a full email address.'
+  if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(text('email'))) errors.email = 'Use a full email address.'
   for (let name of ['linkedinUrl', 'githubUrl']) {
     if (text(name) && !isSafeUrl(text(name))) errors[name] = 'Use a full link starting with https://'
   }

@@ -1,6 +1,7 @@
 import * as http from 'node:http'
 import { createRequestListener } from 'remix/node-fetch-server'
 
+import { adminStatus } from './app/admin/auth.ts'
 import { assets } from './app/assets.ts'
 import { seedIfEmpty } from './app/data/seed.ts'
 import { store } from './app/data/store.ts'
@@ -13,6 +14,7 @@ const hmrProxyPort = process.env.HMR_PROXY_PORT
 const isHmr = process.env.REMIX_NODE_HMR === '1'
 
 await seedIfEmpty(store)
+console.log(`Admin ${adminStatus()}`)
 
 const server = http.createServer(createRequestListener(router.fetch, { trustProxy: isHmr }))
 

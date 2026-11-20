@@ -24,6 +24,26 @@ function directory(env: NodeJS.ProcessEnv = process.env): string {
   return dir
 }
 
+/** The first bytes must match the type the browser claimed, so a script cannot be passed off as an image. */
+function looksLike(type: string, bytes: Buffer): boolean {
+  let head = bytes.subarray(0, 12)
+  let text = (from: number, to: number) => head.subarray(from, to).toString('latin1')
+  switch (type) {
+    case 'application/pdf':
+      return text(0, 5) === '%PDF-'
+    case 'image/png':
+      return head.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+    case 'image/jpeg':
+      return head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff
+    case 'image/gif':
+      return text(0, 6) === 'GIF87a' || text(0, 6) === 'GIF89a'
+    case 'image/webp':
+      return text(0, 4) === 'RIFF' && text(8, 12) === 'WEBP'
+    default:
+      return false
+  }
+}
+
 export type UploadResult = { ok: true; media: Media } | { ok: false; error: string }
 
 export async function saveUpload(
@@ -38,8 +58,8 @@ export async function saveUpload(
   }
   if (file.size > MAX_UPLOAD_BYTES) return { ok: false, error: 'The file is larger than 5 MB.' }
   let bytes = Buffer.from(await file.arrayBuffer())
-  if (kind === 'pdf' && bytes.subarray(0, 5).toString('latin1') !== '%PDF-') {
-    return { ok: false, error: 'That file is not a real PDF.' }
+  if (!looksLike(file.type, bytes)) {
+    return { ok: false, error: kind === 'pdf' ? 'That file is not a real PDF.' : 'That file is not a real image.' }
   }
 
   let id = randomUUID()
