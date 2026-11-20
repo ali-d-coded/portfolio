@@ -73,7 +73,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
             <EmailButton site={site} />
             {projects.length > 0 ? (
               <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
-                See the case studies
+                See the projects
               </a>
             ) : null}
           </div>

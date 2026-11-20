@@ -29,11 +29,11 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
         title={
           project.tagline
             ? `${project.title}: ${project.tagline.charAt(0).toLowerCase()}${project.tagline.slice(1)}`
-            : `${project.title}: a case study${name ? ` by ${name}` : ''}`
+            : `${project.title}${name ? `: a project by ${name}` : ''}`
         }
         description={
           project.summary ||
-          `${project.title}, a case study${name ? ` by ${name}` : ''}, with its stack and architecture.`
+          `${project.title}${name ? `, a project by ${name}` : ''}, with its stack and architecture.`
         }
         pageType="project"
         frame={frame}
@@ -51,7 +51,7 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
         {next ? (
           <Statement
             id="next"
-            kicker="// next case study"
+            kicker="// next project"
             heading={next.title}
             lead={
               next.tagline
@@ -65,13 +65,13 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
                 href={routes.work.show.href({ slug: next.slug })}
                 data-cursor="link"
               >
-                Read the {next.title} case study
+                See {next.title}
                 <Arrow />
               </a>
             </p>
           </Statement>
         ) : (
-          <Statement id="next" kicker="// more" heading="Every case study">
+          <Statement id="next" kicker="// more" heading="Every project">
             <p data-reveal="">
               <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
                 See all work

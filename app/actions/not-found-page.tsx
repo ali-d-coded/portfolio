@@ -30,7 +30,7 @@ export function NotFoundPage(handle: Handle<{ frame: Frame }>) {
             <div class="btns" data-enter="">
               {frame.projects.length > 0 ? (
                 <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
-                  See the case studies
+                  See the projects
                 </a>
               ) : (
                 <a class="btn btn--ghost" href={routes.home.href()} data-cursor="link">

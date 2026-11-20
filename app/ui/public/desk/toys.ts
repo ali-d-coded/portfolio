@@ -19,6 +19,9 @@ export function initToys(reduced: boolean): void {
   let desk = document.querySelector<HTMLElement>('[data-desk]')
   if (!desk) return
   let toys = [...desk.querySelectorAll<HTMLElement>('[data-toy]')]
+  // The dock is fixed to the viewport; lift it out so no animated ancestor can displace it.
+  let dock = desk.querySelector<HTMLElement>('.desk__tools')
+  if (dock) document.body.append(dock)
 
   // GSAP takes over each toy's transform from here, starting from its resting tilt.
   for (let toy of toys) gsap.set(toy, { rotation: baseRotation(toy) })
@@ -117,7 +120,7 @@ export function initToys(reduced: boolean): void {
     Draggable.get(toy)?.update()
   }
 
-  desk.querySelector('[data-desk-scatter]')?.addEventListener('click', () => {
+  dock?.querySelector('[data-desk-scatter]')?.addEventListener('click', () => {
     if (held) return
     for (let toy of draggable) {
       let x = Number(gsap.getProperty(toy, 'x'))
@@ -134,7 +137,7 @@ export function initToys(reduced: boolean): void {
     }
   })
 
-  desk.querySelector('[data-desk-tidy]')?.addEventListener('click', () => {
+  dock?.querySelector('[data-desk-tidy]')?.addEventListener('click', () => {
     for (let toy of draggable) {
       gsap.to(toy, {
         x: 0,
@@ -175,34 +178,105 @@ export function dropToys(): void {
 function initBadge(badge: HTMLElement) {
   let base = baseRotation(badge)
   gsap.set(badge, { transformOrigin: '50% -60px' })
-  let swing = (power: number) =>
-    gsap.fromTo(
-      badge,
-      { rotation: base + power },
-      { rotation: base, duration: 2.6, ease: 'elastic.out(1, 0.22)', overwrite: true },
-    )
+  let current: gsap.core.Tween | gsap.core.Timeline | undefined
+  let pressed = false
+
+  // Every move starts from where the badge is now, so nothing ever jumps.
+  let go = (to: number, vars: gsap.TweenVars) => {
+    current?.kill()
+    current = gsap.to(badge, { rotation: to, overwrite: true, ...vars })
+  }
+  let swing = (power: number) => {
+    current?.kill()
+    current = gsap
+      .timeline()
+      .to(badge, { rotation: base + power, duration: 0.25, ease: 'power2.out' })
+      .to(badge, { rotation: base, duration: 2.4, ease: 'elastic.out(1, 0.25)' })
+  }
+  let atRest = () =>
+    Math.abs(Number(gsap.getProperty(badge, 'rotation')) - base) < 1.5 &&
+    Math.hypot(Number(gsap.getProperty(badge, 'x')), Number(gsap.getProperty(badge, 'y'))) < 2
 
   let lastX = 0
   badge.addEventListener('pointerenter', (event) => {
-    swing(event.clientX >= lastX ? 8 : -8)
+    if (pressed || event.pointerType === 'touch' || !atRest()) return
+    swing(event.clientX >= lastX ? 5 : -5)
   })
   badge.addEventListener('pointermove', (event) => {
     lastX = event.clientX
   })
+
+  // Press and pull: the card follows the pointer as far as you like, the strap stretches to keep hold of it,
+  // and on release everything springs back. The strap is a child of the card, so it is placed in the card's
+  // own (rotated) frame: it runs from the fixed anchor above to the card's top edge.
+  let strap = badge.querySelector<HTMLElement>('.badge__strap')
+  let strapLength = 64
+  if (strap) gsap.set(strap, { transformOrigin: '50% 0%' })
+  let place = () => {
+    if (!strap) return
+    let x = Number(gsap.getProperty(badge, 'x'))
+    let y = Number(gsap.getProperty(badge, 'y'))
+    let r = (Number(gsap.getProperty(badge, 'rotation')) * Math.PI) / 180
+    let lx = x * Math.cos(r) + y * Math.sin(r)
+    let ly = -x * Math.sin(r) + y * Math.cos(r)
+    let length = Math.hypot(lx, strapLength + ly)
+    gsap.set(strap, {
+      x: -lx,
+      y: -ly,
+      rotation: (Math.atan2(-lx, strapLength + ly) * 180) / Math.PI,
+      scaleY: length / strapLength,
+      scaleX: gsap.utils.clamp(0.35, 1, Math.sqrt(strapLength / length)),
+    })
+  }
+  gsap.ticker.add(place)
+
+  let originX = 0
+  let originY = 0
+  let moved = false
   badge.addEventListener('pointerdown', (event) => {
-    let box = badge.getBoundingClientRect()
-    swing(event.clientX < box.left + box.width / 2 ? 14 : -14)
+    if (event.pointerType === 'touch') return
+    pressed = true
+    moved = false
+    current?.kill()
+    originX = event.clientX - Number(gsap.getProperty(badge, 'x'))
+    originY = event.clientY - Number(gsap.getProperty(badge, 'y'))
+    badge.classList.add('is-held')
+    badge.setPointerCapture(event.pointerId)
   })
+  badge.addEventListener('pointermove', (event) => {
+    if (!pressed) return
+    let x = event.clientX - originX
+    let y = event.clientY - originY
+    if (Math.hypot(x, y) > 3) moved = true
+    // Hanging from above, a pull to the right swings the card's bottom to the right: a negative turn about the anchor.
+    gsap.set(badge, { x, y, rotation: base - gsap.utils.clamp(-25, 25, x / 12) })
+  })
+  let release = (event: PointerEvent) => {
+    if (!pressed) return
+    pressed = false
+    badge.classList.remove('is-held')
+    if (badge.hasPointerCapture(event.pointerId)) badge.releasePointerCapture(event.pointerId)
+    if (moved) {
+      current?.kill()
+      current = gsap.to(badge, { x: 0, y: 0, rotation: base, duration: 1.8, ease: 'elastic.out(1, 0.28)', overwrite: true })
+    } else {
+      let box = badge.getBoundingClientRect()
+      swing(event.clientX < box.left + box.width / 2 ? 7 : -7)
+    }
+  }
+  badge.addEventListener('pointerup', release)
+  badge.addEventListener('pointercancel', release)
 
   // A fast scroll sets it swaying; when the page settles it swings back.
-  let follow = gsap.quickTo(badge, 'rotation', { duration: 0.5, ease: 'power3.out' })
   let settle = 0
   ScrollTrigger.create({
     start: 0,
     end: 'max',
     onUpdate(self) {
+      if (pressed) return
       let lean = gsap.utils.clamp(-9, 9, self.getVelocity() / -260)
-      follow(base + lean)
+      if (Math.abs(lean) < 1) return
+      go(base + lean, { duration: 0.4, ease: 'power3.out' })
       window.clearTimeout(settle)
       settle = window.setTimeout(() => swing(lean * 0.6), 140)
     },

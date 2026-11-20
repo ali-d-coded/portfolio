@@ -2,7 +2,7 @@ import type { Handle } from 'remix/component'
 
 import type { Media, Project, SkillGroup } from '../data/content.ts'
 import { routes } from '../routes.ts'
-import { Desk, type DeskFigure } from '../ui/doodles.tsx'
+import { Desk } from '../ui/doodles.tsx'
 import { formatMonth, formatSpan, splitTail } from '../ui/format.ts'
 import { Arrow, EmailButton, Layout, type Frame } from '../ui/layout.tsx'
 import {
@@ -51,6 +51,10 @@ function selected(projects: Project[]): Project[] {
   return (featured.length > 0 ? featured : projects).slice(0, 2)
 }
 
+/** The sticky note on the desk. */
+const DESK_NOTE =
+  '5 years designing and shipping scalable multi-tenant SaaS platforms and high-volume, event-driven backend systems. Strong record of end-to-end ownership, performance optimization, and system design.'
+
 function Hero(handle: Handle<{ frame: Frame }>) {
   return () => {
     let { site, projects, experience } = handle.props.frame
@@ -58,13 +62,6 @@ function Hero(handle: Handle<{ frame: Frame }>) {
     let since = earliestStart(experience)
     let chosen = selected(projects)
     let stack = chosen[0]?.stack.slice(0, 3) ?? []
-    let figures: DeskFigure[] = chosen
-      .flatMap((project) =>
-        project.figures
-          .filter((figure) => figure.value.trim() !== '')
-          .map((figure) => ({ ...figure, project: project.title })),
-      )
-      .slice(0, 3)
     let headline = site?.heroHeadline || site?.name || 'Portfolio'
     let tail = splitTail(headline)
 
@@ -95,7 +92,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
               <EmailButton site={site} />
               {projects.length > 0 ? (
                 <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
-                  See the case studies
+                  See the projects
                 </a>
               ) : null}
             </div>
@@ -107,7 +104,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
             since={since}
             stack={stack}
             degree={studying(site)}
-            figures={figures}
+            note={DESK_NOTE}
           />
         </div>
       </section>
@@ -123,8 +120,8 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
     return (
       <section class="section" id="work" aria-labelledby="work-h" data-ruler-section="Work">
         <div class="wrap">
-          <SectionHead id="work-h" title="Selected work" meta={`// ${projects.length} case ${projects.length === 1 ? 'study' : 'studies'}`}>
-            <p class="section-head__lead">The stack each one runs on, and its case study.</p>
+          <SectionHead id="work-h" title="Selected work" meta={`// ${projects.length}`}>
+            <p class="section-head__lead">Built at my current and previous companies, with the stack each one runs on.</p>
           </SectionHead>
           <div class="projects" data-project-list="">
             {projects.map((project, index) => {
@@ -159,7 +156,7 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
                     href={routes.work.show.href({ slug: project.slug })}
                     data-cursor="view"
                   >
-                    Read the {project.title} case study
+                    See {project.title}
                     <Arrow />
                   </a>
                 </article>

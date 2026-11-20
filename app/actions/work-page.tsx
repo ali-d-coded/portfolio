@@ -6,7 +6,7 @@ import { Arrow, EmailButton, Layout, type Frame } from '../ui/layout.tsx'
 import { SectionHead, Statement, ToolTiles } from '../ui/parts.tsx'
 import { toolIcons } from '../ui/tool-icons.ts'
 
-const H1_START = 'Case studies in '
+const H1_START = 'Projects in '
 
 export function WorkPage(handle: Handle<{ frame: Frame }>) {
   return () => {
@@ -16,8 +16,8 @@ export function WorkPage(handle: Handle<{ frame: Frame }>) {
 
     return (
       <Layout
-        title={name ? `${name}: case studies in backend and full-stack work` : 'Case studies'}
-        description="Every published case study, with the stack each project runs on and a link to its architecture."
+        title={name ? `${name}: projects in backend and full-stack work` : 'Projects'}
+        description="Projects from my current and previous companies, with the stack each one runs on."
         pageType="work"
         frame={frame}
       >
@@ -71,13 +71,13 @@ function Hero(handle: Handle<{ frame: Frame }>) {
                 )}
               </>
             ) : (
-              'Case studies'
+              'Projects'
             )}
           </h1>
           <p class="lead" data-enter="">
             {projects.length > 0
-              ? 'Each project below lists its stack and links to a case study with its architecture.'
-              : 'Case studies are listed here once they are published.'}
+              ? 'Projects I built at my current and previous companies, with the stack each one runs on.'
+              : 'Projects are listed here once they are published.'}
           </p>
           <div class="btns" data-enter="">
             <EmailButton site={site} />
@@ -85,7 +85,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
           {projects.length > 0 ? (
             <dl class="facts" data-enter="">
               <div>
-                <dt>Case studies</dt>
+                <dt>Projects</dt>
                 <dd>{projects.length}</dd>
               </div>
               <div>
@@ -115,7 +115,7 @@ function ProjectList(handle: Handle<{ projects: Project[] }>) {
       <section class="section" id="projects" aria-labelledby="projects-h" data-ruler-section="Projects">
         <div class="wrap">
           <SectionHead id="projects-h" title="All projects" meta={`// ${projects.length}`}>
-            <p class="section-head__lead">Open one for its architecture and the stack it runs on.</p>
+            <p class="section-head__lead">Open one for its details and the stack it runs on.</p>
           </SectionHead>
           <ol class="plist" data-project-list="">
             {projects.map((project, index) => (

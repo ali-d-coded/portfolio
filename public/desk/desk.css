@@ -302,12 +302,7 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 /* sticky note */
 .toy--sticky { width: min(100%, 250px); padding: 22px 18px 16px; background: var(--sticky); color: var(--sticky-ink); border: 1px solid #facc15; border-radius: 2px; }
 .pin { position: absolute; top: -8px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%; background: #dc2626; border: 1px solid #991b1b; box-shadow: inset -2px -2px 0 rgba(0, 0, 0, 0.2), 0 2px 3px rgba(0, 0, 0, 0.35); }
-.sticky__list { display: grid; gap: 10px; }
-.sticky__list li { display: grid; grid-template-columns: auto 1fr; gap: 0 12px; align-items: baseline; padding-bottom: 8px; border-bottom: 1px dashed rgba(28, 25, 23, 0.3); }
-.sticky__list li:last-child { border-bottom: 0; padding-bottom: 0; }
-.sticky__value { font: 700 34px/1 var(--hand); }
-.sticky__label { font: 700 19px/1.15 var(--hand); }
-.sticky__label em { display: block; font-style: normal; font-size: 16px; opacity: 0.7; }
+.sticky__note { font: 700 18px/1.3 var(--hand); }
 
 /* stickers */
 .toy--sticker { width: 112px; }
@@ -341,12 +336,25 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 .rocket__window { fill: color-mix(in oklab, var(--cyan) 30%, transparent); stroke: var(--cyan); stroke-width: 2; }
 .flame { fill: var(--amber); opacity: 0; transform-origin: 45px 74px; }
 
+/* the floating dock: fixed bottom-right, like the design reference */
 .desk__tools { display: none; }
 @media (min-width: 900px) and (hover: hover) and (pointer: fine) {
-  .js .desk__tools { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: center; }
+  .js .desk__tools { display: flex; }
 }
-.desk__tools button { min-height: 36px; padding: 0 14px; border: 1px solid var(--line-2); border-radius: var(--r); background: var(--panel); font: 600 13px var(--mono); cursor: pointer; transition: border-color 0.2s, color 0.2s; }
-.desk__tools button:hover { border-color: var(--cyan); color: var(--cyan-text); }
+.desk__tools {
+  position: fixed; right: 20px; bottom: 20px; z-index: 40; align-items: center; gap: 8px;
+  padding: 6px 12px; border: 1px solid rgba(63, 63, 70, 0.8); border-radius: 999px;
+  background: rgba(20, 20, 24, 0.95); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); font: 500 12px/16px var(--mono);
+}
+:root[data-theme="light"] .desk__tools { background: rgba(255, 255, 255, 0.95); border-color: #d4d4d8; }
+.desk__tools .label { display: flex; align-items: center; gap: 4px; color: #facc15; font-weight: 500; }
+:root[data-theme="light"] .desk__tools .label { color: #a16207; }
+.desk__tools .label svg { width: 16px; height: 16px; }
+.desk__tools .sep { color: #52525b; }
+.desk__tools button { padding: 2px 8px; border: 0; border-radius: 4px; background: none; color: #a1a1aa; font: inherit; cursor: pointer; transition: color 0.15s, background-color 0.15s; }
+.desk__tools button:hover { color: #fde047; background: #27272a; }
+:root[data-theme="light"] .desk__tools button:hover { color: #a16207; background: #f4f4f5; }
 
 /* on a wide screen the objects lie scattered on the desk; elsewhere they sit in a tidy row under the text */
 @media (min-width: 1200px) {
@@ -360,7 +368,6 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
   .toy--mug { top: 540px; left: 24px; }
   .toy--gears { top: 536px; left: 168px; }
   .toy--rocket { top: 528px; left: 304px; }
-  .desk__tools { position: absolute; right: 0; bottom: 0; width: auto; }
   .desk[data-variant="contact"] { min-height: 420px; }
   .desk[data-variant="contact"] .toy--github { top: 40px; left: 20px; }
   .desk[data-variant="contact"] .toy--linkedin { top: 70px; left: 170px; }
@@ -519,10 +526,16 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 .foot__legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-top: 20px; border-top: 1px solid var(--line); font: 400 12px var(--mono); color: var(--ink-3); }
 
 /* ------------------------------------------------------------------ page transition and cursor */
-.curtain { position: fixed; inset: 0; z-index: 90; display: grid; place-items: center; background: var(--bg); clip-path: inset(100% 0 0 0); pointer-events: none; visibility: hidden; }
-.curtain::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: var(--amber); box-shadow: 0 0 18px var(--amber); }
-.curtain__mark { font: 500 48px var(--mono); color: var(--amber); }
-html.arrive .curtain { visibility: visible; clip-path: inset(0); }
+.curtain { position: fixed; inset: 0; z-index: 90; display: grid; justify-content: start; align-content: start; overflow: hidden; background: transparent; pointer-events: none; visibility: hidden; }
+.curtain__px { display: block; background: var(--bg); box-shadow: 0 0 0 1px var(--bg); will-change: transform; }
+.curtain__px--yellow { background: #facc15; box-shadow: 0 0 0 1px #facc15; }
+.curtain__px--white { background: var(--px-white, #fff); box-shadow: 0 0 0 1px var(--px-white, #fff); }
+:root[data-theme="light"] .curtain__px--white { --px-white: #212124; }
+/* the dotted floor's pointer reaction: a canvas behind the page, so content always covers it */
+.dotfx { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+/* before the script runs, an arriving page sits behind a plain cover of the same colour */
+html.arrive .curtain { visibility: visible; background: var(--bg); }
+html.arrive .curtain.is-px { background: transparent; }
 
 .cursor { position: fixed; inset: 0; z-index: 95; pointer-events: none; display: none; }
 .has-cursor .cursor { display: block; }

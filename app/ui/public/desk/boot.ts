@@ -9,6 +9,7 @@ import { initPipeline, initSkills } from './panels.ts'
 import { initCursor, initMagnetic, initPreview } from './pointer.ts'
 import { initRail, initRuler, initScrollEffects, initTimelines } from './scrollfx.ts'
 import { initSmooth } from './smooth.ts'
+import { initDotGrid } from './dotgrid.ts'
 import { initTheme } from './theme.ts'
 import { dropToys, initToys } from './toys.ts'
 import { initTransitions } from './transitions.ts'
@@ -59,6 +60,7 @@ function start() {
     initCursor()
     initMagnetic()
     initPreview()
+    initDotGrid()
   }
   initRail()
   initScrollEffects()

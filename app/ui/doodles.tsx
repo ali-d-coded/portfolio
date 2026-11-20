@@ -1,6 +1,6 @@
 import type { Handle } from 'remix/component'
 
-import type { Education, Experience, Figure, Site } from '../data/content.ts'
+import type { Education, Experience, Site } from '../data/content.ts'
 import { formatMonth, handleOf } from './format.ts'
 
 /**
@@ -9,24 +9,20 @@ import { formatMonth, handleOf } from './format.ts'
  * resume does not: the badge and the note carry facts from the content store, the rest is decoration.
  */
 
-export interface DeskFigure extends Figure {
-  project: string
-}
-
 export interface DeskProps {
   site: Site | null
   now: Experience | null
   since: string | null
   stack: string[]
   degree: Education | null
-  figures: DeskFigure[]
+  note: string
   /** `home` carries the badge and the note too; `contact` is the stickers and the toys only. */
   variant: 'home' | 'contact'
 }
 
 export function Desk(handle: Handle<DeskProps>) {
   return () => {
-    let { site, now, since, stack, degree, figures, variant } = handle.props
+    let { site, now, since, stack, degree, note, variant } = handle.props
     let home = variant === 'home'
 
     return (
@@ -34,7 +30,7 @@ export function Desk(handle: Handle<DeskProps>) {
         {home && site ? (
           <Badge site={site} now={now} since={since} stack={stack} degree={degree} />
         ) : null}
-        {home && figures.length > 0 ? <Sticky figures={figures} /> : null}
+        {home && note ? <Sticky note={note} /> : null}
         {site?.githubUrl ? <Sticker kind="github" href={site.githubUrl} /> : null}
         {site?.linkedinUrl ? <Sticker kind="linkedin" href={site.linkedinUrl} /> : null}
         {site?.email ? <Sticker kind="mail" href={`mailto:${site.email}`} /> : null}
@@ -42,12 +38,21 @@ export function Desk(handle: Handle<DeskProps>) {
         {home ? <Gears /> : null}
         <Rocket />
         <div class="desk__tools" role="group" aria-label="Desk toys">
-          <span class="label">Desk toys</span>
-          <button type="button" data-desk-scatter="">
-            Scatter
+          <span class="label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 11V5a2 2 0 0 1 4 0v6" />
+              <path d="M13 10a2 2 0 0 1 4 1v2a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-3l-2-3a2 2 0 0 1 3-2l1 1" />
+            </svg>
+            Desk Toys
+          </span>
+          <span class="sep" aria-hidden="true">
+            |
+          </span>
+          <button type="button" data-desk-scatter="" title="Randomly fling objects">
+            🎲 Scatter
           </button>
-          <button type="button" data-desk-tidy="">
-            Tidy
+          <button type="button" data-desk-tidy="" title="Reset toys to default">
+            🧹 Tidy
           </button>
         </div>
       </div>
@@ -110,20 +115,11 @@ function Badge(
   }
 }
 
-function Sticky(handle: Handle<{ figures: DeskFigure[] }>) {
+function Sticky(handle: Handle<{ note: string }>) {
   return () => (
     <div class="toy toy--sticky" data-toy="sticky" data-rot="3" data-cursor="drag">
       <i class="pin" aria-hidden="true"></i>
-      <ul class="sticky__list">
-        {handle.props.figures.map((figure, index) => (
-          <li key={index}>
-            <span class="sticky__value">{figure.value}</span>
-            <span class="sticky__label">
-              {figure.label} <em>on {figure.project}</em>
-            </span>
-          </li>
-        ))}
-      </ul>
+      <p class="sticky__note">{handle.props.note}</p>
     </div>
   )
 }

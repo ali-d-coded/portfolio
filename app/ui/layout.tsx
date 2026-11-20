@@ -39,7 +39,7 @@ export interface LayoutProps {
 const PAGE_LABEL: Record<PageType, string> = {
   home: 'Home',
   work: 'Work',
-  project: 'Case study',
+  project: 'Project',
   about: 'About',
   contact: 'Contact',
   'not-found': 'Not found',
@@ -72,9 +72,7 @@ export function Layout(handle: Handle<LayoutProps>) {
           {children}
         </main>
         <Footer frame={frame} />
-        <div class="curtain" aria-hidden="true">
-          <span class="curtain__mark">+</span>
-        </div>
+        <div class="curtain" aria-hidden="true"></div>
         <div class="cursor" aria-hidden="true">
           <i class="cursor__ring"></i>
           <i class="cursor__dot"></i>

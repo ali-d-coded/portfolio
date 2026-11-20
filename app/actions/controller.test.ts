@@ -76,7 +76,7 @@ describe('public pages', () => {
       assert.doesNotMatch(html, /id="(work|skills|experience|projects)"/, path)
     }
 
-    // A case study whose optional parts are all empty still renders, with no empty slots.
+    // A project whose optional parts are all empty still renders, with no empty slots.
     let bare: Project = {
       id: 'bare',
       slug: 'bare',

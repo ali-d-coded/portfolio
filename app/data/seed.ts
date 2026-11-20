@@ -9,7 +9,7 @@ export const seedSnapshot: ContentSnapshot = {
     role: 'Full-Stack Engineer | Backend & Distributed Systems',
     heroHeadline: 'Full-stack engineer for multi-tenant SaaS backends',
     summary:
-      'I design and ship Node.js, TypeScript and Bun services. My latest is a WhatsApp Business CRM that serves 30+ client businesses behind a single API Gateway.',
+      'Specialized in Node.js, Bun, Microservices, Message Queues & Real-time WebSockets with database-per-tenant isolation, caching and resilient fault tolerance.',
     about:
       'I write backend services in Node.js, TypeScript and Bun, and the React and React Native clients that sit on them. Most of my work since 2022 has been multi-tenant SaaS: one codebase serving many client businesses.\n\nI own features from requirements to deployment, and I review code and mentor junior developers along the way. Message queues, real-time delivery and data modelling are where I go deepest.',
     email: 'aliallu3xa@gmail.com',

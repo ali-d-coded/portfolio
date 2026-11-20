@@ -48,7 +48,7 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
               since={null}
               stack={[]}
               degree={null}
-              figures={[]}
+              note=""
             />
           </div>
         </section>

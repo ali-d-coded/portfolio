@@ -40,7 +40,10 @@ export function initCursor(): void {
     root.classList.toggle('is-label', Boolean(word))
     if (word) label.textContent = word
   })
-  document.addEventListener('pointerdown', () => ring.animate([{ scale: 1 }, { scale: 0.8 }, { scale: 1 }], { duration: 260 }))
+  // Scale through GSAP, not CSS `scale`: the ring is placed by a translate, and a CSS scale would shrink that offset too.
+  document.addEventListener('pointerdown', () => {
+    gsap.fromTo(ring, { scale: 1 }, { scale: 0.8, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 })
+  })
   document.documentElement.addEventListener('pointerleave', () => gsap.to(root, { opacity: 0, duration: 0.2 }))
   document.documentElement.addEventListener('pointerenter', () => gsap.to(root, { opacity: 1, duration: 0.2 }))
 }

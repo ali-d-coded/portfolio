@@ -51,7 +51,7 @@ function isFigure(figure: Figure): boolean {
 }
 
 /**
- * A case study's body. Every word is rendered as a text node: nothing the admin types can become markup.
+ * A project's body. Every word is rendered as a text node: nothing the admin types can become markup.
  * Headings become h3 (the section's h2 sits above), text becomes paragraphs split on blank lines.
  */
 export function Blocks(handle: Handle<BlocksProps>) {
