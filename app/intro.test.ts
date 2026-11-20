@@ -14,7 +14,8 @@ describe('loading reveal', () => {
     await resetStore(structuredClone(seedSnapshot))
     let home = await html('/')
     assert.match(home, /data-intro=""/)
-    assert.match(home, /opening__plane/)
+    assert.match(home, /opening__rocket/)
+    assert.match(home, /data-intro-fire/)
     for (let path of ['/work', '/about', '/contact', '/work/eazycrm']) {
       assert.doesNotMatch(await html(path), /data-intro=""/, path)
     }

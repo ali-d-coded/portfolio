@@ -727,24 +727,30 @@ html.arrive .curtain.is-px { background: transparent; }
 .mail-open { overflow: hidden; }
 .mail-open .cursor { display: none !important; }
 
-/* ------------------------------------------------------------------ the loading reveal (first visit to the home page in a tab) */
+/* ------------------------------------------------------------------ the loading reveal (first visit to the home page in a tab): a rocket launch */
 .opening { position: fixed; inset: 0; z-index: 94; display: none; place-items: center; background: var(--bg) radial-gradient(circle, var(--grid-dot) 1px, transparent 1px) 0 0 / 16px 16px; }
 html.intro { overflow: hidden; }
 html.intro .opening { display: grid; }
-.opening.is-open { background: transparent; }
-.opening__center { display: grid; justify-items: stretch; gap: 20px; width: min(340px, 84vw); }
-.opening__mark { width: 64px; height: 64px; font-size: 22px; justify-self: center; }
-.opening__name { margin: 0; text-align: center; color: var(--ink-3); font: 700 12px/1.4 var(--type); letter-spacing: 0.22em; text-transform: uppercase; }
-.opening__log { display: grid; align-content: start; gap: 6px; min-height: 6.4em; margin: 4px 0 0; padding: 0; list-style: none; color: var(--ink-2); font: 500 13px/1.4 var(--mono); }
+.opening.is-open { background: transparent; pointer-events: none; }
+.opening__center { display: grid; justify-items: center; gap: 14px; width: min(360px, 86vw); padding-bottom: 6vh; }
+.opening__label { margin: 0; color: var(--ink-3); font: 700 12px/1.4 var(--type); letter-spacing: 0.3em; text-transform: uppercase; }
+.opening__digit { margin: 0; min-height: 1em; color: var(--amber); font: 700 clamp(72px, 15vw, 132px)/1 var(--mono); text-shadow: 0 0 44px color-mix(in oklab, var(--amber) 40%, transparent); }
+.opening__digit.is-go { font-size: clamp(32px, 7vw, 56px); letter-spacing: 0.08em; text-transform: uppercase; }
+/* the launch pad: the rocket sits on this slot, over a dashed ground line */
+.opening__slot { position: relative; width: 84px; height: 68px; margin-top: 8px; }
+.opening__ground { position: absolute; left: 50%; bottom: -3px; width: 190px; height: 0; border-top: 2px dashed var(--line-2); transform: translateX(-50%); }
+.opening__log { display: grid; align-content: start; gap: 6px; min-height: 6.4em; margin: 18px 0 0; padding: 0; list-style: none; justify-self: start; color: var(--ink-2); font: 500 13px/1.4 var(--mono); }
 .opening__line::before { content: ">"; margin-right: 10px; color: var(--amber-text); }
-.opening__line--ready { color: var(--amber-text); font-weight: 700; }
-.opening__meter { display: grid; gap: 14px; margin-top: 6px; }
-.opening__count { justify-self: end; color: var(--amber-text); font: 700 12px/1 var(--mono); letter-spacing: 0.1em; }
-.opening__bar { position: relative; height: 4px; border-radius: 2px; background: var(--line-2); }
-.opening__fill { position: absolute; inset: 0 auto 0 0; width: 100%; border-radius: 2px; background: var(--amber); transform: scaleX(0); transform-origin: 0 50%; }
-/* the doodle plane rides the front of the bar, nose to the right */
-.opening__plane { position: absolute; left: 0; top: -26px; width: 30px; height: 30px; margin-left: -4px; filter: var(--drop); will-change: transform; }
-.opening__plane svg { display: block; width: 100%; height: 100%; overflow: visible; transform: rotate(135deg); transform-origin: 6% 6%; }
-.opening__plane .cp__swoosh { opacity: 0.9; }
-.opening__px { position: absolute; inset: 0; display: grid; pointer-events: none; }
+.opening__line--go { color: var(--amber-text); font-weight: 700; }
+.opening__fire { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 2; }
+/* the rocket is the desk's rocket doodle, drawn bigger, with a flame that is lit at ignition */
+.opening__rocket { position: absolute; left: 0; top: 0; z-index: 3; width: 84px; height: 131px; overflow: visible; filter: var(--drop); will-change: transform; }
+.rk__body { fill: var(--panel); stroke: var(--amber); stroke-width: 2.2; stroke-linejoin: round; }
+.rk__fin { fill: var(--cyan); opacity: 0.9; }
+.rk__window { fill: color-mix(in oklab, var(--cyan) 30%, transparent); stroke: var(--cyan); stroke-width: 2; }
+.rk__fire { transform-box: fill-box; transform-origin: 50% 0; }
+.rk__fire--outer { fill: #ef4444; }
+.rk__fire--mid { fill: #fb923c; }
+.rk__fire--core { fill: #fff3c4; }
+.opening__px { position: absolute; inset: 0; z-index: 1; display: grid; pointer-events: none; }
 .opening__px i { display: block; }

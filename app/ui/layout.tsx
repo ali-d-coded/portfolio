@@ -55,7 +55,7 @@ export function Layout(handle: Handle<LayoutProps>) {
         description={description}
         robots={pageType === 'not-found' ? 'noindex' : 'index, follow'}
       >
-        {pageType === 'home' ? <IntroLoader site={frame.site} /> : null}
+        {pageType === 'home' ? <IntroLoader /> : null}
         <a class="skip-link" href="#top">
           Skip to content
         </a>
@@ -483,44 +483,44 @@ function MailDialog(handle: Handle<{ site: Site | null }>) {
 }
 
 /**
- * The loading reveal on the first visit to the home page in a tab: the desk "boots" with a short log and a
- * progress bar that a paper plane rides along, then pixels peel away to show the page. A closed or new tab
- * counts as a first visit. The boot script in the document head decides whether it plays.
+ * The loading reveal on the first visit to the home page in a tab: a rocket launch. The desk counts down from
+ * five on the pad, the rocket lights and lifts off, and flies a loop around the whole window trailing fire while
+ * the cover breaks into pixels and the page is revealed. A closed or new tab counts as a first visit. The boot
+ * script in the document head decides whether it plays.
  */
-function IntroLoader(handle: Handle<{ site: Site | null }>) {
-  return () => {
-    let { site } = handle.props
-    return (
-      <div class="opening" data-intro="" aria-hidden="true">
-        <div class="opening__center" data-intro-center="">
-          <span class="brand__mark opening__mark">{site ? initials(site.name) : ''}</span>
-          <p class="opening__name">{site?.name ?? ''}</p>
-          <ul class="opening__log">
-            <li class="opening__line">unpacking the desk</li>
-            <li class="opening__line">taping up the stickers</li>
-            <li class="opening__line">warming up the plane</li>
-            <li class="opening__line opening__line--ready">ready</li>
-          </ul>
-          <div class="opening__meter">
-            <span class="opening__count" data-intro-count="">
-              00%
-            </span>
-            <div class="opening__bar">
-              <i class="opening__fill" data-intro-fill=""></i>
-              <span class="opening__plane" data-intro-plane="">
-                <svg viewBox="0 0 52 52" aria-hidden="true">
-                  <path class="cp__swoosh" d="M33 37 Q40 42 48 38" />
-                  <path class="cp__flap" d="M27 27 L40 15 L37 33 Z" />
-                  <path class="cp__wing cp__wing--b" d="M3 3 Q6 23 15 40 L27 27 Z" />
-                  <path class="cp__wing cp__wing--a" d="M3 3 Q23 6 40 15 L27 27 Z" />
-                  <path class="cp__fold" d="M3 3 L27 27" />
-                </svg>
-              </span>
-            </div>
-          </div>
+function IntroLoader() {
+  return () => (
+    <div class="opening" data-intro="" aria-hidden="true">
+      <canvas class="opening__fire" data-intro-fire=""></canvas>
+      <div class="opening__center" data-intro-center="">
+        <p class="opening__label" data-intro-label="">
+          T-minus
+        </p>
+        <p class="opening__digit" data-intro-digit="">
+          5
+        </p>
+        <div class="opening__slot" data-intro-slot="">
+          <i class="opening__ground"></i>
         </div>
-        <div class="opening__px" data-intro-px=""></div>
+        <ul class="opening__log">
+          <li class="opening__line">fuel loaded</li>
+          <li class="opening__line">stickers taped down</li>
+          <li class="opening__line">toys strapped in</li>
+          <li class="opening__line opening__line--go">ignition</li>
+        </ul>
       </div>
-    )
-  }
+      <svg class="opening__rocket" data-intro-rocket="" viewBox="0 0 90 140" aria-hidden="true">
+        <g class="rk__flame" data-intro-flame="">
+          <path class="rk__fire rk__fire--outer" d="M33 72 Q45 140 57 72 Z" />
+          <path class="rk__fire rk__fire--mid" d="M37 72 Q45 116 53 72 Z" />
+          <path class="rk__fire rk__fire--core" d="M41 72 Q45 98 49 72 Z" />
+        </g>
+        <path class="rk__fin" d="M30 62 L18 72 L32 75 Z" />
+        <path class="rk__fin" d="M60 62 L72 72 L58 75 Z" />
+        <path class="rk__body" d="M45 15 C33 30 31 55 31 72 L59 72 C59 55 57 30 45 15 Z" />
+        <circle class="rk__window" cx="45" cy="42" r="7" />
+      </svg>
+      <div class="opening__px" data-intro-px=""></div>
+    </div>
+  )
 }
