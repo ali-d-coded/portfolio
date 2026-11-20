@@ -2,6 +2,7 @@ import { createRouter, type RouterContext } from 'remix/router'
 import { render } from 'remix/middleware/render'
 import { staticFiles } from 'remix/middleware/static'
 
+import adminController, { loginController } from './actions/admin/controller.tsx'
 import controller from './actions/controller.tsx'
 import { renderNotFound } from './actions/not-found-page.tsx'
 import workController from './actions/work/controller.tsx'
@@ -22,4 +23,6 @@ declare module 'remix' {
 }
 
 router.map(routes, controller)
+router.map(routes.admin.login, loginController)
+router.map(routes.admin, adminController)
 router.map(routes.work, workController)

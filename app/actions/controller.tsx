@@ -1,5 +1,6 @@
 import { createController } from 'remix/router'
 
+import { readUpload } from '../admin/uploads.ts'
 import { assets } from '../assets.ts'
 import { store } from '../data/store.ts'
 import { routes } from '../routes.ts'
@@ -33,9 +34,18 @@ export default createController(routes, {
     async contact(context) {
       return context.render(<ContactPage frame={await loadFrame(store)} />)
     },
-    media() {
-      // Uploads arrive with the admin area; until then no media is served.
-      return new Response('Not Found', { status: 404 })
+    async media(context) {
+      let media = await store.getMedia(context.params.id)
+      let bytes = media ? await readUpload(media) : null
+      if (!media || !bytes) return new Response('Not Found', { status: 404 })
+      return new Response(new Uint8Array(bytes), {
+        headers: {
+          'Content-Type': media.contentType,
+          'Content-Length': String(bytes.length),
+          'Cache-Control': 'public, max-age=3600',
+          'X-Content-Type-Options': 'nosniff',
+        },
+      })
     },
   },
 })
