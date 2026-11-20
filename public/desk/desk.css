@@ -640,3 +640,83 @@ html.arrive .curtain.is-px { background: transparent; }
 .rail__item.is-match h3, .tl__entry.is-match h3 { color: var(--amber-text); }
 .rail__item.is-dim, .tl__entry.is-dim, .project.is-dim { opacity: 0.32; }
 .rail__item.is-match::before { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+
+/* ------------------------------------------------------------------ the message form */
+/* A full-screen dialog, so the letter can fold and fly across the whole page. The dialog is in the top layer, so
+   the page cursor is hidden behind it; the real cursor comes back inside it. */
+.mailbox { position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: var(--ink); overflow: hidden; }
+.mailbox::backdrop { background: transparent; }
+.mailbox, .mailbox * { cursor: auto; }
+.mailbox button, .mailbox a, .mailbox [data-mb-close] { cursor: pointer; }
+.mailbox input, .mailbox textarea { cursor: text; }
+.mb__scrim { position: absolute; inset: 0; background: color-mix(in oklab, var(--bg) 74%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.mb__stage { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px; pointer-events: none; }
+.mb__card { position: relative; z-index: 3; width: min(540px, 100%); pointer-events: auto; overflow: hidden; padding: clamp(18px, 3vw, 28px); }
+.mb__form { display: grid; gap: 0; }
+.mb__fields { display: grid; gap: 16px; padding-bottom: 18px; }
+.mb__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mb__head .label { margin: 0; }
+.mb__x { display: grid; place-items: center; width: 32px; height: 32px; margin: -6px -8px -6px 0; padding: 0; border: 0; border-radius: var(--r); background: none; color: var(--ink-3); transition: color 0.2s, background-color 0.2s; }
+.mb__x:hover { color: var(--ink); background: color-mix(in oklab, var(--ink) 8%, transparent); }
+.mb__x svg { width: 18px; height: 18px; }
+.mb__row { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mb__field { display: grid; gap: 6px; min-width: 0; }
+.mb__field label { font: 700 11px/1.4 var(--type); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.mb__field input, .mb__field textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--r); background: color-mix(in oklab, var(--bg) 55%, transparent); color: var(--ink); font: 500 14px/1.5 var(--mono); transition: border-color 0.2s, box-shadow 0.2s; }
+.mb__field textarea { min-height: 128px; resize: vertical; }
+.mb__field input:focus, .mb__field textarea:focus { outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px color-mix(in oklab, var(--amber) 22%, transparent); }
+.mb__field input[aria-invalid="true"], .mb__field textarea[aria-invalid="true"] { border-color: var(--rose); }
+.mb__err { display: block; min-height: 0; color: var(--rose); font: 500 12px/1.4 var(--mono); }
+.mb__err:empty { display: none; }
+.mb__fail { padding: 10px 12px; border: 1px solid color-mix(in oklab, var(--rose) 45%, transparent); border-radius: var(--r); background: color-mix(in oklab, var(--rose) 10%, transparent); color: var(--rose); font: 500 13px/1.5 var(--mono); }
+.mb__fail[hidden], .mb__fields[hidden] { display: none; }
+.mb__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.mb__foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.mb__hint { color: var(--ink-3); font: 500 11px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; }
+.mb__send { gap: 10px; }
+.mb__icon { width: 16px; height: 16px; }
+.mb__spin { display: none; width: 14px; height: 14px; border: 2px solid color-mix(in oklab, var(--amber-ink) 25%, transparent); border-top-color: var(--amber-ink); border-radius: 50%; animation: mbspin 0.7s linear infinite; }
+.is-sending .mb__icon { display: none; }
+.is-sending .mb__spin { display: inline-block; }
+.is-sending.is-flying .mb__icon { display: inline-block; }
+.is-sending.is-flying .mb__spin { display: none; }
+@keyframes mbspin { to { transform: rotate(360deg); } }
+.mb__done { display: grid; gap: 12px; }
+.mb__done[hidden] { display: none; }
+.mb__done-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mb__sent { display: flex; align-items: center; gap: 8px; margin: 0; font: 700 15px/1.3 var(--mono); }
+.mb__sent .brand__mark { width: 24px; height: 24px; font-size: 10px; }
+.mb__time { color: var(--ink-3); font: 500 12px/1 var(--mono); }
+.mb__copy { margin: 0; color: var(--ink-2); font-size: 14px; line-height: 1.6; }
+.mb__again { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mb__again .btn { justify-content: center; }
+
+/* the letter: paper, a stamp and a postmark, folded into a plane and flown away */
+.mb__letter { position: absolute; left: 0; top: 0; z-index: 2; visibility: hidden; pointer-events: none; filter: drop-shadow(0 18px 22px rgba(0, 0, 0, 0.45)); will-change: transform; }
+.mb__sheet { position: absolute; inset: 0; background: #fbfbf9; clip-path: polygon(50% 0, 100% 0, 100% 100%, 0 100%, 0 0); }
+.mb__paper { position: absolute; inset: 0; padding: 7% 9%; color: #1c1c20; outline: 1px dashed rgba(28, 28, 32, 0.22); outline-offset: -12px; background: repeating-linear-gradient(to right, rgba(28, 28, 32, 0.12) 0 1px, transparent 1px 12px) bottom 9px left 9% / 82% 5px no-repeat; }
+.mb__date { font: 500 11px/1.4 var(--type); letter-spacing: 0.1em; color: rgba(28, 28, 32, 0.55); }
+.mb__text { max-width: 72%; margin-top: 18%; font: 400 clamp(14px, 1.7vw, 18px)/1.5 var(--type); color: #1c1c20; overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.mb__stamp { position: absolute; top: 6%; right: 7%; display: grid; justify-items: center; align-content: center; gap: 6px; width: 19%; aspect-ratio: 4 / 5; border: 3px dotted #fbfbf9; outline: 1px solid rgba(28, 28, 32, 0.12); background: linear-gradient(160deg, #fde047, #facc15 55%, #eab308); color: #1c1c20; font: 700 7px/1 var(--mono); letter-spacing: 0.1em; text-transform: uppercase; box-shadow: 0 0 0 1px rgba(28, 28, 32, 0.1); }
+.mb__stamp-icon { width: 46%; height: auto; }
+.mb__postmark { position: absolute; top: 10%; right: 22%; width: 34%; height: auto; color: rgba(28, 28, 32, 0.34); }
+.mb__flap { position: absolute; inset: 0; z-index: 2; opacity: 0; }
+.mb__flap--l { background: linear-gradient(135deg, #f8f8f6, #e8e8e5); clip-path: polygon(0 28%, 50% 0, 50% 28%); }
+.mb__flap--r { background: linear-gradient(225deg, #cfcfcc, #e6e6e3); clip-path: polygon(50% 0, 100% 28%, 50% 28%); }
+.mb__plane { position: absolute; left: 0; top: 0; z-index: 4; width: 120px; height: 120px; overflow: visible; visibility: hidden; pointer-events: none; filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.5)); will-change: transform; }
+.mb__pl { stroke: rgba(28, 28, 32, 0.16); stroke-width: 0.6; stroke-linejoin: round; }
+.mb__pl--tail { fill: #f1f1ef; }
+.mb__pl--up { fill: #e3e3e0; }
+.mb__pl--down { fill: #fbfbf9; }
+.mb__trail { position: absolute; inset: 0; z-index: 3; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.mb__glow, .mb__line { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.mb__glow { stroke-width: 9; opacity: 0.4; filter: blur(5px); }
+.mb__line { stroke-width: 2.4; }
+@media (max-width: 560px) {
+  .mb__row, .mb__again { grid-template-columns: 1fr; }
+  .mb__hint { display: none; }
+  .mb__foot { justify-content: flex-end; }
+  .is-sending .mb__hint { display: block; margin-right: auto; }
+}
+.mail-open { overflow: hidden; }
+.mail-open .cursor { display: none !important; }

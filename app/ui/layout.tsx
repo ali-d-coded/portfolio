@@ -70,6 +70,7 @@ export function Layout(handle: Handle<LayoutProps>) {
         <ThemeToggle />
         <ScrollTop />
         <FloatingMenu frame={frame} pageType={pageType} />
+        <MailDialog site={frame.site} />
         <main id="top" data-page={pageType}>
           {children}
         </main>
@@ -345,6 +346,130 @@ function Footer(handle: Handle<{ frame: Frame }>) {
           </div>
         </div>
       </footer>
+    )
+  }
+}
+
+/** The paper plane outline used on the send button and the stamp. */
+function PlaneIcon(handle: Handle<{ class?: string }>) {
+  return () => (
+    <svg class={handle.props.class ?? 'mb__icon'} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M21.5 2.5 10.2 13.8" />
+      <path d="M21.5 2.5 14.6 21.5l-4.4-7.7L2.5 9.4z" />
+    </svg>
+  )
+}
+
+/**
+ * The message form, opened by any email link on the page. It is a full-screen dialog so the letter can fold
+ * and fly across the whole page. Without script the links are plain `mailto:` links and this stays closed.
+ */
+function MailDialog(handle: Handle<{ site: Site | null }>) {
+  return () => {
+    let { site } = handle.props
+    if (!site?.email) return null
+    let owner = firstName(site.name)
+    return (
+      <dialog class="mailbox" data-mailbox="" data-owner={owner} data-mark={initials(site.name)} aria-labelledby="mb-title" data-lenis-prevent="">
+        <div class="mb__scrim" data-mb-close=""></div>
+        <div class="mb__stage">
+          <div class="mb__card panel" data-mb-card="">
+            <form class="mb__form" method="post" action={routes.mail.href()} novalidate data-mb-form="">
+              <div class="mb__fields" data-mb-fields="">
+              <div class="mb__head">
+                <p class="label" id="mb-title">
+                  {`// new message to ${owner}`}
+                </p>
+                <button class="mb__x" type="button" aria-label="Close the form" data-mb-close="" data-cursor="link">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6 6 18" />
+                  </svg>
+                </button>
+              </div>
+              <div class="mb__row">
+                <div class="mb__field">
+                  <label for="mb-name">Your name</label>
+                  <input id="mb-name" name="name" type="text" autoComplete="name" maxLength={80} required />
+                  <span class="mb__err" data-mb-err="name"></span>
+                </div>
+                <div class="mb__field">
+                  <label for="mb-email">Your email</label>
+                  <input id="mb-email" name="email" type="email" autoComplete="email" maxLength={120} required />
+                  <span class="mb__err" data-mb-err="email"></span>
+                </div>
+              </div>
+              <div class="mb__field">
+                <label for="mb-message">Message</label>
+                <textarea id="mb-message" name="message" rows={5} maxLength={5000} required></textarea>
+                <span class="mb__err" data-mb-err="message"></span>
+              </div>
+              <div class="mb__hp" aria-hidden="true">
+                <label for="mb-website">Website</label>
+                <input id="mb-website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+              </div>
+              <div class="mb__fail" role="alert" data-mb-fail="" hidden></div>
+              </div>
+              <div class="mb__foot">
+                <span class="mb__hint" data-mb-hint="">
+                  Ctrl Enter to send
+                </span>
+                <button class="btn btn--primary mb__send" type="submit" data-mb-send="" data-cursor="link">
+                  <span class="mb__send-label" data-mb-label="">
+                    Send
+                  </span>
+                  <PlaneIcon />
+                  <i class="mb__spin" aria-hidden="true"></i>
+                </button>
+              </div>
+            </form>
+            <div class="mb__done" data-mb-done="" hidden>
+              <div class="mb__done-head">
+                <p class="mb__sent">
+                  Sent to <span class="brand__mark" aria-hidden="true">{initials(site.name)}</span> {owner}
+                </p>
+                <span class="mb__time" data-mb-time=""></span>
+              </div>
+              <p class="mb__copy">{`${owner} reads every message personally, usually within a day, and replies from the address you gave.`}</p>
+              <div class="mb__again">
+                <button class="btn btn--primary" type="button" data-mb-again="" data-cursor="link">
+                  Write another
+                </button>
+                <button class="btn btn--ghost" type="button" data-mb-edit="" data-cursor="link">
+                  Edit and resend
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb__letter" data-mb-letter="" aria-hidden="true">
+            <div class="mb__sheet" data-mb-sheet="">
+            <i class="mb__flap mb__flap--l"></i>
+            <i class="mb__flap mb__flap--r"></i>
+            <div class="mb__paper">
+              <div class="mb__date" data-mb-date=""></div>
+              <div class="mb__text" data-mb-text=""></div>
+              <div class="mb__stamp">
+                <PlaneIcon class="mb__stamp-icon" />
+                <span>Air mail</span>
+              </div>
+              <svg class="mb__postmark" viewBox="0 0 120 56" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+                <path d="M2 14c8-6 12 6 20 0s12 6 20 0 12 6 20 0M2 26c8-6 12 6 20 0s12 6 20 0 12 6 20 0M2 38c8-6 12 6 20 0s12 6 20 0 12 6 20 0" />
+                <circle cx="90" cy="28" r="22" />
+                <circle cx="90" cy="28" r="15" />
+              </svg>
+            </div>
+            </div>
+          </div>
+          <svg class="mb__plane" data-mb-plane="" viewBox="0 0 100 100" aria-hidden="true">
+            <polygon points="0,0 40,50 0,100" class="mb__pl mb__pl--tail" />
+            <polygon points="0,0 100,50 40,50" class="mb__pl mb__pl--up" />
+            <polygon points="0,100 100,50 40,50" class="mb__pl mb__pl--down" />
+          </svg>
+        </div>
+        <svg class="mb__trail" data-mb-trail="" aria-hidden="true">
+          <path class="mb__glow" data-mb-glow="" />
+          <path class="mb__line" data-mb-line="" />
+        </svg>
+      </dialog>
     )
   }
 }

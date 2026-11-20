@@ -7,6 +7,7 @@ export const routes = route({
   about: '/about',
   contact: '/contact',
   media: get('/media/:id'),
+  mail: post('/api/mail'),
   admin: {
     // The sign-in form is its own map so the guard on the rest does not apply to it.
     login: form('/admin/login'),

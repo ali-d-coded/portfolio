@@ -11,6 +11,7 @@ import { initRail, initRuler, initScrollEffects, initTimelines } from './scrollf
 import { initSmooth } from './smooth.ts'
 import { initDraggableToggle, initMenu, initScrollTop } from './chrome.ts'
 import { initDotGrid } from './dotgrid.ts'
+import { initMailbox } from './mailbox.ts'
 import { initTheme } from './theme.ts'
 import { dropToys, initToys } from './toys.ts'
 import { initTransitions } from './transitions.ts'
@@ -44,6 +45,7 @@ function start() {
   let fine = hasFinePointer()
 
   initTheme(reduced)
+  initMailbox(reduced)
   initScrollTop(reduced)
   initMenu(reduced)
   initDraggableToggle(reduced)
