@@ -11,6 +11,7 @@ import { initRail, initRuler, initScrollEffects, initTimelines } from './scrollf
 import { initSmooth } from './smooth.ts'
 import { initDraggableToggle, initMenu, initScrollTop } from './chrome.ts'
 import { initDotGrid } from './dotgrid.ts'
+import { playIntro } from './intro.ts'
 import { initMailbox } from './mailbox.ts'
 import { initTheme } from './theme.ts'
 import { dropToys, initToys } from './toys.ts'
@@ -19,7 +20,7 @@ import { initTransitions } from './transitions.ts'
 gsap.registerPlugin(ScrollTrigger, Draggable, InertiaPlugin, SplitText)
 
 /** The hero arrives: headline lines rise out of their masks, the other pieces follow, the toys drop in. */
-async function enter() {
+async function enter(intro: Promise<void> | null) {
   let root = document.documentElement
   let hero = document.querySelector<HTMLElement>('[data-hero]')
   let pieces = [...document.querySelectorAll<HTMLElement>('[data-enter]')]
@@ -32,7 +33,9 @@ async function enter() {
   gsap.set(pieces, { opacity: 0, y: 24 })
   root.classList.add('ready')
 
-  let delay = root.classList.contains('arrive') ? 0.55 : 0.05
+  // On the first visit in a tab the hero waits for the loading reveal to start clearing.
+  if (intro) await intro
+  let delay = intro ? 0.1 : root.classList.contains('arrive') ? 0.55 : 0.05
   if (split) {
     gsap.to(split.lines, { yPercent: 0, duration: 1, ease: 'power4.out', stagger: 0.09, delay })
   }
@@ -42,6 +45,7 @@ async function enter() {
 
 function start() {
   let reduced = prefersReducedMotion()
+  let intro = document.documentElement.classList.contains('intro') && !reduced ? playIntro() : null
   let fine = hasFinePointer()
 
   initTheme(reduced)
@@ -70,7 +74,7 @@ function start() {
   }
   initRail()
   initScrollEffects()
-  void enter()
+  void enter(intro)
 }
 
 function initTransitionsFor(reduced: boolean) {

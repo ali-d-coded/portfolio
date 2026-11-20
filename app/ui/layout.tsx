@@ -55,6 +55,7 @@ export function Layout(handle: Handle<LayoutProps>) {
         description={description}
         robots={pageType === 'not-found' ? 'noindex' : 'index, follow'}
       >
+        {pageType === 'home' ? <IntroLoader site={frame.site} /> : null}
         <a class="skip-link" href="#top">
           Skip to content
         </a>
@@ -77,8 +78,15 @@ export function Layout(handle: Handle<LayoutProps>) {
         <Footer frame={frame} />
         <div class="curtain" aria-hidden="true"></div>
         <div class="cursor" aria-hidden="true">
-          <i class="cursor__ring"></i>
-          <i class="cursor__dot"></i>
+          <span class="cursor__plane">
+            <svg viewBox="0 0 52 52" aria-hidden="true">
+              <path class="cp__swoosh" d="M33 37 Q40 42 48 38" />
+              <path class="cp__flap" d="M27 27 L40 15 L37 33 Z" />
+              <path class="cp__wing cp__wing--b" d="M3 3 Q6 23 15 40 L27 27 Z" />
+              <path class="cp__wing cp__wing--a" d="M3 3 Q23 6 40 15 L27 27 Z" />
+              <path class="cp__fold" d="M3 3 L27 27" />
+            </svg>
+          </span>
           <span class="cursor__label"></span>
         </div>
       </Document>
@@ -470,6 +478,49 @@ function MailDialog(handle: Handle<{ site: Site | null }>) {
           <path class="mb__line" data-mb-line="" />
         </svg>
       </dialog>
+    )
+  }
+}
+
+/**
+ * The loading reveal on the first visit to the home page in a tab: the desk "boots" with a short log and a
+ * progress bar that a paper plane rides along, then pixels peel away to show the page. A closed or new tab
+ * counts as a first visit. The boot script in the document head decides whether it plays.
+ */
+function IntroLoader(handle: Handle<{ site: Site | null }>) {
+  return () => {
+    let { site } = handle.props
+    return (
+      <div class="opening" data-intro="" aria-hidden="true">
+        <div class="opening__center" data-intro-center="">
+          <span class="brand__mark opening__mark">{site ? initials(site.name) : ''}</span>
+          <p class="opening__name">{site?.name ?? ''}</p>
+          <ul class="opening__log">
+            <li class="opening__line">unpacking the desk</li>
+            <li class="opening__line">taping up the stickers</li>
+            <li class="opening__line">warming up the plane</li>
+            <li class="opening__line opening__line--ready">ready</li>
+          </ul>
+          <div class="opening__meter">
+            <span class="opening__count" data-intro-count="">
+              00%
+            </span>
+            <div class="opening__bar">
+              <i class="opening__fill" data-intro-fill=""></i>
+              <span class="opening__plane" data-intro-plane="">
+                <svg viewBox="0 0 52 52" aria-hidden="true">
+                  <path class="cp__swoosh" d="M33 37 Q40 42 48 38" />
+                  <path class="cp__flap" d="M27 27 L40 15 L37 33 Z" />
+                  <path class="cp__wing cp__wing--b" d="M3 3 Q6 23 15 40 L27 27 Z" />
+                  <path class="cp__wing cp__wing--a" d="M3 3 Q23 6 40 15 L27 27 Z" />
+                  <path class="cp__fold" d="M3 3 L27 27" />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="opening__px" data-intro-px=""></div>
+      </div>
     )
   }
 }

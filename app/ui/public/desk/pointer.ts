@@ -1,34 +1,64 @@
 import { gsap } from 'gsap'
 
-/** The custom cursor: a ring and a dot that follow the mouse, and grow or take a label over things. */
+/**
+ * The custom cursor: a doodled paper plane, drawn like the other things on the desk. Its nose is the pointer.
+ * It banks to face the way the mouse is moving and levels out when the mouse stops, leans in over links, and
+ * gets a small label over things you can view or drag.
+ */
 export function initCursor(): void {
   let root = document.querySelector<HTMLElement>('.cursor')
-  let ring = root?.querySelector<HTMLElement>('.cursor__ring')
-  let dot = root?.querySelector<HTMLElement>('.cursor__dot')
+  let plane = root?.querySelector<HTMLElement>('.cursor__plane')
   let label = root?.querySelector<HTMLElement>('.cursor__label')
-  if (!root || !ring || !dot || !label) return
+  if (!root || !plane || !label) return
 
-  gsap.set([ring, dot, label], { x: -100, y: -100 })
-  let ringX = gsap.quickTo(ring, 'x', { duration: 0.4, ease: 'power3' })
-  let ringY = gsap.quickTo(ring, 'y', { duration: 0.4, ease: 'power3' })
-  let dotX = gsap.quickTo(dot, 'x', { duration: 0.08, ease: 'none' })
-  let dotY = gsap.quickTo(dot, 'y', { duration: 0.08, ease: 'none' })
+  // The plane turns about its nose, so the nose stays exactly on the pointer.
+  gsap.set(plane, { x: -100, y: -100, transformOrigin: '6% 6%' })
+  gsap.set(label, { x: -100, y: -100 })
+  let planeX = gsap.quickTo(plane, 'x', { duration: 0.12, ease: 'power3' })
+  let planeY = gsap.quickTo(plane, 'y', { duration: 0.12, ease: 'power3' })
+  let turn = gsap.quickTo(plane, 'rotation', { duration: 0.35, ease: 'power3' })
   let labelX = gsap.quickTo(label, 'x', { duration: 0.4, ease: 'power3' })
   let labelY = gsap.quickTo(label, 'y', { duration: 0.4, ease: 'power3' })
   let active = false
+
+  // At rest the nose points up and to the left, like an ordinary cursor.
+  const REST = -135
+  let lastX = 0
+  let lastY = 0
+  let rotation = 0
+  let settle = 0
 
   window.addEventListener('pointermove', (event) => {
     if (event.pointerType !== 'mouse') return
     if (!active) {
       active = true
+      lastX = event.clientX
+      lastY = event.clientY
       document.documentElement.classList.add('has-cursor')
     }
-    ringX(event.clientX)
-    ringY(event.clientY)
-    dotX(event.clientX)
-    dotY(event.clientY)
+    planeX(event.clientX)
+    planeY(event.clientY)
     labelX(event.clientX)
     labelY(event.clientY)
+
+    let dx = event.clientX - lastX
+    let dy = event.clientY - lastY
+    lastX = event.clientX
+    lastY = event.clientY
+    if (Math.hypot(dx, dy) > 4) {
+      // Face the way it is travelling, by the shortest way round.
+      let heading = (Math.atan2(dy, dx) * 180) / Math.PI - REST
+      rotation += ((((heading - rotation) % 360) + 540) % 360) - 180
+      turn(rotation)
+      root.classList.add('is-moving')
+      window.clearTimeout(settle)
+      settle = window.setTimeout(() => {
+        // Level out to the nearest resting angle.
+        rotation = Math.round(rotation / 360) * 360
+        turn(rotation)
+        root.classList.remove('is-moving')
+      }, 140)
+    }
   })
 
   let words: Record<string, string> = { view: 'View', drag: 'Drag' }
@@ -40,13 +70,14 @@ export function initCursor(): void {
     root.classList.toggle('is-label', Boolean(word))
     if (word) label.textContent = word
   })
-  // Scale through GSAP, not CSS `scale`: the ring is placed by a translate, and a CSS scale would shrink that offset too.
+  // Scale through GSAP, not CSS `scale`: the plane is placed by a translate, and a CSS scale would shrink that offset too.
   document.addEventListener('pointerdown', () => {
-    gsap.fromTo(ring, { scale: 1 }, { scale: 0.8, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 })
+    gsap.fromTo(plane, { scale: 1 }, { scale: 0.8, duration: 0.12, ease: 'power2.out', yoyo: true, repeat: 1 })
   })
   document.documentElement.addEventListener('pointerleave', () => gsap.to(root, { opacity: 0, duration: 0.2 }))
   document.documentElement.addEventListener('pointerenter', () => gsap.to(root, { opacity: 1, duration: 0.2 }))
 }
+
 
 /** Buttons marked `data-magnetic` lean toward the pointer and spring back. */
 export function initMagnetic(): void {
