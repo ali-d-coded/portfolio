@@ -10,7 +10,7 @@ describe('seedIfEmpty', () => {
     await resetStore()
 
     assert.equal(await seedIfEmpty(store), true)
-    assert.equal((await store.listProjects()).length, 2)
+    assert.equal((await store.listProjects()).length, 3)
     assert.equal((await store.listExperience()).length, 4)
     assert.equal((await store.listSkillGroups()).length, 9)
     assert.equal((await store.getSite())?.email, 'aliallu3xa@gmail.com')

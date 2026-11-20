@@ -138,6 +138,13 @@ export function ToolTiles(handle: Handle<{ names: string[]; limit?: number; size
 export function ProjectVisual(handle: Handle<{ project: Project; media: Map<string, Media> }>) {
   return () => {
     let { project, media } = handle.props
+    if (project.previewImage) {
+      return (
+        <div class="visual" data-parallax="0.06">
+          <img class="visual__img" src={project.previewImage} alt={`Screenshot of ${project.title}`} loading="lazy" />
+        </div>
+      )
+    }
     let cover = project.coverMediaId ? media.get(project.coverMediaId) : undefined
     if (cover) {
       return (

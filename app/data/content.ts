@@ -39,6 +39,10 @@ export interface Project {
   figures: Figure[]
   blocks: Block[]
   coverMediaId: string | null
+  /** The project's live site, shown as a link with a preview. */
+  liveUrl?: string
+  /** A screenshot of the live site, a path under `public/`. */
+  previewImage?: string
   featured: boolean
   published: boolean
   position: number

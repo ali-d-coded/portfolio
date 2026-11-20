@@ -3,6 +3,7 @@ import type { Handle } from 'remix/component'
 import type { Media, Project } from '../../data/content.ts'
 import { routes } from '../../routes.ts'
 import { Blocks, chapters } from '../../ui/blocks.tsx'
+import { displayUrl } from '../../ui/format.ts'
 import { Arrow, EmailButton, Layout, type Frame } from '../../ui/layout.tsx'
 import { SectionHead, Statement, ToolTile, ToolTiles } from '../../ui/parts.tsx'
 import { toolIcon } from '../../ui/tool-icons.ts'
@@ -47,6 +48,7 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
             </div>
           </section>
         ) : null}
+        <LivePreview project={project} />
         {project.slug === 'eazycrm' ? <Pipeline /> : null}
         {next ? (
           <Statement
@@ -131,6 +133,43 @@ function Hero(handle: Handle<{ frame: Frame; project: Project }>) {
               ) : null}
             </dl>
           ) : null}
+        </div>
+      </section>
+    )
+  }
+}
+
+/** The live site: a clickable browser-window preview with its screenshot, opening the real site in a new tab. */
+function LivePreview(handle: Handle<{ project: Project }>) {
+  return () => {
+    let { project } = handle.props
+    if (!project.liveUrl) return null
+    let host = displayUrl(project.liveUrl)
+    return (
+      <section class="section section--tight" id="live" aria-label="Live site" data-ruler-section="Live site">
+        <div class="wrap">
+          <a
+            class="live"
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-cursor="view"
+            data-reveal=""
+          >
+            <span class="live__bar" aria-hidden="true">
+              <i></i>
+              <i></i>
+              <i></i>
+              <span class="live__url">{host}</span>
+            </span>
+            {project.previewImage ? (
+              <img class="live__img" src={project.previewImage} alt={`Screenshot of ${host}`} loading="lazy" />
+            ) : null}
+            <span class="live__cta">
+              Visit {host}
+              <Arrow />
+            </span>
+          </a>
         </div>
       </section>
     )
