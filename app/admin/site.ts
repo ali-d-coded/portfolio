@@ -12,12 +12,14 @@ export const siteFields: Field[] = [
   { name: 'email', label: 'Email', type: 'text', required: true },
   { name: 'linkedinUrl', label: 'LinkedIn link', type: 'url' },
   { name: 'githubUrl', label: 'GitHub link', type: 'url' },
+  { name: 'resume', label: 'Resume', type: 'pdf', hint: 'A PDF up to 5 MB. Uploading a new one replaces the old.' },
   { name: 'education', label: 'Education', type: 'textarea', rows: 3, hint: 'One per line: Degree | School | 2024-06 | 2027-06 (the end is optional).' },
 ]
 
-export function siteValues(site: Site | null): Values {
+export function siteValues(site: Site | null, resumeHref: string): Values {
   if (!site) return {}
   return {
+    resume: resumeHref,
     name: site.name,
     role: site.role,
     heroHeadline: site.heroHeadline,

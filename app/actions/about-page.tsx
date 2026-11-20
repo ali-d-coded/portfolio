@@ -71,7 +71,7 @@ function Hero(handle: Handle<{ frame: Frame }>) {
           </p>
           <div class="btns" data-enter="">
             <EmailButton site={site} />
-            <ResumeButtons />
+            <ResumeButtons site={site} />
             {projects.length > 0 ? (
               <a class="btn btn--ghost" href={routes.work.index.href()} data-cursor="link">
                 See the projects

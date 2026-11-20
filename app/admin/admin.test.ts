@@ -184,6 +184,40 @@ describe('admin', () => {
     assert.equal((await request('/admin/c/projects/new', { method: 'POST', body: svg, cookie })).status, 400)
   })
 
+  it('uploads a resume, links it everywhere and replaces it', async () => {
+    let cookie = await login()
+    let site = (await store.getSite())!
+    let fields = { name: site.name, role: site.role, heroHeadline: site.heroHeadline, summary: '', about: '', email: site.email, linkedinUrl: '', githubUrl: '', education: '' }
+    function withResume(file: File | null) {
+      let body = new FormData()
+      for (let [name, value] of Object.entries(fields)) body.set(name, value)
+      if (file) body.set('resumeUpload', file)
+      return request('/admin/site', { method: 'POST', body, cookie })
+    }
+    let pdf = (text: string) => new File(['%PDF-1.4 ' + text], 'cv.pdf', { type: 'application/pdf' })
+
+    assert.equal((await withResume(new File(['hello'], 'cv.pdf', { type: 'application/pdf' }))).status, 400)
+    assert.equal((await withResume(new File(['x'], 'cv.txt', { type: 'text/plain' }))).status, 400)
+
+    assert.equal((await withResume(pdf('first'))).status, 303)
+    let firstId = (await store.getSite())!.resumeMediaId
+    assert.ok(firstId)
+    for (let path of ['/', '/about', '/contact']) {
+      assert.ok((await (await request(path)).text()).includes(`href="/media/${firstId}"`), path)
+    }
+    let served = await request(`/media/${firstId}`)
+    assert.equal(served.headers.get('content-type'), 'application/pdf')
+
+    // Saving with no file keeps it; a new file replaces it and removes the old one.
+    await withResume(null)
+    assert.equal((await store.getSite())!.resumeMediaId, firstId)
+    await withResume(pdf('second'))
+    let secondId = (await store.getSite())!.resumeMediaId
+    assert.notEqual(secondId, firstId)
+    assert.equal(await store.getMedia(firstId!), null)
+    assert.equal((await request(`/media/${firstId}`)).status, 404)
+  })
+
   it('downloads a backup', async () => {
     let cookie = await login()
     let response = await request('/admin/backup', { cookie })

@@ -26,7 +26,7 @@ export function isKind(value: string): value is Kind {
 export interface Field {
   name: string
   label: string
-  type: 'text' | 'textarea' | 'month' | 'checkbox' | 'url' | 'image'
+  type: 'text' | 'textarea' | 'month' | 'checkbox' | 'url' | 'image' | 'pdf'
   hint?: string
   rows?: number
   required?: boolean

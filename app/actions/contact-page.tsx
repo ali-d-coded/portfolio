@@ -4,7 +4,7 @@ import type { Site } from '../data/content.ts'
 import { routes } from '../routes.ts'
 import { Desk } from '../ui/doodles.tsx'
 import { displayUrl } from '../ui/format.ts'
-import { EmailButton, Layout, RESUME_HREF, ResumeButtons, type Frame } from '../ui/layout.tsx'
+import { EmailButton, Layout, resumeHref, ResumeButtons, type Frame } from '../ui/layout.tsx'
 import { SectionHead, ToolTile } from '../ui/parts.tsx'
 import { toolIcon } from '../ui/tool-icons.ts'
 
@@ -39,7 +39,7 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
               </p>
               <div class="btns" data-enter="">
                 <EmailButton site={site} />
-                <ResumeButtons />
+                <ResumeButtons site={site} />
               </div>
             </div>
             <Desk
@@ -90,7 +90,7 @@ function Links(handle: Handle<{ site: Site | null }>) {
     rows.push({
       label: 'Resume',
       value: 'View the resume (PDF)',
-      href: RESUME_HREF,
+      href: resumeHref(site),
       icon: <FileGlyph />,
     })
     if (rows.length === 0) return null

@@ -107,10 +107,15 @@ export function EmailButton(handle: Handle<{ site: Site | null; arrow?: boolean 
 /** The resume PDF, served unchanged from `public/`. */
 export const RESUME_HREF = '/ali-afthab-resume.pdf'
 
+/** An uploaded resume if there is one, otherwise the bundled file. */
+export function resumeHref(site: Site | null): string {
+  return site?.resumeMediaId ? `/media/${site.resumeMediaId}` : RESUME_HREF
+}
+
 /** Open the resume in a new tab. */
-export function ResumeButtons() {
+export function ResumeButtons(handle: Handle<{ site: Site | null }>) {
   return () => (
-    <a class="btn btn--ghost" href={RESUME_HREF} target="_blank" rel="noopener" data-cursor="link">
+    <a class="btn btn--ghost" href={resumeHref(handle.props.site)} target="_blank" rel="noopener" data-cursor="link">
       View resume
     </a>
   )
@@ -275,7 +280,7 @@ function Footer(handle: Handle<{ frame: Frame }>) {
             ) : null}
             <div class="btns">
               <EmailButton site={site} />
-              <ResumeButtons />
+              <ResumeButtons site={site} />
             </div>
           </div>
           {site ? (

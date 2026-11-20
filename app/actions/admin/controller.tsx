@@ -16,9 +16,10 @@ import {
 import { collections, isKind, type Values } from '../../admin/collections.ts'
 import { saveSiteValues, siteFields, siteValues } from '../../admin/site.ts'
 import { FormPage, ListPage, LoginPage, OverviewPage } from '../../admin/ui.tsx'
-import { saveUpload } from '../../admin/uploads.ts'
+import { deleteUpload, saveUpload } from '../../admin/uploads.ts'
 import { store } from '../../data/store.ts'
 import { routes } from '../../routes.ts'
+import { resumeHref } from '../../ui/layout.tsx'
 
 const UPLOAD_LIMIT = 6 * 1024 * 1024
 
@@ -123,6 +124,7 @@ export default createController(routes.admin, {
     },
 
     async site(context) {
+      let site = await store.getSite()
       let flash = context.url.searchParams.has('saved') ? 'Saved.' : undefined
       return context.render(
         <FormPage
@@ -130,7 +132,7 @@ export default createController(routes.admin, {
           active="site"
           action={routes.admin.saveSite.href()}
           fields={siteFields}
-          values={siteValues(await store.getSite())}
+          values={siteValues(site, resumeHref(site))}
           backHref={routes.admin.home.href()}
           flash={flash}
         />,
@@ -138,17 +140,33 @@ export default createController(routes.admin, {
     },
 
     async saveSite(context) {
-      let { values } = valuesOf(context.formData)
+      let { values, files } = valuesOf(context.formData)
       let result = await saveSiteValues(store, values)
-      if (!result.ok) {
+      let errors = result.ok ? {} : result.errors
+
+      // A new resume replaces the old one: the file and its record are removed once the new one is saved.
+      let upload = files.get('resumeUpload')
+      if (result.ok && upload) {
+        let saved = await saveUpload(store, upload, 'Resume', 'pdf')
+        let site = await store.getSite()
+        if (saved.ok && site) {
+          let previous = site.resumeMediaId ? await store.getMedia(site.resumeMediaId) : null
+          await store.saveSite({ ...site, resumeMediaId: saved.media.id })
+          if (previous) await deleteUpload(store, previous)
+        } else if (!saved.ok) {
+          errors = { resume: saved.error }
+        }
+      }
+
+      if (Object.keys(errors).length > 0) {
         return context.render(
           <FormPage
             title="Site"
             active="site"
             action={routes.admin.saveSite.href()}
             fields={siteFields}
-            values={values}
-            errors={result.errors}
+            values={{ ...values, resume: resumeHref(await store.getSite()) }}
+            errors={errors}
             backHref={routes.admin.home.href()}
           />,
           { status: 400 },
