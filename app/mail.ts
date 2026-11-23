@@ -19,6 +19,8 @@ export interface OutgoingMail {
   text: string
   /** The same message set in the site's dark theme; `text` stays as the plain fallback. */
   html?: string
+  /** `high` adds `X-Priority: 1`, `X-MSMail-Priority: High` and `Importance: High`. */
+  priority?: 'high' | 'normal' | 'low'
 }
 
 export interface Mailer {
@@ -124,6 +126,8 @@ export function buildMail(message: Message, to: string, env: NodeJS.ProcessEnv =
     subject: `Portfolio message from ${message.name}`,
     text: `${message.message}\n\n--\n${message.name} <${message.email}>\nSent from the contact form on the portfolio.`,
     html: renderHtml(message),
+    // A visitor writing in is the one mail the owner wants a notification for.
+    priority: 'high',
   }
 }
 

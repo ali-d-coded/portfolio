@@ -19,7 +19,7 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
         title={name ? `${name}: email, LinkedIn and GitHub` : 'Contact'}
         description={
           name
-            ? `How to reach ${name} about a full-stack or backend role or project.`
+            ? `${name} is open to projects of any size. Email, LinkedIn and GitHub to start a conversation about a full-stack or backend build.`
             : 'Contact details.'
         }
         pageType="contact"
@@ -35,7 +35,13 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
                 {name ? `${name}, full-stack engineer` : 'Contact'}
               </h1>
               <p class="lead" data-enter="">
-                Write about a role or a project by email, or find me on LinkedIn and GitHub.
+                I'm open to projects of any size: a new product, a backend that needs fixing, an
+                internal tool, or a site that has to work for real customers. Tell me what you're
+                trying to build and I'll tell you honestly how I'd do it, what it takes and when it
+                could be live.
+              </p>
+              <p class="lead" data-enter="">
+                Send a few lines about the idea by email, or find me on LinkedIn and GitHub.
               </p>
               <div class="btns" data-enter="">
                 <EmailButton site={site} />

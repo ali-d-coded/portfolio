@@ -41,6 +41,11 @@ describe('mail body', () => {
     assert.match(mail.html, /line two/)
     assert.match(mail.text, /<script>alert\(1\)<\/script>/)
   })
+
+  it('is sent as high priority', () => {
+    let mail = buildMail({ name: 'Eve', email: 'eve@example.com', message: 'Hello there' }, 'ali@example.com')
+    assert.equal(mail.priority, 'high')
+  })
 })
 
 describe('contact form', () => {
