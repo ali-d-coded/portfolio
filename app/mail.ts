@@ -17,6 +17,8 @@ export interface OutgoingMail {
   replyTo: string
   subject: string
   text: string
+  /** The same message set in the site's dark theme; `text` stays as the plain fallback. */
+  html?: string
 }
 
 export interface Mailer {
@@ -121,7 +123,34 @@ export function buildMail(message: Message, to: string, env: NodeJS.ProcessEnv =
     replyTo: `"${message.name.replace(/"/g, '')}" <${message.email}>`,
     subject: `Portfolio message from ${message.name}`,
     text: `${message.message}\n\n--\n${message.name} <${message.email}>\nSent from the contact form on the portfolio.`,
+    html: renderHtml(message),
   }
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+// The site's dark theme (public/desk/desk.css), inline and table based because mail clients ignore the rest.
+const MONO = `'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace`
+const SANS = `Geist,system-ui,-apple-system,'Segoe UI',Arial,sans-serif`
+
+function renderHtml(message: Message): string {
+  let name = escapeHtml(message.name)
+  let email = escapeHtml(message.email)
+  let body = escapeHtml(message.message).replace(/\n/g, '<br>')
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="color-scheme" content="dark"><meta name="supported-color-schemes" content="dark"></head>
+<body style="margin:0;padding:0;background:#111113;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" bgcolor="#111113" style="background:#111113;"><tr><td align="center" style="padding:32px 16px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;border:1px solid #2a2a30;border-radius:4px;background:#1c1c20;">
+<tr><td style="padding:14px 20px;border-bottom:1px solid #2a2a30;font-family:${MONO};font-size:13px;color:#8b8b95;"><span style="color:#facc15;">&gt;</span> mail --from ${name.toLowerCase()}</td></tr>
+<tr><td style="padding:24px 20px 8px;font-family:${MONO};font-size:20px;font-weight:600;color:#f4f4f6;letter-spacing:-0.02em;">New message from ${name}</td></tr>
+<tr><td style="padding:0 20px 20px;font-family:${MONO};font-size:13px;color:#8b8b95;">Reply goes straight to <a href="mailto:${email}" style="color:#7dd3fc;text-decoration:none;">${email}</a></td></tr>
+<tr><td style="padding:0 20px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="background:#232328;border-left:3px solid #facc15;border-radius:2px;padding:16px 18px;font-family:${SANS};font-size:15px;line-height:1.6;color:#f4f4f6;">${body}</td></tr></table></td></tr>
+<tr><td style="padding:0 20px 24px;"><a href="mailto:${email}?subject=${encodeURIComponent('Re: your message')}" style="display:inline-block;background:#facc15;color:#111113;font-family:${MONO};font-size:13px;font-weight:600;text-decoration:none;padding:10px 18px;border-radius:4px;">Reply to ${name}</a></td></tr>
+<tr><td style="padding:14px 20px;border-top:1px solid #2a2a30;font-family:${MONO};font-size:12px;color:#8b8b95;">Sent from the contact form on aliafthab.me</td></tr>
+</table></td></tr></table></body></html>`
 }
 
 // --- Slowing spam down -----------------------------------------------------------------------------------

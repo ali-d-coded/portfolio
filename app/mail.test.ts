@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, it } from 'remix/test'
 
 import { seedSnapshot } from './data/seed.ts'
 import { resetStore } from './data/test-helpers.ts'
-import { createMailer, getMailer, resetSlots, setMailer, type Mailer, type OutgoingMail } from './mail.ts'
+import { buildMail, createMailer, getMailer, resetSlots, setMailer, type Mailer, type OutgoingMail } from './mail.ts'
 import { router } from './router.ts'
 
 const original = getMailer()
@@ -30,6 +30,18 @@ function send(body: unknown, headers: HeadersInit = { origin: 'http://localhost'
     }),
   )
 }
+
+describe('mail body', () => {
+  it('sets the message in the themed html and escapes what the visitor typed', () => {
+    let mail = buildMail({ name: 'Eve <b>', email: 'eve@example.com', message: '<script>alert(1)</script>\nline two' }, 'ali@example.com')
+    assert.ok(mail.html)
+    assert.match(mail.html, /#111113/)
+    assert.doesNotMatch(mail.html, /<script/)
+    assert.match(mail.html, /&lt;script&gt;/)
+    assert.match(mail.html, /line two/)
+    assert.match(mail.text, /<script>alert\(1\)<\/script>/)
+  })
+})
 
 describe('contact form', () => {
   beforeEach(async () => {
