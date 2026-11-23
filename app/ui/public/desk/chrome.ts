@@ -117,6 +117,7 @@ export function initScrollTop(reduced: boolean): void {
     visible = show
     node.classList.toggle('is-on', show)
     node.tabIndex = show ? 0 : -1
+    document.querySelector('[data-theme-toggle]')?.classList.toggle('is-compact', show)
   }
   node.tabIndex = -1
   window.addEventListener('scroll', update, { passive: true })

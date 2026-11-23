@@ -13,7 +13,6 @@ import {
   earliestStart,
   lowerFirst,
   studying,
-  toolTone,
 } from '../ui/parts.tsx'
 import { toolIcons } from '../ui/tool-icons.ts'
 
@@ -163,8 +162,6 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
           </div>
           <div class="projects" data-project-list="">
             {projects.map((project, index) => {
-              let details = (project.details ?? []).filter((row) => row.label.trim() && row.value.trim())
-              let rowTones = index % 2 === 0 ? ['', 'green', 'blue'] : ['', 'green', 'amber']
               return (
                 <article
                   key={project.id}
@@ -184,25 +181,17 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
                     </a>
                   </h3>
                   {project.summary ? <p class="project__summary">{project.summary}</p> : null}
-                  {project.stack.length > 0 ? (
-                    <ul class="stackchips" aria-label="Tools">
-                      {project.stack.map((tool) => (
-                        <li key={tool} class={`stackchip${toolTone(tool) ? ` stackchip--${toolTone(tool)}` : ''}`}>
-                          {tool}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  {details.length > 0 ? (
-                    <dl class="cardfacts">
-                      {details.map((row, rowIndex) => (
-                        <div key={row.label} class="cardfacts__row">
-                          <dt>{row.label}:</dt>
-                          <dd class={rowTones[rowIndex] ? `tone--${rowTones[rowIndex]}` : undefined}>{row.value}</dd>
-                        </div>
-                      ))}
-                    </dl>
-                  ) : null}
+                  <div class="project__foot">
+                    {toolIcons(project.stack).length > 0 ? (
+                      <span class="project__tools" aria-hidden="true">
+                        <ToolTiles names={project.stack} limit={6} size={32} />
+                      </span>
+                    ) : null}
+                    <span class="project__more" aria-hidden="true">
+                      Read the case study
+                      <Arrow />
+                    </span>
+                  </div>
                 </article>
               )
             })}

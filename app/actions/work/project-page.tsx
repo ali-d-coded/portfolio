@@ -172,6 +172,7 @@ function LivePreview(handle: Handle<{ project: Project }>) {
               <Arrow />
             </span>
           </a>
+          {project.liveNote ? <p class="live__note">{project.liveNote}</p> : null}
         </div>
       </section>
     )

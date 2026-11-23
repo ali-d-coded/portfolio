@@ -135,6 +135,7 @@ function ProjectList(handle: Handle<{ projects: Project[] }>) {
                   <span class="prow__main">
                     <span class="prow__title">{project.title}</span>
                     {project.tagline ? <span class="prow__tagline">{project.tagline}</span> : null}
+                    {project.summary ? <span class="prow__summary">{project.summary}</span> : null}
                   </span>
                   {toolIcons(project.stack).length > 0 ? (
                     <span class="prow__tools" aria-hidden="true" data-preview-tools="">

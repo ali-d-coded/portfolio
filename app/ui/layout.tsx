@@ -5,7 +5,7 @@ import type { Experience, Project, Site } from '../data/content.ts'
 import type { ContentStore } from '../data/store.ts'
 import { routes } from '../routes.ts'
 import { ThemeToggle } from './doodles.tsx'
-import { firstName, formatMonth } from './format.ts'
+import { firstName } from './format.ts'
 
 export type PageType = 'home' | 'work' | 'project' | 'about' | 'contact' | 'not-found'
 
@@ -269,8 +269,7 @@ function ScrollTop() {
 function Footer(handle: Handle<{ frame: Frame }>) {
   return () => {
     let { frame } = handle.props
-    let { site, projects, experience } = frame
-    let now = experience[0] ?? null
+    let { site, projects } = frame
     let year = new Date().getFullYear()
 
     return (
@@ -280,11 +279,11 @@ function Footer(handle: Handle<{ frame: Frame }>) {
             <i class="washi washi--cta" aria-hidden="true"></i>
             <p class="label">// get in touch</p>
             <h2 id="close-h" data-split="">
-              {site ? `Email ${site.name}` : 'Contact'}
+              {site ? "Tell me what you're building" : 'Contact'}
             </h2>
-            {now ? (
+            {site ? (
               <p class="lead">
-                {now.role} at {now.company} since {formatMonth(now.start)}.
+                A few lines is enough. I'll reply with how I'd approach it, what it takes and when it could be live.
               </p>
             ) : null}
             <div class="btns">

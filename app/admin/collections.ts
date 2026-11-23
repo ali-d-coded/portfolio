@@ -81,10 +81,11 @@ const projects: Collection = {
     { name: 'gains', label: 'What a business gets', type: 'textarea', rows: 5, hint: 'Shown as plain rows at the top of the project page, up to six. One per line: Title | One sentence in plain words' },
     { name: 'stages', label: 'Route of a message', type: 'textarea', rows: 8, hint: 'The stops a plane flies through on the project page. One per line: Name | Short line | Tool name for the logo | What it means for the client' },
     { name: 'screens', label: 'App screenshots', type: 'screens', rows: 4, hint: 'One per line: web, mobile or admin | Label | /media/link. Upload screenshots below and they are added here.' },
-    { name: 'details', label: 'Card facts', type: 'textarea', rows: 4, hint: 'Up to six rows on the home page card, one per line: Architecture | API Gateway + Tenant RBAC' },
+    { name: 'details', label: 'Card facts', type: 'textarea', rows: 4, hint: 'Saved with the project but no longer shown on the home page card, which now carries the summary and tool logos. One per line: Architecture | API Gateway + Tenant RBAC' },
     { name: 'summary', label: 'Summary', type: 'textarea', rows: 4, hint: 'Shown on the project cards.' },
     { name: 'stack', label: 'Tools', type: 'text', hint: 'Separated by commas.' },
     { name: 'liveUrl', label: 'Live site', type: 'url', hint: 'A link with a preview on the project page.' },
+    { name: 'liveNote', label: 'Live site note', type: 'text', hint: 'Optional. One line under the preview saying what the linked site is, if it is not the project itself.' },
     { name: 'previewImage', label: 'Preview image', type: 'image', hint: 'A screenshot of the live site. Upload one, or paste a path or link.' },
     { name: 'figures', label: 'Key figures', type: 'textarea', rows: 3, hint: 'One per line: 30+ | client businesses' },
     {
@@ -122,6 +123,7 @@ const projects: Collection = {
       summary: project.summary,
       stack: project.stack.join(', '),
       liveUrl: project.liveUrl ?? '',
+      liveNote: project.liveNote ?? '',
       previewImage: project.previewImage ?? '',
       figures: formatFigures(project.figures),
       blocks: formatBlocks(project.blocks),
@@ -172,6 +174,8 @@ const projects: Collection = {
     let screens = parseScreens(values.screens ?? '')
     if (screens.length > 0) project.screens = screens
     if (liveUrl) project.liveUrl = liveUrl
+    let liveNote = (values.liveNote ?? '').replace(/\s+/g, ' ').trim().slice(0, 200)
+    if (liveNote) project.liveNote = liveNote
     if (previewImage) project.previewImage = previewImage
     try {
       await store.saveProject(project)

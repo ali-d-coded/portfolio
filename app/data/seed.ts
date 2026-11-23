@@ -41,7 +41,7 @@ export const seedSnapshot: ContentSnapshot = {
       ],
       stack: ['Node.js', 'Bun', 'TypeScript', 'MongoDB', 'Redis', 'BullMQ', 'Redis Streams', 'Socket.IO', 'React', 'React Native'],
       summary:
-        'Gateway-centric microservices platform built for team inboxes, automated bulk drip campaigns, WhatsApp Groups, and e-commerce automation. Implements fault-tolerant webhook ingestion with BullMQ and tenant-scoped real-time delivery via Redis Streams and Socket.IO.',
+        'A WhatsApp CRM for businesses: your team answers customers from one shared inbox, sends campaigns to your whole list, and connects your store. Every business gets its own database, and 30+ client businesses run on it.',
       figures: [
         { value: '30+', label: 'client businesses' },
         { value: '3', label: 'client apps: web, mobile and admin' },
@@ -81,13 +81,13 @@ export const seedSnapshot: ContentSnapshot = {
         { title: 'Your data stays yours', text: 'Every business gets its own database. One client never sees another client message.' },
       ],
       stages: [
-        { name: 'Webhook', line: 'Meta WhatsApp Cloud API', tool: 'WhatsApp', benefit: 'A customer writes on WhatsApp and Meta hands the message to the platform right away.' },
-        { name: 'BullMQ queue', line: 'Queued, fault-tolerant ingestion', tool: 'Redis', benefit: 'The message waits safely in a queue, so a busy moment or a restart does not lose it.' },
-        { name: 'Worker', line: 'Processes each event', tool: 'Bun', benefit: 'A background worker handles each event, so the rest of the platform stays responsive.' },
-        { name: 'MongoDB', line: 'One database per tenant', tool: 'MongoDB', benefit: 'The message is saved in the database that belongs to that business, apart from every other client.' },
-        { name: 'Redis Streams', line: 'Tenant-scoped broadcast', tool: 'Redis', benefit: 'Only the team of that business is told a new message has arrived.' },
-        { name: 'Socket.IO', line: 'Real-time delivery', tool: 'Socket.IO', benefit: 'It shows up on the agent screen as it arrives, with no refresh.' },
-        { name: 'Inbox', line: 'Agents see only their assigned chats', tool: 'React', benefit: 'The assigned agent opens it in the web or mobile app. Other agents never see the chat.' },
+        { name: 'Webhook', line: 'It arrives the moment it is sent', tool: 'WhatsApp', benefit: 'A customer writes on WhatsApp and Meta hands the message to the platform right away.' },
+        { name: 'BullMQ queue', line: 'It is never lost in a busy moment', tool: 'Redis', benefit: 'The message waits safely in a queue, so a busy moment or a restart does not lose it.' },
+        { name: 'Worker', line: 'Everything else stays fast', tool: 'Bun', benefit: 'A background worker handles each event, so the rest of the platform stays responsive.' },
+        { name: 'MongoDB', line: 'Kept apart from other clients', tool: 'MongoDB', benefit: 'The message is saved in the database that belongs to that business, apart from every other client.' },
+        { name: 'Redis Streams', line: 'Only your team is told', tool: 'Redis', benefit: 'Only the team of that business is told a new message has arrived.' },
+        { name: 'Socket.IO', line: 'It appears with no refresh', tool: 'Socket.IO', benefit: 'It shows up on the agent screen as it arrives, with no refresh.' },
+        { name: 'Inbox', line: 'Only the assigned agent sees it', tool: 'React', benefit: 'The assigned agent opens it in the web or mobile app. Other agents never see the chat.' },
       ],
       previewImage: '/projects/eazycrm.jpg',
       featured: true,
@@ -108,7 +108,7 @@ export const seedSnapshot: ContentSnapshot = {
       ],
       stack: ['Node.js', 'Laravel', 'PostgreSQL', 'MySQL', 'Real-time Analytics', 'Query Optimization'],
       summary:
-        'High-performance Point of Sale engine engineered with real-time operational workflows and sales analytics. Built scalable RESTful APIs with Node.js and Laravel, optimizing heavy PostgreSQL and MySQL queries and indexes for fast reporting under lunch/dinner spikes.',
+        'A point of sale for restaurants, with sales reports that update in real time. I built the APIs behind it and tuned the database queries so reports stay fast through the lunch and dinner rush.',
       figures: [],
       blocks: [
         { type: 'heading', text: 'Overview' },
@@ -124,6 +124,7 @@ export const seedSnapshot: ContentSnapshot = {
       ],
       coverMediaId: null,
       liveUrl: 'https://calicutvibeuae.com/',
+      liveNote: "A restaurant that runs on this platform. The point of sale itself is a private system, so this is the restaurant's public site.",
       previewImage: '/projects/restaurant-pos.jpg',
       featured: true,
       published: true,

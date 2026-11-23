@@ -323,7 +323,7 @@ describe('admin', () => {
     }
   })
 
-  it('shows a project badge and card facts on the home page', async () => {
+  it('shows a project badge and tool logos on the home page card, and no facts box or tool chips', async () => {
     let cookie = await login()
     // The home page shows two featured projects at most, so the seeded ones step aside.
     for (let seeded of await store.listProjects()) await store.saveProject({ ...seeded, featured: false })
@@ -341,8 +341,9 @@ describe('admin', () => {
     let html = await (await request('/')).text()
     assert.match(html, /Flagship SaaS/)
     assert.match(html, /Showcase One — Tag/)
-    assert.match(html, /Architecture:/)
-    assert.match(html, /stackchip--amber/)
+    assert.match(html, /Read the case study/)
+    assert.doesNotMatch(html, /Architecture:/)
+    assert.doesNotMatch(html, /stackchip/)
   })
 
   it('saves the case study fields and turns uploaded screenshots into screens', async () => {
