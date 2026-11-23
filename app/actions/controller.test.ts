@@ -203,6 +203,20 @@ describe('public pages', () => {
     assert.match(html, /data-toy="sticker"/)
   })
 
+  it('the contact page lists every social account with its own icon', async () => {
+    await resetStore(seedCopy())
+
+    let html = await (await get('/contact')).text()
+    for (let [name, href, icon] of [
+      ['LinkedIn', 'https://linkedin.com/in/ali-afthab', 'linkedin'],
+      ['GitHub', 'https://github.com/ali-d-coded', 'github'],
+      ['Instagram', 'https://www.instagram.com/_ali_afthab/', 'instagram'],
+    ]) {
+      assert.ok(html.includes(`href="${href}"`), `${name} link`)
+      assert.ok(html.includes(`/assets/icons/${icon}.svg`), `${name} icon`)
+    }
+  })
+
   it('the skills panel and the experience entries carry the tools they use', async () => {
     await resetStore(seedCopy())
 

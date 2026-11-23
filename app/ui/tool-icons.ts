@@ -43,6 +43,10 @@ const ICONS: Array<[RegExp, ToolIcon]> = [
   [/^claude\b/, { file: 'claude-code', shape: 'land' }],
   [/^chatgpt\b/, { file: 'openai', ink: true }],
   [/^github copilot\b/, { file: 'github-copilot', ink: true }],
+  // Social accounts, as named on the contact page.
+  [/^github$/, { file: 'github', ink: true }],
+  [/^linkedin$/, { file: 'linkedin' }],
+  [/^instagram$/, { file: 'instagram' }],
 ]
 
 /** The icon for a tool named as the store writes it ("Node.js", "MongoDB (Mongoose)"), or null. */

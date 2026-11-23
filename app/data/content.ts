@@ -52,6 +52,8 @@ export interface Site {
   email: string
   linkedinUrl: string
   githubUrl: string
+  /** Absent in content saved before the field existed. */
+  instagramUrl?: string
   resumeMediaId: string | null
   education: Education[]
 }

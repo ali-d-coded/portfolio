@@ -324,7 +324,7 @@ function Footer(handle: Handle<{ frame: Frame }>) {
                 </li>
               </ul>
             </div>
-            {site?.linkedinUrl || site?.githubUrl ? (
+            {site?.linkedinUrl || site?.githubUrl || site?.instagramUrl ? (
               <div class="foot__col">
                 <h3 class="label">Elsewhere</h3>
                 <ul>
@@ -339,6 +339,13 @@ function Footer(handle: Handle<{ frame: Frame }>) {
                     <li>
                       <a href={site.githubUrl} rel="me" data-cursor="link">
                         GitHub
+                      </a>
+                    </li>
+                  ) : null}
+                  {site.instagramUrl ? (
+                    <li>
+                      <a href={site.instagramUrl} rel="me" data-cursor="link">
+                        Instagram
                       </a>
                     </li>
                   ) : null}

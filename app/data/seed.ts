@@ -15,6 +15,7 @@ export const seedSnapshot: ContentSnapshot = {
     email: 'aliallu3xa@gmail.com',
     linkedinUrl: 'https://linkedin.com/in/ali-afthab',
     githubUrl: 'https://github.com/ali-d-coded',
+    instagramUrl: 'https://www.instagram.com/_ali_afthab/',
     resumeMediaId: null,
     education: [
       {

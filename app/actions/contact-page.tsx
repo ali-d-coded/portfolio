@@ -16,10 +16,10 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
 
     return (
       <Layout
-        title={name ? `${name}: email, LinkedIn and GitHub` : 'Contact'}
+        title={name ? `${name}: email, LinkedIn, GitHub and Instagram` : 'Contact'}
         description={
           name
-            ? `${name} is open to projects of any size. Email, LinkedIn and GitHub to start a conversation about a full-stack or backend build.`
+            ? `${name} is open to projects of any size. Email, LinkedIn, GitHub and Instagram to start a conversation about a full-stack or backend build.`
             : 'Contact details.'
         }
         pageType="contact"
@@ -41,7 +41,7 @@ export function ContactPage(handle: Handle<{ frame: Frame }>) {
                 could be live.
               </p>
               <p class="lead" data-enter="">
-                Send a few lines about the idea by email, or find me on LinkedIn and GitHub.
+                Send a few lines about the idea by email, or find me on LinkedIn, GitHub and Instagram.
               </p>
               <div class="btns" data-enter="">
                 <EmailButton site={site} />
@@ -83,6 +83,7 @@ function Links(handle: Handle<{ site: Site | null }>) {
     for (let [label, url] of [
       ['LinkedIn', site.linkedinUrl],
       ['GitHub', site.githubUrl],
+      ['Instagram', site.instagramUrl],
     ] as const) {
       if (!url) continue
       let icon = toolIcon(label)
@@ -104,9 +105,9 @@ function Links(handle: Handle<{ site: Site | null }>) {
     return (
       <section class="section" id="links" aria-labelledby="links-h" data-ruler-section="Links">
         <div class="wrap">
-          <SectionHead id="links-h" title="Email, LinkedIn and GitHub">
+          <SectionHead id="links-h" title="Email and social accounts">
             <p class="section-head__lead">
-              Email goes to my own inbox; LinkedIn and GitHub are my personal accounts.
+              Email goes to my own inbox; LinkedIn, GitHub and Instagram are my personal accounts.
             </p>
           </SectionHead>
           <ul class="contact-list">

@@ -121,6 +121,7 @@ function Story(handle: Handle<{ site: Site | null }>) {
     let links = [
       site.linkedinUrl ? { name: 'LinkedIn', href: site.linkedinUrl } : null,
       site.githubUrl ? { name: 'GitHub', href: site.githubUrl } : null,
+      site.instagramUrl ? { name: 'Instagram', href: site.instagramUrl } : null,
     ].filter((link) => link !== null)
     if (story.length === 0 && education.length === 0 && links.length === 0) return null
 

@@ -12,6 +12,7 @@ export const siteFields: Field[] = [
   { name: 'email', label: 'Email', type: 'text', required: true },
   { name: 'linkedinUrl', label: 'LinkedIn link', type: 'url' },
   { name: 'githubUrl', label: 'GitHub link', type: 'url' },
+  { name: 'instagramUrl', label: 'Instagram link', type: 'url' },
   { name: 'resume', label: 'Resume', type: 'pdf', hint: 'A PDF up to 5 MB. Uploading a new one replaces the old.' },
   { name: 'education', label: 'Education', type: 'textarea', rows: 3, hint: 'One per line: Degree | School | 2024-06 | 2027-06 (the end is optional).' },
 ]
@@ -28,6 +29,7 @@ export function siteValues(site: Site | null, resumeHref: string): Values {
     email: site.email,
     linkedinUrl: site.linkedinUrl,
     githubUrl: site.githubUrl,
+    instagramUrl: site.instagramUrl ?? '',
     education: formatEducation(site.education),
   }
 }
@@ -39,7 +41,7 @@ export async function saveSiteValues(store: ContentStore, values: Values): Promi
   if (!text('role')) errors.role = 'A role is needed.'
   if (!text('heroHeadline')) errors.heroHeadline = 'A headline is needed.'
   if (!/^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/.test(text('email'))) errors.email = 'Use a full email address.'
-  for (let name of ['linkedinUrl', 'githubUrl']) {
+  for (let name of ['linkedinUrl', 'githubUrl', 'instagramUrl']) {
     if (text(name) && !isSafeUrl(text(name))) errors[name] = 'Use a full link starting with https://'
   }
   if (Object.keys(errors).length > 0) return { ok: false, errors }
@@ -54,6 +56,7 @@ export async function saveSiteValues(store: ContentStore, values: Values): Promi
     email: text('email'),
     linkedinUrl: text('linkedinUrl'),
     githubUrl: text('githubUrl'),
+    instagramUrl: text('instagramUrl'),
     resumeMediaId: existing?.resumeMediaId ?? null,
     education: parseEducation(values.education ?? ''),
   })
