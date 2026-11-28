@@ -9,7 +9,7 @@ export const seedSnapshot: ContentSnapshot = {
     role: 'Full-Stack Engineer | Backend & Distributed Systems',
     heroHeadline: 'I build multi-tenant products\nand real-time backends',
     summary:
-      'Full-stack engineer working in Node.js, TypeScript and Bun. At Ginger Technologies I architected and built EazyCRM, a WhatsApp CRM serving 30+ client businesses.',
+      'Full-stack engineer working in Node.js, TypeScript and Bun. I architected and built a multi-tenant WhatsApp CRM serving 30+ client businesses.',
     about:
       'I write backend services in Node.js, TypeScript and Bun, and the React and React Native clients that sit on them. Most of my work since 2022 has been multi-tenant SaaS: one codebase serving many client businesses.\n\nI own features from requirements to deployment, and I review code and mentor junior developers along the way. Message queues, real-time delivery and data modelling are where I go deepest.',
     email: 'aliallu3xa@gmail.com',
