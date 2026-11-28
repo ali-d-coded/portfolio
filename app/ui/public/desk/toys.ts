@@ -234,7 +234,6 @@ function initBadge(badge: HTMLElement) {
   let originY = 0
   let moved = false
   badge.addEventListener('pointerdown', (event) => {
-    if (event.pointerType === 'touch') return
     pressed = true
     moved = false
     current?.kill()

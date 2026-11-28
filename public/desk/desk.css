@@ -340,7 +340,8 @@ html.js:not(.ready) [data-enter], html.js:not(.ready) [data-hero], html.js:not(.
 .toy__cap { display: block; margin-top: 2px; text-align: center; font: 700 15px/1.1 var(--hand); color: var(--amber-text); }
 
 /* badge on its lanyard */
-.toy--badge { width: min(100%, 290px); margin-top: 60px; transform-origin: 50% -60px; }
+/* on touch a sideways pull takes the card and an up or down swipe still scrolls the page */
+.toy--badge { width: min(100%, 290px); margin-top: 60px; transform-origin: 50% -60px; touch-action: pan-y; }
 .badge__strap { position: absolute; top: -60px; left: 50%; width: 14px; height: 64px; margin-left: -7px; background: repeating-linear-gradient(180deg, var(--carbon) 0 6px, var(--line-2) 6px 7px); border-inline: 1px solid var(--line-2); }
 .badge { position: relative; padding: 24px 18px 16px; background: var(--carbon); border: 1px solid var(--line-2); border-radius: 12px; }
 :root[data-theme="light"] .badge { background: #212124; color: #f4f4f6; border-color: #212124; }
