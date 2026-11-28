@@ -92,7 +92,7 @@ export function ProjectPage(handle: Handle<ProjectPageProps>) {
 function Hero(handle: Handle<{ frame: Frame; project: Project }>) {
   return () => {
     let { frame, project } = handle.props
-    let hasFacts = Boolean(project.tagline) || project.stack.length > 0
+    let hasFacts = Boolean(project.tagline || project.myRole) || project.stack.length > 0
 
     return (
       <section class="hero hero--page" aria-labelledby="hero-h" data-ruler-section="Intro">
@@ -120,6 +120,12 @@ function Hero(handle: Handle<{ frame: Frame; project: Project }>) {
                 <div>
                   <dt>What it is</dt>
                   <dd>{project.tagline}</dd>
+                </div>
+              ) : null}
+              {project.myRole ? (
+                <div>
+                  <dt>My role</dt>
+                  <dd>{project.myRole}</dd>
                 </div>
               ) : null}
               {project.stack.length > 0 ? (

@@ -241,6 +241,11 @@ function FloatingMenu(handle: Handle<{ frame: Frame; pageType: PageType }>) {
               {item.label}
             </a>
           ))}
+          {frame.site?.email ? (
+            <a class="fmenu__item fmenu__item--mail" href={`mailto:${frame.site.email}`} data-menu-item="" tabIndex={-1}>
+              Email
+            </a>
+          ) : null}
         </nav>
         <button class="fmenu__btn" type="button" aria-expanded="false" aria-controls="fmenu-list" aria-label="Open the menu" data-menu-button="">
           <span class="fmenu__bars" aria-hidden="true">
@@ -403,19 +408,19 @@ function MailDialog(handle: Handle<{ site: Site | null }>) {
               <div class="mb__row">
                 <div class="mb__field">
                   <label for="mb-name">Your name</label>
-                  <input id="mb-name" name="name" type="text" autoComplete="name" maxLength={80} required />
-                  <span class="mb__err" data-mb-err="name"></span>
+                  <input id="mb-name" name="name" type="text" autoComplete="name" maxLength={80} required aria-describedby="mb-name-err" />
+                  <span class="mb__err" id="mb-name-err" aria-live="polite" data-mb-err="name"></span>
                 </div>
                 <div class="mb__field">
                   <label for="mb-email">Your email</label>
-                  <input id="mb-email" name="email" type="email" autoComplete="email" maxLength={120} required />
-                  <span class="mb__err" data-mb-err="email"></span>
+                  <input id="mb-email" name="email" type="email" autoComplete="email" maxLength={120} required aria-describedby="mb-email-err" />
+                  <span class="mb__err" id="mb-email-err" aria-live="polite" data-mb-err="email"></span>
                 </div>
               </div>
               <div class="mb__field">
                 <label for="mb-message">Message</label>
-                <textarea id="mb-message" name="message" rows={5} maxLength={5000} required></textarea>
-                <span class="mb__err" data-mb-err="message"></span>
+                <textarea id="mb-message" name="message" rows={5} maxLength={5000} required aria-describedby="mb-message-err"></textarea>
+                <span class="mb__err" id="mb-message-err" aria-live="polite" data-mb-err="message"></span>
               </div>
               <div class="mb__hp" aria-hidden="true">
                 <label for="mb-website">Website</label>

@@ -7,9 +7,9 @@ export const seedSnapshot: ContentSnapshot = {
   site: {
     name: 'Ali Afthab',
     role: 'Full-Stack Engineer | Backend & Distributed Systems',
-    heroHeadline: 'Full-Stack Engineer | Backend & Distributed Systems',
+    heroHeadline: 'I build multi-tenant products\nand real-time backends',
     summary:
-      'Specialized in Node.js, Bun, Microservices, Message Queues & Real-time WebSockets with database-per-tenant isolation, caching and resilient fault tolerance.',
+      'Full-stack engineer working in Node.js, TypeScript and Bun. At Ginger Technologies I architected and built EazyCRM, a WhatsApp CRM serving 30+ client businesses.',
     about:
       'I write backend services in Node.js, TypeScript and Bun, and the React and React Native clients that sit on them. Most of my work since 2022 has been multi-tenant SaaS: one codebase serving many client businesses.\n\nI own features from requirements to deployment, and I review code and mentor junior developers along the way. Message queues, real-time delivery and data modelling are where I go deepest.',
     email: 'aliallu3xa@gmail.com',
@@ -74,6 +74,8 @@ export const seedSnapshot: ContentSnapshot = {
       ],
       coverMediaId: null,
       liveUrl: 'https://scribbleandconnect.com/',
+      liveNote: "EazyCRM's public website.",
+      myRole: 'Full-Stack Engineer at Ginger Technologies, since June 2025',
       gains: [
         { title: 'One inbox for the whole team', text: 'Customers write on WhatsApp and your team answers from one shared inbox. Each agent sees only the chats assigned to them.' },
         { title: 'Campaigns to your whole list', text: 'Send bulk drip campaigns and reach WhatsApp Groups, without sending them one by one.' },
@@ -124,6 +126,7 @@ export const seedSnapshot: ContentSnapshot = {
       ],
       coverMediaId: null,
       liveUrl: 'https://calicutvibeuae.com/',
+      myRole: 'Software Development Engineer (Contract) at Brixton Corporate and Media, February to May 2025',
       liveNote: "A restaurant that runs on this platform. The point of sale itself is a private system, so this is the restaurant's public site.",
       previewImage: '/projects/restaurant-pos.jpg',
       featured: true,

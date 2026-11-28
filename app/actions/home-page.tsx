@@ -11,7 +11,6 @@ import {
   ToolTiles,
   currentRole,
   earliestStart,
-  lowerFirst,
   studying,
 } from '../ui/parts.tsx'
 import { toolIcons } from '../ui/tool-icons.ts'
@@ -54,11 +53,10 @@ function selected(projects: Project[]): Project[] {
 const DESK_NOTE =
   '5 years designing and shipping scalable multi-tenant SaaS platforms and high-volume, event-driven backend systems. Strong record of end-to-end ownership, performance optimization, and system design.'
 
-/** The headline on one line; a headline that already starts with the name is not given the name twice. */
+/** The browser tab and search title: the name and role. */
 function pageTitle(site: Frame['site']): string {
-  if (!site?.heroHeadline) return site?.name ?? 'Portfolio'
-  let flat = site.heroHeadline.replace(/\s*\n\s*/g, ' ').trim()
-  return flat.toLowerCase().startsWith(site.name.toLowerCase()) ? flat : `${site.name}: ${lowerFirst(flat)}`
+  if (!site) return 'Portfolio'
+  return site.role ? `${site.name}: ${site.role}` : site.name
 }
 
 function Hero(handle: Handle<{ frame: Frame }>) {
@@ -175,6 +173,11 @@ function SelectedWork(handle: Handle<{ projects: Project[]; media: Map<string, M
                     {project.badge ? <span class="project__badge">{project.badge}</span> : <span></span>}
                     <span class="project__index">Project #{String(index + 1).padStart(2, '0')}</span>
                   </div>
+                  {project.previewImage ? (
+                    <span class="photo">
+                      <img src={project.previewImage} alt="" width="788" height="470" loading="lazy" />
+                    </span>
+                  ) : null}
                   <h3>
                     <a class="project__title" href={routes.work.show.href({ slug: project.slug })} data-cursor="view">
                       {project.headline || project.title}

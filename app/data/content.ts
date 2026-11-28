@@ -82,6 +82,8 @@ export interface Project {
   screens?: Screen[]
   /** The project's live site, shown as a link with a preview. */
   liveUrl?: string
+  /** The owner's role on the project: title, employer and dates. */
+  myRole?: string
   /** A line under the live preview saying what the linked site is, when it is not the project itself. */
   liveNote?: string
   /** A screenshot of the live site, a path under `public/`. */

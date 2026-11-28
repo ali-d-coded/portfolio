@@ -111,7 +111,15 @@ export function initScrollTop(reduced: boolean): void {
   if (!button) return
   let node = button
   let visible = false
+  let lastY = window.scrollY
   function update() {
+    // On small screens the floating buttons step aside while the page is being read downwards.
+    let y = window.scrollY
+    if (Math.abs(y - lastY) > 6) {
+      let atEnd = y + window.innerHeight >= document.documentElement.scrollHeight - 80
+      document.documentElement.classList.toggle('is-reading', y > lastY && y > 120 && !atEnd)
+      lastY = y
+    }
     let show = window.scrollY > window.innerHeight * 0.8
     if (show === visible) return
     visible = show
@@ -147,7 +155,7 @@ export function initMenu(reduced: boolean): void {
   let trigger = button
 
   // The links sit on a quarter circle around the button: from straight up round to straight left.
-  let reach = 126
+  let reach = items.length > 4 ? 164 : 126
   let spots = items.map((_, index) => {
     let angle = items.length === 1 ? 135 : 90 + (index / (items.length - 1)) * 90
     let radians = (angle * Math.PI) / 180
@@ -187,8 +195,11 @@ export function initMenu(reduced: boolean): void {
   }
 
   trigger.addEventListener('click', () => set(!open))
+  // The Email item opens the message form on this page, so the menu has to fold itself away.
+  for (let item of items) item.addEventListener('click', () => set(false))
   document.addEventListener('pointerdown', (event) => {
-    if (open && !menu.contains(event.target as Node)) set(false)
+    // The backdrop is a pseudo-element of the menu, so a press on it targets the menu itself.
+    if (open && (event.target === menu || !menu.contains(event.target as Node))) set(false)
   })
   document.addEventListener('keydown', (event) => {
     if (open && event.key === 'Escape') {

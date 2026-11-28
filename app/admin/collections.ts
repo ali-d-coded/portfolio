@@ -83,6 +83,7 @@ const projects: Collection = {
     { name: 'screens', label: 'App screenshots', type: 'screens', rows: 4, hint: 'One per line: web, mobile or admin | Label | /media/link. Upload screenshots below and they are added here.' },
     { name: 'details', label: 'Card facts', type: 'textarea', rows: 4, hint: 'Saved with the project but no longer shown on the home page card, which now carries the summary and tool logos. One per line: Architecture | API Gateway + Tenant RBAC' },
     { name: 'summary', label: 'Summary', type: 'textarea', rows: 4, hint: 'Shown on the project cards.' },
+    { name: 'myRole', label: 'My role', type: 'text', hint: 'Optional. Your title, the employer and the dates, shown at the top of the project page.' },
     { name: 'stack', label: 'Tools', type: 'text', hint: 'Separated by commas.' },
     { name: 'liveUrl', label: 'Live site', type: 'url', hint: 'A link with a preview on the project page.' },
     { name: 'liveNote', label: 'Live site note', type: 'text', hint: 'Optional. One line under the preview saying what the linked site is, if it is not the project itself.' },
@@ -124,6 +125,7 @@ const projects: Collection = {
       stack: project.stack.join(', '),
       liveUrl: project.liveUrl ?? '',
       liveNote: project.liveNote ?? '',
+      myRole: project.myRole ?? '',
       previewImage: project.previewImage ?? '',
       figures: formatFigures(project.figures),
       blocks: formatBlocks(project.blocks),
@@ -176,6 +178,8 @@ const projects: Collection = {
     if (liveUrl) project.liveUrl = liveUrl
     let liveNote = (values.liveNote ?? '').replace(/\s+/g, ' ').trim().slice(0, 200)
     if (liveNote) project.liveNote = liveNote
+    let myRole = (values.myRole ?? '').replace(/\s+/g, ' ').trim().slice(0, 200)
+    if (myRole) project.myRole = myRole
     if (previewImage) project.previewImage = previewImage
     try {
       await store.saveProject(project)
